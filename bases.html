@@ -1,0 +1,243 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Bases &mdash; Julia Quantum Optics</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Julia Quantum Optics" href="index.html"/>
+        <link rel="next" title="Spin basis" href="spin.html"/>
+        <link rel="prev" title="Installation" href="installation.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Quantumoptics.jl
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Bases</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="spin.html">Spin basis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fock.html">Fock Basis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="particle.html">Particle basis</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="states.html">States</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operators.html">Operators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="superoperators.html">Super-operators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timeevolution.html">Time-evolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="steadystate.html">Steady state</a></li>
+<li class="toctree-l1"><a class="reference internal" href="correlations.html">Two-time correlation functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spectralanalysis.html">Spectral Analysis</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">Quantumoptics.jl</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Bases</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/bases.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="bases">
+<span id="section-bases"></span><h1>Bases<a class="headerlink" href="#bases" title="Permalink to this headline">¶</a></h1>
+<p>The primary purpose of bases in <strong>Quantumoptics.jl</strong> is to specify the dimension of the Hilbert space of the system and to make sure that quantum objects associated to distinct bases can&#8217;t be combined accidentally in an incorrect way. Many of the commonly used basis types like</p>
+<ul class="simple">
+<li><a class="reference internal" href="spin.html#section-spin"><span>Spin basis</span></a></li>
+<li><a class="reference internal" href="fock.html#section-fock"><span>Fock Basis</span></a></li>
+<li><a class="reference internal" href="particle.html#section-particle"><span>Particle basis</span></a></li>
+</ul>
+<p>are already built into <strong>Quantumoptics.jl</strong>. Hilbert spaces of composite systems can be handled automatically with the <code class="xref jl jl-type docutils literal"><span class="pre">CompositeBasis</span></code> which can for example be created using the <cite>tensor</cite> function:</p>
+<div class="highlight-julia"><div class="highlight"><pre><span></span><span class="n">basis_fock</span> <span class="o">=</span> <span class="n">FockBasis</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">basis_particle</span> <span class="o">=</span> <span class="n">MomentumBasis</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">10.</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+<span class="n">basis</span> <span class="o">=</span> <span class="n">tensor</span><span class="p">(</span><span class="n">basis_fock</span><span class="p">,</span> <span class="n">basis_particle</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>For cases not covered by these one can either use the <code class="xref jl jl-type docutils literal"><span class="pre">bases.GenericBasis</span></code> or implement own special purpose bases by deriving from the abstract <code class="xref jl jl-abstract docutils literal"><span class="pre">Basis</span></code> type. The only mandatory property of all basis types is that they have a field <cite>shape</cite> which specifies the dimensionality of their Hilbert space. E.g. a spin 1/2 basis could be implemented as:</p>
+<div class="highlight-julia"><div class="highlight"><pre><span></span><span class="k">type</span><span class="nc"> SpinBasis</span> <span class="o">&lt;:</span> <span class="n">Basis</span>
+    <span class="n">shape</span><span class="p">::</span><span class="n">Vector</span><span class="p">{</span><span class="kt">Int</span><span class="p">}</span>
+    <span class="n">SpinBasis</span><span class="p">()</span> <span class="o">=</span> <span class="nb">new</span><span class="p">(</span><span class="kt">Int</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="c"># Constructor</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p>The interaction with other bases can be determined by overloading the <cite>==</cite> operator as well as the <code class="xref jl jl-func docutils literal"><span class="pre">bases.multiplicable</span></code> function:</p>
+<div class="highlight-julia"><div class="highlight"><pre><span></span><span class="o">==</span><span class="p">(</span><span class="n">b1</span><span class="p">::</span><span class="n">SpinBasis</span><span class="p">,</span> <span class="n">b2</span><span class="p">::</span><span class="n">SpinBasis</span><span class="p">)</span> <span class="o">=</span> <span class="n">true</span>
+<span class="n">multiplicable</span><span class="p">(</span><span class="n">b1</span><span class="p">::</span><span class="n">SpinBasis</span><span class="p">,</span> <span class="n">b2</span><span class="p">::</span><span class="n">SpinBasis</span><span class="p">)</span> <span class="o">=</span> <span class="n">true</span>
+</pre></div>
+</div>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="spin.html" class="btn btn-neutral float-right" title="Spin basis" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="installation.html" class="btn btn-neutral" title="Installation" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014, Sebastian Krämer.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

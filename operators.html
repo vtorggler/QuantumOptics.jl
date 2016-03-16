@@ -1,0 +1,279 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Operators &mdash; Julia Quantum Optics</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Julia Quantum Optics" href="index.html"/>
+        <link rel="next" title="Super-operators" href="superoperators.html"/>
+        <link rel="prev" title="States" href="states.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Quantumoptics.jl
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bases.html">Bases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="states.html">States</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Operators</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#dense-operators">Dense operators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sparse-operators">Sparse operators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#lazy-operators">Lazy operators</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="superoperators.html">Super-operators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timeevolution.html">Time-evolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="steadystate.html">Steady state</a></li>
+<li class="toctree-l1"><a class="reference internal" href="correlations.html">Two-time correlation functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spectralanalysis.html">Spectral Analysis</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">Quantumoptics.jl</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Operators</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/operators.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="operators">
+<span id="section-operators"></span><h1>Operators<a class="headerlink" href="#operators" title="Permalink to this headline">¶</a></h1>
+<p>Operators can be defined as linear mappings from one Hilbert space to another. However, equivalently to states, operators in <strong>Quantumoptics.jl</strong> are interpreted as coefficients of an abstract operator in respect to one (or more generally two, possibly distinct) <a class="reference internal" href="bases.html#section-bases"><span>basis</span></a>. For a certain choice of bases <span class="math">\(\{|u_i\rangle\}_i\)</span> and <span class="math">\(\{|v_j\rangle\}_j\)</span> an abstract operator <span class="math">\(A\)</span> has the coefficients <span class="math">\(A_{ij}\)</span> which are connected by the relation</p>
+<div class="math">
+\[A =  \sum_{ij} A_{ij} | u_i \rangle \langle v_j |\]</div>
+<p>For performance reasons there are several different implementation of operators in <strong>Quantumoptics.jl</strong>:</p>
+<ul class="simple">
+<li><a class="reference internal" href="#subsection-denseoperators"><span>Dense operators</span></a></li>
+<li><a class="reference internal" href="#subsection-sparseoperators"><span>Sparse operators</span></a></li>
+<li><a class="reference internal" href="#subsection-lazyoperators"><span>Lazy operators</span></a></li>
+</ul>
+<p>All of them have the same interface and can in most cases be used interchangeably. E.g. all of them implement the expected arithmetic functions
+*, /, +, -:</p>
+<div class="highlight-julia"><div class="highlight"><pre><span></span><span class="n">b</span> <span class="o">=</span> <span class="n">SpinBasis</span><span class="p">(</span><span class="mi">1</span><span class="o">//</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">sx</span> <span class="o">=</span> <span class="n">sigmax</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+<span class="n">sy</span> <span class="o">=</span> <span class="n">sigmay</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+<span class="n">sx</span> <span class="o">+</span> <span class="n">sy</span>
+<span class="n">sx</span> <span class="o">*</span> <span class="n">sy</span>
+</pre></div>
+</div>
+<p>and also <code class="xref jl jl-func docutils literal"><span class="pre">dagger(::DenseOperator)</span></code>, <code class="xref jl jl-func docutils literal"><span class="pre">normalize(::DenseOperator)</span></code> and <code class="xref jl jl-func docutils literal"><span class="pre">normalize!(::DenseOperator)</span></code> are available.</p>
+<ul class="simple">
+<li>Expectation values can be calculated with:</li>
+</ul>
+<blockquote class="epigraph">
+<div><dl class="function"><dt id="expect-a3c235865b6f231a3eb6b141e13770eb"><em class="property">function </em><code class="descname">expect</code><span class="sig-paren">(</span><em>op</em>, <em>state</em><span class="sig-paren">)</span><a class="headerlink" href="#expect-a3c235865b6f231a3eb6b141e13770eb" title="Permalink to this function">¶</a></dt><dd>Expectation value of the given operator for the specified state(s).</dd></dl><dl class="function"><dt id="expect-6c603930eb6f3b799d5946fe58020a87"><em class="property">function </em><code class="descname">expect</code><span class="sig-paren">(</span><em>op</em>, <em>states</em><span class="sig-paren">)</span><a class="headerlink" href="#expect-6c603930eb6f3b799d5946fe58020a87" title="Permalink to this function">¶</a></dt><dd></dd></dl><dl class="function"><dt id="expect-1ac4556d84f557a684c36a906189b1b2"><em class="property">function </em><code class="descname">expect</code><span class="sig-paren">(</span><em>op</em>, <em>state</em><span class="sig-paren">)</span><a class="headerlink" href="#expect-1ac4556d84f557a684c36a906189b1b2" title="Permalink to this function">¶</a></dt><dd></dd></dl><dl class="function"><dt id="expect-3c3945c7126535b01e124bc5c5a850ee"><em class="property">function </em><code class="descname">expect</code><span class="sig-paren">(</span><em>op</em>, <em>states</em><span class="sig-paren">)</span><a class="headerlink" href="#expect-3c3945c7126535b01e124bc5c5a850ee" title="Permalink to this function">¶</a></dt><dd></dd></dl></div></blockquote>
+<ul class="simple">
+<li>Composite operators can be created with:</li>
+</ul>
+<blockquote class="epigraph">
+<div><dl class="function"><dt id="tensor-da5b811e9453697de055622229de1813"><em class="property">function </em><code class="descname">tensor</code><span class="sig-paren">(</span><em>a</em>, <em>b</em><span class="sig-paren">)</span><a class="headerlink" href="#tensor-da5b811e9453697de055622229de1813" title="Permalink to this function">¶</a></dt><dd>Tensor product of operators.</dd></dl><dl class="function"><dt id="tensor-5662811f2f9cf48a4c3ccf3f9be3a690"><em class="property">function </em><code class="descname">tensor</code><span class="sig-paren">(</span><em>a</em>, <em>b</em><span class="sig-paren">)</span><a class="headerlink" href="#tensor-5662811f2f9cf48a4c3ccf3f9be3a690" title="Permalink to this function">¶</a></dt><dd>Tensor product of a ket and a bra results in an operator.</dd></dl></div></blockquote>
+<ul class="simple">
+<li>The inverse operation - taking a partial trace is done with:</li>
+</ul>
+<blockquote class="epigraph">
+<div><dl class="function"><dt id="ptrace-e488b69341c709b1c9510785af082861"><em class="property">function </em><code class="descname">ptrace</code><span class="sig-paren">(</span><em>a</em>, <em>indices</em><span class="sig-paren">)</span><a class="headerlink" href="#ptrace-e488b69341c709b1c9510785af082861" title="Permalink to this function">¶</a></dt><dd>Partial trace of the given operator over the specified indices.</dd></dl><dl class="function"><dt id="ptrace-bd0f46f5e8a3eaaf7653ecccfc129328"><em class="property">function </em><code class="descname">ptrace</code><span class="sig-paren">(</span><em>a</em>, <em>indices</em><span class="sig-paren">)</span><a class="headerlink" href="#ptrace-bd0f46f5e8a3eaaf7653ecccfc129328" title="Permalink to this function">¶</a></dt><dd></dd></dl></div></blockquote>
+<ul class="simple">
+<li>For creating operators of the type <span class="math">\(A = I \otimes I \otimes ... a_i ... \otimes I\)</span> the very useful embed function can be used:</li>
+</ul>
+<blockquote class="epigraph">
+<div><dl class="function"><dt id="embed-ba4ce26d50746a4aab8574966e7bc994"><em class="property">function </em><code class="descname">embed</code><span class="sig-paren">(</span><em>basis</em>, <em>indices</em>, <em>operators</em><span class="sig-paren">)</span><a class="headerlink" href="#embed-ba4ce26d50746a4aab8574966e7bc994" title="Permalink to this function">¶</a></dt><dd><p>Tensor product of operators where all missing indices are identity operators.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>basis</strong> &#8211; CompositeBasis of the resulting operator.</li>
+<li><strong>indices</strong> &#8211; Indices of the subsystems in which the given operators live.</li>
+<li><strong>operators</strong> &#8211; Operators defined in the subsystems.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl><dl class="function"><dt id="embed-540a6c0833694fd78c90a1fb9f1596d4"><em class="property">function </em><code class="descname">embed{T <: Operator}</code><span class="sig-paren">(</span><em>basis</em>, <em>index</em>, <em>op</em><span class="sig-paren">)</span><a class="headerlink" href="#embed-540a6c0833694fd78c90a1fb9f1596d4" title="Permalink to this function">¶</a></dt><dd></dd></dl></div></blockquote>
+<div class="section" id="dense-operators">
+<span id="subsection-denseoperators"></span><h2>Dense operators<a class="headerlink" href="#dense-operators" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="sparse-operators">
+<span id="subsection-sparseoperators"></span><h2>Sparse operators<a class="headerlink" href="#sparse-operators" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="lazy-operators">
+<span id="subsection-lazyoperators"></span><h2>Lazy operators<a class="headerlink" href="#lazy-operators" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="superoperators.html" class="btn btn-neutral float-right" title="Super-operators" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="states.html" class="btn btn-neutral" title="States" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014, Sebastian Krämer.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
