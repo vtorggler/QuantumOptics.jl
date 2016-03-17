@@ -15,4 +15,5 @@ Quantumoptics.jl
     steadystate
     correlations
     spectralanalysis
+    examples
 
