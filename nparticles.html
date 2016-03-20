@@ -1,6 +1,5 @@
 
 
-
 <!DOCTYPE html>
 <!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
@@ -9,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Index &mdash; Julia Quantum Optics</title>
+  <title>N-Particles Basis &mdash; Julia Quantum Optics</title>
   
 
   
@@ -31,7 +30,10 @@
   
 
   
-    <link rel="top" title="Julia Quantum Optics" href="index.html"/> 
+    <link rel="top" title="Julia Quantum Optics" href="index.html"/>
+        <link rel="up" title="Quantum systems" href="quantumsystems.html"/>
+        <link rel="next" title="Time-evolution" href="timeevolution.html"/>
+        <link rel="prev" title="Particle basis" href="particle.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -80,14 +82,20 @@
           
             
             
-                <ul>
+                <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bases.html">Bases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="states.html">States</a></li>
 <li class="toctree-l1"><a class="reference internal" href="operators.html">Operators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="superoperators.html">Super-operators</a></li>
-<li class="toctree-l1"><a class="reference internal" href="quantumsystems.html">Quantum systems</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="quantumsystems.html">Quantum systems</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="spin.html">Spin basis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fock.html">Fock Basis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="particle.html">Particle basis</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">N-Particles Basis</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="timeevolution.html">Time-evolution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="steadystate.html">Steady state</a></li>
 <li class="toctree-l1"><a class="reference internal" href="correlations.html">Two-time correlation functions</a></li>
@@ -116,7 +124,7 @@
         <div class="rst-content">
           
 
-
+ 
 
 
 
@@ -124,9 +132,13 @@
   <ul class="wy-breadcrumbs">
     <li><a href="index.html">Docs</a> &raquo;</li>
       
-    <li></li>
+          <li><a href="quantumsystems.html">Quantum systems</a> &raquo;</li>
+      
+    <li>N-Particles Basis</li>
       <li class="wy-breadcrumbs-aside">
         
+          
+            <a href="_sources/nparticles.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -136,17 +148,38 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-
-<h1 id="index">Index</h1>
-
-<div class="genindex-jumpbox">
- 
+  <div class="section" id="n-particles-basis">
+<h1>N-Particles Basis<a class="headerlink" href="#n-particles-basis" title="Permalink to this headline">¶</a></h1>
+<p>Describing systems consisting of many identical particles in a tensor product space created out of single particle Hilbert spaces leads to the problem that not all states in this space correspond to real physical states. In this picture one would have to restrict the Hilbert space to a subspace that is invariant under permutation of particles. However, it is also possible to find a valid description that doesn&#8217;t first introduce redundant states that later on have to be eliminated. The general idea is to choose an arbitrary basis <span class="math">\(\{\left|u_i\right\rangle\}_i\)</span> of the single particle Hilbert space and create the N-particle Hilbert space from states that count how many particles are in each of these states - which will in the following be denoted as <span class="math">\(\left|\{n\}\right\rangle\)</span>. Of course the sum of these occupation numbers has to be identical to the number of particles. For fermionic particles an additional restriction is that there can&#8217;t be more than one particle in one state.</p>
+<p>This concept is captured in the abstract <a class="reference internal" href="api.html#NParticleBasis" title="NParticleBasis"><code class="xref jl jl-abstract docutils literal"><span class="pre">NParticleBasis</span></code></a> type and in the concrete fermionic and bosonic implementations <a class="reference internal" href="api.html#FermionicNParticleBasis" title="FermionicNParticleBasis"><code class="xref jl jl-type docutils literal"><span class="pre">FermionicNParticleBasis</span></code></a> and <a class="reference internal" href="api.html#BosonicNParticleBasis" title="BosonicNParticleBasis"><code class="xref jl jl-type docutils literal"><span class="pre">BosonicNParticleBasis</span></code></a>.</p>
+<p>Connection between additive single particle operator <span class="math">\(\sum_i x_i\)</span> and its corresponding N-particle operator:</p>
+<div class="math">
+\[X = \sum_{ij} a_i^\dagger a_j
+                \left\langle u_i \right|
+                x
+                \left| u_j \right\rangle\]</div>
+<p>Connection between additive two particle operator <span class="math">\(\sum_{i \neq j} V_{ij}\)</span> and its corresponding N-particle operator:</p>
+<div class="math">
+\[X = \sum_{ijkl} a_i^\dagger a_j^\dagger a_k a_l
+        \left\langle u_i \right| \left\langle u_j \right|
+        x
+        \left| u_k \right\rangle \left| u_l \right\rangle\]</div>
+<p>The creation of the N-particle operators is implemented in <a class="reference internal" href="api.html#nparticleoperator_1-282ce03b15cea232f2802697a5853948" title="nparticleoperator_1"><code class="xref jl jl-func docutils literal"><span class="pre">nparticleoperator_1</span></code></a> and <a class="reference internal" href="api.html#nparticleoperator_2-282ce03b15cea232f2802697a5853948" title="nparticleoperator_2"><code class="xref jl jl-func docutils literal"><span class="pre">nparticleoperator_2</span></code></a>.</p>
 </div>
 
 
            </div>
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="timeevolution.html" class="btn btn-neutral float-right" title="Time-evolution" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="particle.html" class="btn btn-neutral" title="Particle basis" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>

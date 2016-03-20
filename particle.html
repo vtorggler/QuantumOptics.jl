@@ -31,8 +31,8 @@
 
   
     <link rel="top" title="Julia Quantum Optics" href="index.html"/>
-        <link rel="up" title="Bases" href="bases.html"/>
-        <link rel="next" title="States" href="states.html"/>
+        <link rel="up" title="Quantum systems" href="quantumsystems.html"/>
+        <link rel="next" title="N-Particles Basis" href="nparticles.html"/>
         <link rel="prev" title="Fock Basis" href="fock.html"/> 
 
   
@@ -85,20 +85,23 @@
                 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="bases.html">Bases</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="spin.html">Spin basis</a></li>
-<li class="toctree-l2"><a class="reference internal" href="fock.html">Fock Basis</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="">Particle basis</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="bases.html">Bases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="states.html">States</a></li>
 <li class="toctree-l1"><a class="reference internal" href="operators.html">Operators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="superoperators.html">Super-operators</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="quantumsystems.html">Quantum systems</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="spin.html">Spin basis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fock.html">Fock Basis</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Particle basis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nparticles.html">N-Particles Basis</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="timeevolution.html">Time-evolution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="steadystate.html">Steady state</a></li>
 <li class="toctree-l1"><a class="reference internal" href="correlations.html">Two-time correlation functions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="spectralanalysis.html">Spectral Analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 </ul>
 
             
@@ -129,7 +132,7 @@
   <ul class="wy-breadcrumbs">
     <li><a href="index.html">Docs</a> &raquo;</li>
       
-          <li><a href="bases.html">Bases</a> &raquo;</li>
+          <li><a href="quantumsystems.html">Quantum systems</a> &raquo;</li>
       
     <li>Particle basis</li>
       <li class="wy-breadcrumbs-aside">
@@ -147,7 +150,7 @@
             
   <div class="section" id="particle-basis">
 <span id="section-particle"></span><h1>Particle basis<a class="headerlink" href="#particle-basis" title="Permalink to this headline">¶</a></h1>
-<p>For particles <strong>Quantumoptics.jl</strong> provides two different choices - either the calculations can be done in real space or they can be done in momentum space by using <code class="xref jl jl-type docutils literal"><span class="pre">PositionBasis</span></code> or <code class="xref jl jl-type docutils literal"><span class="pre">MomentumBasis</span></code> respectively. To create a particle basis, a left boundary <span class="math">\(x_\mathrm{min}\)</span>, a right boundary <span class="math">\(x_\mathrm{max}\)</span> and the number of discretization points have to be provided:</p>
+<p>For particles <strong>Quantumoptics.jl</strong> provides two different choices - either the calculations can be done in real space or they can be done in momentum space by using <a class="reference internal" href="api.html#PositionBasis" title="PositionBasis"><code class="xref jl jl-type docutils literal"><span class="pre">PositionBasis</span></code></a> or <a class="reference internal" href="api.html#MomentumBasis" title="MomentumBasis"><code class="xref jl jl-type docutils literal"><span class="pre">MomentumBasis</span></code></a> respectively. To create a particle basis, a left boundary <span class="math">\(x_\mathrm{min}\)</span>, a right boundary <span class="math">\(x_\mathrm{max}\)</span> and the number of discretization points have to be provided:</p>
 <div class="highlight-julia"><div class="highlight"><pre><span></span><span class="n">xmin</span> <span class="o">=</span> <span class="o">-</span><span class="mf">2.</span>
 <span class="n">xmax</span> <span class="o">=</span> <span class="mf">4.</span>
 <span class="n">N</span> <span class="o">=</span> <span class="mi">10</span>
@@ -177,7 +180,7 @@
 <span class="k">end</span>
 </pre></div>
 </div>
-<p>Since real space and momentum space are connected via a Fourier transformation the bases are connected. The numerically inevitable cutoff implies that the functions <span class="math">\(\Psi(x)\)</span> and <span class="math">\(\Psi(p)\)</span> can be interpreted to continue periodically over the whole real axis the specific choice of the cutoff points is therefor irrelevant as long as the interval length stays the same. This free choice of cutoff points allows to easily create a corresponding <code class="xref jl jl-type docutils literal"><span class="pre">MomentumBasis</span></code> from a <code class="xref jl jl-type docutils literal"><span class="pre">PositionBasis</span></code> and vice versa:</p>
+<p>Since real space and momentum space are connected via a Fourier transformation the bases are connected. The numerically inevitable cutoff implies that the functions <span class="math">\(\Psi(x)\)</span> and <span class="math">\(\Psi(p)\)</span> can be interpreted to continue periodically over the whole real axis the specific choice of the cutoff points is therefor irrelevant as long as the interval length stays the same. This free choice of cutoff points allows to easily create a corresponding <a class="reference internal" href="api.html#MomentumBasis" title="MomentumBasis"><code class="xref jl jl-type docutils literal"><span class="pre">MomentumBasis</span></code></a> from a <a class="reference internal" href="api.html#PositionBasis" title="PositionBasis"><code class="xref jl jl-type docutils literal"><span class="pre">PositionBasis</span></code></a> and vice versa:</p>
 <div class="highlight-julia"><div class="highlight"><pre><span></span><span class="n">b_momentum</span> <span class="o">=</span> <span class="n">MomentumBasis</span><span class="p">(</span><span class="n">b_position</span><span class="p">)</span>
 <span class="n">b_position</span> <span class="o">=</span> <span class="n">PositionBasis</span><span class="p">(</span><span class="n">b_momentum</span><span class="p">)</span>
 </pre></div>
@@ -193,61 +196,22 @@
 </div>
 <p>The following operators are implemented:</p>
 <ul class="simple">
-<li><code class="xref jl jl-func docutils literal"><span class="pre">momentumoperator(b::PositionBasis)</span></code></li>
-<li><code class="xref jl jl-func docutils literal"><span class="pre">positionoperator(b::PositionBasis)</span></code></li>
-<li><code class="xref jl jl-func docutils literal"><span class="pre">laplace_x(b::PositionBasis)</span></code></li>
-<li><code class="xref jl jl-func docutils literal"><span class="pre">laplace_p(b::PositionBasis)</span></code></li>
+<li><a class="reference internal" href="api.html#momentumoperator-159d9d51ca53cf0e04ef1f26fb2534fb" title="momentumoperator(b::PositionBasis)"><code class="xref jl jl-func docutils literal"><span class="pre">momentumoperator(b::PositionBasis)</span></code></a></li>
+<li><a class="reference internal" href="api.html#positionoperator-159d9d51ca53cf0e04ef1f26fb2534fb" title="positionoperator(b::PositionBasis)"><code class="xref jl jl-func docutils literal"><span class="pre">positionoperator(b::PositionBasis)</span></code></a></li>
+<li><a class="reference internal" href="api.html#laplace_x-159d9d51ca53cf0e04ef1f26fb2534fb" title="laplace_x(b::PositionBasis)"><code class="xref jl jl-func docutils literal"><span class="pre">laplace_x(b::PositionBasis)</span></code></a></li>
+<li><a class="reference internal" href="api.html#laplace_p-159d9d51ca53cf0e04ef1f26fb2534fb" title="laplace_p(b::PositionBasis)"><code class="xref jl jl-func docutils literal"><span class="pre">laplace_p(b::PositionBasis)</span></code></a></li>
 </ul>
-<p>The same is true for creating states:</p>
-<div class="highlight-julia"><div class="highlight"><pre><span></span><span class="n">x0</span> <span class="o">=</span> <span class="mf">0.</span>
-<span class="n">p0</span> <span class="o">=</span> <span class="mf">1.</span>
-<span class="n">sigma</span> <span class="o">=</span> <span class="mi">2</span>
-<span class="n">Psi_x</span> <span class="o">=</span> <span class="n">gaussianstate</span><span class="p">(</span><span class="n">b_position</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">p0</span><span class="p">,</span> <span class="n">sigma</span><span class="p">)</span>
-<span class="n">Psi_p</span> <span class="o">=</span> <span class="n">gaussianstate</span><span class="p">(</span><span class="n">b_momentum</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">p0</span><span class="p">,</span> <span class="n">sigma</span><span class="p">)</span>
+<p>And functions for creating states:</p>
+<div class="highlight-julia"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">:</span><span class="n">jl</span><span class="p">:</span><span class="n">func</span><span class="p">:</span><span class="sb">`gaussianstate(b::PositionBasis, , , )`</span>
 </pre></div>
 </div>
-<p>The implementation details can be found in the docstring:</p>
-<blockquote class="epigraph">
-<div><dl class="function"><dt id="gaussianstate-8b17650f9f241d5e26a1971f0650c036"><em class="property">function </em><code class="descname">gaussianstate</code><span class="sig-paren">(</span><em>b</em>, <em>x0</em>, <em>p0</em>, <em>sigma</em><span class="sig-paren">)</span><a class="headerlink" href="#gaussianstate-8b17650f9f241d5e26a1971f0650c036" title="Permalink to this function">¶</a></dt><dd><p>Create a Gaussian state around x0 and p0 with width sigma in real space.</p>
-<p>This implementation is based on the definition</p>
-<div class="math">
-\[\Psi(x) = \frac{\sqrt{\Delta x}}{\pi^{1/4}\sqrt{\sigma}}
-            e^{i p_0 (x-x_0) - \frac{(x-x_0)^2}{2 \sigma^2}}\]</div>
-<p>which has the properties</p>
-<ul class="simple">
-<li><span class="math">\(|\Psi(p)|^2 = 1\)</span></li>
-<li><span class="math">\(\langle p \rangle = p_0\)</span></li>
-<li><span class="math">\(\langle x \rangle = x_0\)</span></li>
-<li><span class="math">\(\mathrm{Var}(x) = \frac{\sigma^2}{2}\)</span></li>
-<li><span class="math">\(\mathrm{Var}(p) = \frac{1}{2 \sigma^2}\)</span></li>
-</ul>
-<p>and is connected to the MomentumBasis based implementation via a
-Fourier-transformation</p>
-<div class="math">
-\[\Psi(p) = \frac{1}{\sqrt{2\pi}}
-            \int_{-\infty}^{\infty} e^{-ipx}\Psi(x) \mathrm{d}x\]</div>
-<p>Due to the numerically necessary discretization an additional scaling
-factor <span class="math">\(\sqrt{\Delta x}\)</span> is used so that
-<span class="math">\(\Psi_i = \sqrt{\Delta x} \Psi(x_i)\)</span> and the resulting state
-is normalized to</p>
-<div class="math">
-\[\sum_i |\Psi_i|^2 = 1\]</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>b</strong> &#8211; PositionBasis.</li>
-<li><strong>x0</strong> &#8211; Center of the Gaussian in position space.</li>
-<li><strong>p0</strong> &#8211; Center of the Gaussian in momentum space.</li>
-<li><strong>sigma</strong> &#8211; Width of the Gaussian.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl></div></blockquote>
-<p>Transforming a state from one basis into another can be done efficiently using the <code class="xref jl jl-type docutils literal"><span class="pre">FFTOperator</span></code> which can be used in the following way:</p>
+<blockquote>
+<div>x0 = 0.
+p0 = 1.
+sigma = 2
+Psi_x = gaussianstate(b_position, x0, p0, sigma)
+Psi_p = gaussianstate(b_momentum, x0, p0, sigma)</div></blockquote>
+<p>Transforming a state from one basis into another can be done efficiently using the <a class="reference internal" href="api.html#FFTOperator" title="FFTOperator"><code class="xref jl jl-type docutils literal"><span class="pre">FFTOperator</span></code></a> which can be used in the following way:</p>
 <div class="highlight-julia"><div class="highlight"><pre><span></span><span class="n">op_fft</span> <span class="o">=</span> <span class="n">FFTOperator</span><span class="p">(</span><span class="n">basis_momentum</span><span class="p">,</span> <span class="n">basis_position</span><span class="p">)</span>
 <span class="n">Psi_p</span> <span class="o">=</span> <span class="n">op_fft</span><span class="o">*</span><span class="n">Psi_x</span>
 </pre></div>
@@ -261,7 +225,7 @@ is normalized to</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="states.html" class="btn btn-neutral float-right" title="States" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="nparticles.html" class="btn btn-neutral float-right" title="N-Particles Basis" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="fock.html" class="btn btn-neutral" title="Fock Basis" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>

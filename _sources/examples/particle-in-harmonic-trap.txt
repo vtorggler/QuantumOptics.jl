@@ -1,6 +1,6 @@
 
 *This notebook can be found on*
-`github <https://github.com/bastikr/Quantumoptics.jl/blob/master/examples/Particle%20in%20harmonic%20trap.ipynb>`__
+`github <https://github.com/bastikr/Quantumoptics.jl/blob/master/examples/particle-in-harmonic-trap.ipynb>`__
 
 Particle in harmonic trap potential
 ===================================

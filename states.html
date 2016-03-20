@@ -32,7 +32,7 @@
   
     <link rel="top" title="Julia Quantum Optics" href="index.html"/>
         <link rel="next" title="Operators" href="operators.html"/>
-        <link rel="prev" title="Particle basis" href="particle.html"/> 
+        <link rel="prev" title="Bases" href="bases.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -88,11 +88,13 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="">States</a></li>
 <li class="toctree-l1"><a class="reference internal" href="operators.html">Operators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="superoperators.html">Super-operators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quantumsystems.html">Quantum systems</a></li>
 <li class="toctree-l1"><a class="reference internal" href="timeevolution.html">Time-evolution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="steadystate.html">Steady state</a></li>
 <li class="toctree-l1"><a class="reference internal" href="correlations.html">Two-time correlation functions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="spectralanalysis.html">Spectral Analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 </ul>
 
             
@@ -151,7 +153,7 @@
 <span class="n">y</span> <span class="o">=</span> <span class="n">Bra</span><span class="p">(</span><span class="n">basis</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
 </pre></div>
 </div>
-<p>Many commonly used states are already implemented for the various bases, like e.g. <code class="xref jl jl-func docutils literal"><span class="pre">fockstate</span></code> or <code class="xref jl jl-func docutils literal"><span class="pre">gaussianstate</span> <span class="pre">gaussianstate(::MomentumBasis,</span> <span class="pre">x0,</span> <span class="pre">p0,</span> <span class="pre">sigma)</span></code>.</p>
+<p>Many commonly used states are already implemented for the various bases, like e.g. <a class="reference internal" href="api.html#fockstate-f683047ee9916a4521b1498fe155667d" title="fockstate"><code class="xref jl jl-func docutils literal"><span class="pre">fockstate</span></code></a> or <code class="xref jl jl-func docutils literal"><span class="pre">gaussianstate</span> <span class="pre">gaussianstate(::MomentumBasis,</span> <span class="pre">x0,</span> <span class="pre">p0,</span> <span class="pre">sigma)</span></code>.</p>
 <p>All expected arithmetic functions like *, /, +, - are implemented:</p>
 <div class="highlight-julia"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">+</span> <span class="n">x</span>
 <span class="n">x</span> <span class="o">-</span> <span class="n">x</span>
@@ -184,7 +186,7 @@
         <a href="operators.html" class="btn btn-neutral float-right" title="Operators" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="particle.html" class="btn btn-neutral" title="Particle basis" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="bases.html" class="btn btn-neutral" title="Bases" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

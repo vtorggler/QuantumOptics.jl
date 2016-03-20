@@ -31,9 +31,9 @@
 
   
     <link rel="top" title="Julia Quantum Optics" href="index.html"/>
-        <link rel="up" title="Bases" href="bases.html"/>
+        <link rel="up" title="Quantum systems" href="quantumsystems.html"/>
         <link rel="next" title="Fock Basis" href="fock.html"/>
-        <link rel="prev" title="Bases" href="bases.html"/> 
+        <link rel="prev" title="Quantum systems" href="quantumsystems.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -85,20 +85,23 @@
                 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="bases.html">Bases</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="">Spin basis</a></li>
-<li class="toctree-l2"><a class="reference internal" href="fock.html">Fock Basis</a></li>
-<li class="toctree-l2"><a class="reference internal" href="particle.html">Particle basis</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="bases.html">Bases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="states.html">States</a></li>
 <li class="toctree-l1"><a class="reference internal" href="operators.html">Operators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="superoperators.html">Super-operators</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="quantumsystems.html">Quantum systems</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="">Spin basis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fock.html">Fock Basis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="particle.html">Particle basis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nparticles.html">N-Particles Basis</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="timeevolution.html">Time-evolution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="steadystate.html">Steady state</a></li>
 <li class="toctree-l1"><a class="reference internal" href="correlations.html">Two-time correlation functions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="spectralanalysis.html">Spectral Analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 </ul>
 
             
@@ -129,7 +132,7 @@
   <ul class="wy-breadcrumbs">
     <li><a href="index.html">Docs</a> &raquo;</li>
       
-          <li><a href="bases.html">Bases</a> &raquo;</li>
+          <li><a href="quantumsystems.html">Quantum systems</a> &raquo;</li>
       
     <li>Spin basis</li>
       <li class="wy-breadcrumbs-aside">
@@ -166,16 +169,16 @@
 </div>
 <p>All expected operators are implemented:</p>
 <ul class="simple">
-<li><code class="xref jl jl-func docutils literal"><span class="pre">sigmax</span></code></li>
-<li><code class="xref jl jl-func docutils literal"><span class="pre">sigmay</span></code></li>
-<li><code class="xref jl jl-func docutils literal"><span class="pre">sigmaz</span></code></li>
-<li><code class="xref jl jl-func docutils literal"><span class="pre">sigmap</span></code></li>
-<li><code class="xref jl jl-func docutils literal"><span class="pre">sigmam</span></code></li>
+<li><a class="reference internal" href="api.html#sigmax-a078f1f8aa9b8b20c63c5668656b47fc" title="sigmax"><code class="xref jl jl-func docutils literal"><span class="pre">sigmax</span></code></a></li>
+<li><a class="reference internal" href="api.html#sigmay-a078f1f8aa9b8b20c63c5668656b47fc" title="sigmay"><code class="xref jl jl-func docutils literal"><span class="pre">sigmay</span></code></a></li>
+<li><a class="reference internal" href="api.html#sigmaz-a078f1f8aa9b8b20c63c5668656b47fc" title="sigmaz"><code class="xref jl jl-func docutils literal"><span class="pre">sigmaz</span></code></a></li>
+<li><a class="reference internal" href="api.html#sigmap-a078f1f8aa9b8b20c63c5668656b47fc" title="sigmap"><code class="xref jl jl-func docutils literal"><span class="pre">sigmap</span></code></a></li>
+<li><a class="reference internal" href="api.html#sigmam-a078f1f8aa9b8b20c63c5668656b47fc" title="sigmam"><code class="xref jl jl-func docutils literal"><span class="pre">sigmam</span></code></a></li>
 </ul>
 <p>Also the lowest and uppermost states are defined:</p>
 <ul class="simple">
-<li><code class="xref jl jl-func docutils literal"><span class="pre">spinup</span></code></li>
-<li><code class="xref jl jl-func docutils literal"><span class="pre">spindown</span></code></li>
+<li><a class="reference internal" href="api.html#spinup-a078f1f8aa9b8b20c63c5668656b47fc" title="spinup"><code class="xref jl jl-func docutils literal"><span class="pre">spinup</span></code></a></li>
+<li><a class="reference internal" href="api.html#spindown-a078f1f8aa9b8b20c63c5668656b47fc" title="spindown"><code class="xref jl jl-func docutils literal"><span class="pre">spindown</span></code></a></li>
 </ul>
 </div>
 
@@ -189,7 +192,7 @@
         <a href="fock.html" class="btn btn-neutral float-right" title="Fock Basis" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="bases.html" class="btn btn-neutral" title="Bases" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="quantumsystems.html" class="btn btn-neutral" title="Quantum systems" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

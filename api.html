@@ -1,0 +1,450 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>API &mdash; Julia Quantum Optics</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Julia Quantum Optics" href="index.html"/>
+        <link rel="prev" title="Particle in harmonic trap potential" href="examples/particle-in-harmonic-trap.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Quantumoptics.jl
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bases.html">Bases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="states.html">States</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operators.html">Operators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="superoperators.html">Super-operators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quantumsystems.html">Quantum systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timeevolution.html">Time-evolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="steadystate.html">Steady state</a></li>
+<li class="toctree-l1"><a class="reference internal" href="correlations.html">Two-time correlation functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spectralanalysis.html">Spectral Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#bases">Bases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#systems">Systems</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#fock">Fock</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#spin">Spin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#particle">Particle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#n-particles">N-Particles</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#superoperators">Superoperators</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">Quantumoptics.jl</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>API</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/api.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="api">
+<h1>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="bases">
+<h2>Bases<a class="headerlink" href="#bases" title="Permalink to this headline">¶</a></h2>
+<dl class="class"><dt id=Basis><em class="property">abstract </em><code class="descname">Basis</code><a class="headerlink" href="#Basis" title="Permalink to thisabstract">¶</a></dt><dd class="body"><p>Abstract base class for all specialized bases.</p>
+<p>The Basis class is meant to specify a basis of the Hilbert space of the
+studied system. Besides basis specific information all subclasses must
+implement a shape variable which indicates the dimension of the used
+Hilbert space. For a spin 1/2 Hilbert space this would for example be the
+vector Int[2]. A system composed of 2 spins could for example have a
+shape vector Int[2 2].</p>
+<p>Composite systems can be easily defined with help of the CompositeBasis class.</p>
+</dd></dl><dl class="class"><dt id=GenericBasis><em class="property">type </em><code class="descname">GenericBasis<: Basis</code><a class="headerlink" href="#GenericBasis" title="Permalink to thistype">¶</a></dt><dd class="body"><p>An easy and fast to use general purpose basis.</p>
+<p>Should only be used rarely since it defeats the purpose of checking that the
+bases of state vectors and operators are correct for algebraic operations.
+The cleaner way is to specify special bases for different systems, i.e.
+there are FockBasis, MomentumBasis and PositionBasis.</p>
+</dd></dl><dl class="class"><dt id=CompositeBasis><em class="property">type </em><code class="descname">CompositeBasis<: Basis</code><a class="headerlink" href="#CompositeBasis" title="Permalink to thistype">¶</a></dt><dd class="body"><p>Basis for composite Hilbert spaces.</p>
+<p>Simply stores the subbases in a vector and creates the shape vector directly
+from the shape vectors of these subbases.</p>
+</dd></dl><dl class="function"><dt id="tensor-19ab65e3c5e281716c25d7f49b3f383e"><em class="property">function </em><code class="descname">tensor</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tensor-19ab65e3c5e281716c25d7f49b3f383e" title="Permalink to this function">¶</a></dt><dd><p>Create composite bases.</p>
+<p>Any given CompositeBasis is expanded so that the resulting CompositeBasis never
+has another CompositeBasis as subbasis.</p>
+</dd></dl><dl class="function"><dt id="tensor-36cb28176c67f97b563bb56dd6fcdac0"><em class="property">function </em><code class="descname">tensor</code><span class="sig-paren">(</span><em>b1</em>, <em>b2</em><span class="sig-paren">)</span><a class="headerlink" href="#tensor-36cb28176c67f97b563bb56dd6fcdac0" title="Permalink to this function">¶</a></dt><dd></dd></dl><dl class="function"><dt id="tensor-616a480024960229ee44268ca48b7557"><em class="property">function </em><code class="descname">tensor</code><span class="sig-paren">(</span><em>b1</em>, <em>b2</em><span class="sig-paren">)</span><a class="headerlink" href="#tensor-616a480024960229ee44268ca48b7557" title="Permalink to this function">¶</a></dt><dd></dd></dl><dl class="function"><dt id="tensor-ac588232947457dca86e53c1cd54a126"><em class="property">function </em><code class="descname">tensor</code><span class="sig-paren">(</span><em>b1</em>, <em>b2</em><span class="sig-paren">)</span><a class="headerlink" href="#tensor-ac588232947457dca86e53c1cd54a126" title="Permalink to this function">¶</a></dt><dd></dd></dl><dl class="function"><dt id="tensor-97db420b5571eba9d33a787b26f1bad0"><em class="property">function </em><code class="descname">tensor</code><span class="sig-paren">(</span><em>b1</em>, <em>b2</em><span class="sig-paren">)</span><a class="headerlink" href="#tensor-97db420b5571eba9d33a787b26f1bad0" title="Permalink to this function">¶</a></dt><dd></dd></dl><dl class="function"><dt id="tensor-b79234177b2cb81a78a26d14462867fb"><em class="property">function </em><code class="descname">tensor</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tensor-b79234177b2cb81a78a26d14462867fb" title="Permalink to this function">¶</a></dt><dd></dd></dl><dl class="class"><dt id=SubspaceBasis><em class="property">type </em><code class="descname">SubspaceBasis<: Basis</code><a class="headerlink" href="#SubspaceBasis" title="Permalink to thistype">¶</a></dt><dd class="body"><p>A basis describing a subspace in a higher dimensional Hilbert space.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>superbasis</strong> &#8211; Basis of the higher dimensional Hilbert space.</li>
+<li><strong>basisstates</strong> &#8211; States in respect to the superbasis that span the subspace.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl><dl class="function"><dt id="orthonormalize-bac7ce7e9a9ed729ad457782dc264d0d"><em class="property">function </em><code class="descname">orthonormalize</code><span class="sig-paren">(</span><em>b</em><span class="sig-paren">)</span><a class="headerlink" href="#orthonormalize-bac7ce7e9a9ed729ad457782dc264d0d" title="Permalink to this function">¶</a></dt><dd>Orthonormalize the given SubspaceBasis using the modified Gram-Schmidt process.</dd></dl><dl class="function"><dt id="projector-887a875d30732b20e259aaec12da905a"><em class="property">function </em><code class="descname">projector</code><span class="sig-paren">(</span><em>b1</em>, <em>b2</em><span class="sig-paren">)</span><a class="headerlink" href="#projector-887a875d30732b20e259aaec12da905a" title="Permalink to this function">¶</a></dt><dd>Operator projecting states from one subspace to another.</dd></dl><dl class="function"><dt id="projector-2fe2af3d9f32db9685a8369cc89ce9a4"><em class="property">function </em><code class="descname">projector</code><span class="sig-paren">(</span><em>b1</em>, <em>b2</em><span class="sig-paren">)</span><a class="headerlink" href="#projector-2fe2af3d9f32db9685a8369cc89ce9a4" title="Permalink to this function">¶</a></dt><dd>Operator projecting states from the superspace to the subspace.</dd></dl><dl class="function"><dt id="projector-a4be392d8c5a0ab40f42781e29e4a67c"><em class="property">function </em><code class="descname">projector</code><span class="sig-paren">(</span><em>b1</em>, <em>b2</em><span class="sig-paren">)</span><a class="headerlink" href="#projector-a4be392d8c5a0ab40f42781e29e4a67c" title="Permalink to this function">¶</a></dt><dd>Operator projecting states from the subspace to the superspace.</dd></dl></div>
+<div class="section" id="systems">
+<h2>Systems<a class="headerlink" href="#systems" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="fock">
+<h3>Fock<a class="headerlink" href="#fock" title="Permalink to this headline">¶</a></h3>
+<dl class="class"><dt id=FockBasis><em class="property">type </em><code class="descname">FockBasis<: Basis</code><a class="headerlink" href="#FockBasis" title="Permalink to thistype">¶</a></dt><dd class="body"><p>Basis for a Fock space.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>Nmin</strong> &#8211; Minimal particle number included in this basis. By default it is zero, i.e.
+starting with the vacuum state.</li>
+<li><strong>Nmax</strong> &#8211; Maximal particle number included in this basis.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl><dl class="function"><dt id="number-066933f5a3f6aa5fd36ef8d0dbb37f8f"><em class="property">function </em><code class="descname">number</code><span class="sig-paren">(</span><em>b</em><span class="sig-paren">)</span><a class="headerlink" href="#number-066933f5a3f6aa5fd36ef8d0dbb37f8f" title="Permalink to this function">¶</a></dt><dd><p>Number operator for the given Fock space.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>b</strong> &#8211; FockBasis of this operator.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl><dl class="function"><dt id="destroy-066933f5a3f6aa5fd36ef8d0dbb37f8f"><em class="property">function </em><code class="descname">destroy</code><span class="sig-paren">(</span><em>b</em><span class="sig-paren">)</span><a class="headerlink" href="#destroy-066933f5a3f6aa5fd36ef8d0dbb37f8f" title="Permalink to this function">¶</a></dt><dd><p>Annihilation operator for the given Fock space.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>b</strong> &#8211; FockBasis of this operator.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl><dl class="function"><dt id="create-066933f5a3f6aa5fd36ef8d0dbb37f8f"><em class="property">function </em><code class="descname">create</code><span class="sig-paren">(</span><em>b</em><span class="sig-paren">)</span><a class="headerlink" href="#create-066933f5a3f6aa5fd36ef8d0dbb37f8f" title="Permalink to this function">¶</a></dt><dd><p>Creation operator for the given Fock space.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>b</strong> &#8211; FockBasis of this operator.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl><dl class="function"><dt id="fockstate-f683047ee9916a4521b1498fe155667d"><em class="property">function </em><code class="descname">fockstate</code><span class="sig-paren">(</span><em>b</em>, <em>n</em><span class="sig-paren">)</span><a class="headerlink" href="#fockstate-f683047ee9916a4521b1498fe155667d" title="Permalink to this function">¶</a></dt><dd><p>Fock state for the given particle number.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>b</strong> &#8211; FockBasis for this state.</li>
+<li><strong>n</strong> &#8211; Quantum number of the state.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl><dl class="function"><dt id="coherentstate-6394865a64fad4a3d45cef51d1379736"><em class="property">function </em><code class="descname">coherentstate</code><span class="sig-paren">(</span><em>b</em>, <em>alpha</em><span class="sig-paren">)</span><a class="headerlink" href="#coherentstate-6394865a64fad4a3d45cef51d1379736" title="Permalink to this function">¶</a></dt><dd><p>Coherent state <span class="math">\(| \alpha \rangle\)</span> for the given Fock basis.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>b</strong> &#8211; FockBasis for this state.</li>
+<li><strong>alpha</strong> &#8211; Eigenvalue of annihilation operator.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl></div>
+<div class="section" id="spin">
+<h3>Spin<a class="headerlink" href="#spin" title="Permalink to this headline">¶</a></h3>
+<dl class="class"><dt id=SpinBasis><em class="property">type </em><code class="descname">SpinBasis<: Basis</code><a class="headerlink" href="#SpinBasis" title="Permalink to thistype">¶</a></dt><dd class="body"><p>Basis for spin-n particles.</p>
+<p>The basis can be created for arbitrary spinnumbers by using a rational number,
+e.g. SpinBasis(3//2). The Pauli operators are defined for all possible
+spinnumbers.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>spinnumber</strong> &#8211; Rational number specifying the spin quantum number.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl><dl class="function"><dt id="sigmax-a078f1f8aa9b8b20c63c5668656b47fc"><em class="property">function </em><code class="descname">sigmax</code><span class="sig-paren">(</span><em>b</em><span class="sig-paren">)</span><a class="headerlink" href="#sigmax-a078f1f8aa9b8b20c63c5668656b47fc" title="Permalink to this function">¶</a></dt><dd>Pauli <span class="math">\(\sigma_x\)</span> operator for the given SpinBasis.</dd></dl><dl class="function"><dt id="sigmay-a078f1f8aa9b8b20c63c5668656b47fc"><em class="property">function </em><code class="descname">sigmay</code><span class="sig-paren">(</span><em>b</em><span class="sig-paren">)</span><a class="headerlink" href="#sigmay-a078f1f8aa9b8b20c63c5668656b47fc" title="Permalink to this function">¶</a></dt><dd>Pauli <span class="math">\(\sigma_y\)</span> operator for the given SpinBasis.</dd></dl><dl class="function"><dt id="sigmaz-a078f1f8aa9b8b20c63c5668656b47fc"><em class="property">function </em><code class="descname">sigmaz</code><span class="sig-paren">(</span><em>b</em><span class="sig-paren">)</span><a class="headerlink" href="#sigmaz-a078f1f8aa9b8b20c63c5668656b47fc" title="Permalink to this function">¶</a></dt><dd>Pauli <span class="math">\(\sigma_z\)</span> operator for the given SpinBasis.</dd></dl><dl class="function"><dt id="sigmap-a078f1f8aa9b8b20c63c5668656b47fc"><em class="property">function </em><code class="descname">sigmap</code><span class="sig-paren">(</span><em>b</em><span class="sig-paren">)</span><a class="headerlink" href="#sigmap-a078f1f8aa9b8b20c63c5668656b47fc" title="Permalink to this function">¶</a></dt><dd>Raising operator <span class="math">\(\sigma_+\)</span> for the given SpinBasis.</dd></dl><dl class="function"><dt id="sigmam-a078f1f8aa9b8b20c63c5668656b47fc"><em class="property">function </em><code class="descname">sigmam</code><span class="sig-paren">(</span><em>b</em><span class="sig-paren">)</span><a class="headerlink" href="#sigmam-a078f1f8aa9b8b20c63c5668656b47fc" title="Permalink to this function">¶</a></dt><dd>Lowering operator <span class="math">\(\sigma_-\)</span> for the given SpinBasis.</dd></dl><dl class="function"><dt id="spinup-a078f1f8aa9b8b20c63c5668656b47fc"><em class="property">function </em><code class="descname">spinup</code><span class="sig-paren">(</span><em>b</em><span class="sig-paren">)</span><a class="headerlink" href="#spinup-a078f1f8aa9b8b20c63c5668656b47fc" title="Permalink to this function">¶</a></dt><dd>Spin up state for the given SpinBasis.</dd></dl><dl class="function"><dt id="spindown-a078f1f8aa9b8b20c63c5668656b47fc"><em class="property">function </em><code class="descname">spindown</code><span class="sig-paren">(</span><em>b</em><span class="sig-paren">)</span><a class="headerlink" href="#spindown-a078f1f8aa9b8b20c63c5668656b47fc" title="Permalink to this function">¶</a></dt><dd>Spin down state for the given SpinBasis.</dd></dl></div>
+<div class="section" id="particle">
+<h3>Particle<a class="headerlink" href="#particle" title="Permalink to this headline">¶</a></h3>
+<dl class="class"><dt id=PositionBasis><em class="property">type </em><code class="descname">PositionBasis<: Basis</code><a class="headerlink" href="#PositionBasis" title="Permalink to thistype">¶</a></dt><dd class="body"><p>Basis for a particle in real space.</p>
+<p>For simplicity periodic boundaries are assumed which means that
+the rightmost point defined by xmax is not included in the basis
+but is defined to be the same as xmin.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>xmin</strong> &#8211; Left boundary.</li>
+<li><strong>xmax</strong> &#8211; Right boundary.</li>
+<li><strong>N</strong> &#8211; Number of discrete points in the basis.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl><dl class="class"><dt id=MomentumBasis><em class="property">type </em><code class="descname">MomentumBasis<: Basis</code><a class="headerlink" href="#MomentumBasis" title="Permalink to thistype">¶</a></dt><dd class="body"><p>Basis for a particle in momentum space.</p>
+<p>For simplicity periodic boundaries are assumed which means that
+pmax is not included in the basis but is defined to be the same as pmin.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>pmin</strong> &#8211; Left boundary.</li>
+<li><strong>pmax</strong> &#8211; Right boundary.</li>
+<li><strong>N</strong> &#8211; Number of discrete points in the basis.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl><dl class="function"><dt id="positionoperator-159d9d51ca53cf0e04ef1f26fb2534fb"><em class="property">function </em><code class="descname">positionoperator</code><span class="sig-paren">(</span><em>b</em><span class="sig-paren">)</span><a class="headerlink" href="#positionoperator-159d9d51ca53cf0e04ef1f26fb2534fb" title="Permalink to this function">¶</a></dt><dd>Position operator in real space.</dd></dl><dl class="function"><dt id="positionoperator-4b6f2d43f5b36a4975d3b3d4d555f151"><em class="property">function </em><code class="descname">positionoperator</code><span class="sig-paren">(</span><em>b</em><span class="sig-paren">)</span><a class="headerlink" href="#positionoperator-4b6f2d43f5b36a4975d3b3d4d555f151" title="Permalink to this function">¶</a></dt><dd>Position operator in momentum space.</dd></dl><dl class="function"><dt id="momentumoperator-4b6f2d43f5b36a4975d3b3d4d555f151"><em class="property">function </em><code class="descname">momentumoperator</code><span class="sig-paren">(</span><em>b</em><span class="sig-paren">)</span><a class="headerlink" href="#momentumoperator-4b6f2d43f5b36a4975d3b3d4d555f151" title="Permalink to this function">¶</a></dt><dd>Momentum operator in momentum space.</dd></dl><dl class="function"><dt id="momentumoperator-159d9d51ca53cf0e04ef1f26fb2534fb"><em class="property">function </em><code class="descname">momentumoperator</code><span class="sig-paren">(</span><em>b</em><span class="sig-paren">)</span><a class="headerlink" href="#momentumoperator-159d9d51ca53cf0e04ef1f26fb2534fb" title="Permalink to this function">¶</a></dt><dd>Momentum operator in real space.</dd></dl><dl class="function"><dt id="laplace_x-159d9d51ca53cf0e04ef1f26fb2534fb"><em class="property">function </em><code class="descname">laplace_x</code><span class="sig-paren">(</span><em>b</em><span class="sig-paren">)</span><a class="headerlink" href="#laplace_x-159d9d51ca53cf0e04ef1f26fb2534fb" title="Permalink to this function">¶</a></dt><dd>Second x-derivative in real space.</dd></dl><dl class="function"><dt id="laplace_x-4b6f2d43f5b36a4975d3b3d4d555f151"><em class="property">function </em><code class="descname">laplace_x</code><span class="sig-paren">(</span><em>b</em><span class="sig-paren">)</span><a class="headerlink" href="#laplace_x-4b6f2d43f5b36a4975d3b3d4d555f151" title="Permalink to this function">¶</a></dt><dd>Second x-derivative in momentum space.</dd></dl><dl class="function"><dt id="laplace_p-4b6f2d43f5b36a4975d3b3d4d555f151"><em class="property">function </em><code class="descname">laplace_p</code><span class="sig-paren">(</span><em>b</em><span class="sig-paren">)</span><a class="headerlink" href="#laplace_p-4b6f2d43f5b36a4975d3b3d4d555f151" title="Permalink to this function">¶</a></dt><dd>Second p-derivative in momentum space.</dd></dl><dl class="function"><dt id="laplace_p-159d9d51ca53cf0e04ef1f26fb2534fb"><em class="property">function </em><code class="descname">laplace_p</code><span class="sig-paren">(</span><em>b</em><span class="sig-paren">)</span><a class="headerlink" href="#laplace_p-159d9d51ca53cf0e04ef1f26fb2534fb" title="Permalink to this function">¶</a></dt><dd>Second p-derivative in real space.</dd></dl><dl class="class"><dt id=FFTOperator><em class="property">type </em><code class="descname">FFTOperator<: LazyOperator</code><a class="headerlink" href="#FFTOperator" title="Permalink to thistype">¶</a></dt><dd class="body"></dd></dl></div>
+<div class="section" id="n-particles">
+<h3>N-Particles<a class="headerlink" href="#n-particles" title="Permalink to this headline">¶</a></h3>
+<dl class="class"><dt id=NParticleBasis><em class="property">abstract </em><code class="descname">NParticleBasis<: Basis</code><a class="headerlink" href="#NParticleBasis" title="Permalink to thisabstract">¶</a></dt><dd class="body"><p>Abstract basis for n-particle systems. (Second quantization)</p>
+<p>The inheriting bosonic and fermionic bases all have the same fields:</p>
+<dl class="docutils">
+<dt>particlenumber</dt>
+<dd>(Fixed) number of particles in the system.</dd>
+<dt>modenumber</dt>
+<dd>Number of modes in which the particles can be distributed.</dd>
+<dt>occupations</dt>
+<dd>Basis states that specify how many particles are in which modes.</dd>
+</dl>
+<p>The only difference between Fermionic and Bosonic basis is which basis states
+are included. These states are created automatically if the occupation
+states are ommited when creating a FermionicNParticleBasis or a
+BosonicNParticleBasis.</p>
+</dd></dl><dl class="class"><dt id=BosonicNParticleBasis><em class="property">type </em><code class="descname">BosonicNParticleBasis<: NParticleBasis</code><a class="headerlink" href="#BosonicNParticleBasis" title="Permalink to thistype">¶</a></dt><dd class="body"></dd></dl><dl class="class"><dt id=FermionicNParticleBasis><em class="property">type </em><code class="descname">FermionicNParticleBasis<: NParticleBasis</code><a class="headerlink" href="#FermionicNParticleBasis" title="Permalink to thistype">¶</a></dt><dd class="body"></dd></dl><dl class="function"><dt id="nparticleoperator_1-282ce03b15cea232f2802697a5853948"><em class="property">function </em><code class="descname">nparticleoperator_1</code><span class="sig-paren">(</span><em>nparticlebasis</em>, <em>op</em><span class="sig-paren">)</span><a class="headerlink" href="#nparticleoperator_1-282ce03b15cea232f2802697a5853948" title="Permalink to this function">¶</a></dt><dd><p>Create a N-particle operator from a single particle operator.</p>
+<p>The mathematical formalism is described by</p>
+<div class="math">
+\[X = \sum_{ij} a_i^\dagger a_j
+                \left\langle u_i \right|
+                x
+                \left| u_j \right\rangle\]</div>
+<p>where <span class="math">\(X\)</span> is the N-particle operator, <span class="math">\(x\)</span> is the single particle operator and
+<span class="math">\(\left| u \right\rangle\)</span> are the single particle states associated to the
+different modes of the N-particle basis.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>nparticlebasis</strong> &#8211; NParticleBasis</li>
+<li><strong>op</strong> &#8211; An operator represented in the single-particle functions associated to the
+modes of the N-particle basis. This means the dimension of this operator has to
+be equal to the modenumber of the N-particle basis.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl><dl class="function"><dt id="nparticleoperator_2-282ce03b15cea232f2802697a5853948"><em class="property">function </em><code class="descname">nparticleoperator_2</code><span class="sig-paren">(</span><em>nparticlebasis</em>, <em>op</em><span class="sig-paren">)</span><a class="headerlink" href="#nparticleoperator_2-282ce03b15cea232f2802697a5853948" title="Permalink to this function">¶</a></dt><dd><p>Create a N-particle operator from a two-particle operator.</p>
+<p>The mathematical formalism is described by</p>
+<div class="math">
+\[X = \sum_{ijkl} a_i^\dagger a_j^\dagger a_k a_l
+        \left\langle u_i \right| \left\langle u_j \right|
+        x
+        \left| u_k \right\rangle \left| u_l \right\rangle\]</div>
+<p>where <span class="math">\(X\)</span> is the N-particle operator, <span class="math">\(x\)</span> is the two-particle operator and
+<span class="math">\(\left| u \right\rangle\)</span> are the single particle states associated to the
+different modes of the N-particle basis.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>nparticlebasis</strong> &#8211; NParticleBasis</li>
+<li><strong>op</strong> &#8211; A two particle operator represented in the single particle functions associated to the
+modes of the N-particle basis. This means the dimension of this operator has to
+be equal to the modenumber of the N-particle basis.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl></div>
+</div>
+<div class="section" id="superoperators">
+<h2>Superoperators<a class="headerlink" href="#superoperators" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="examples/particle-in-harmonic-trap.html" class="btn btn-neutral" title="Particle in harmonic trap potential" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014, Sebastian Krämer.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

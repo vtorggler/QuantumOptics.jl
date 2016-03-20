@@ -61,20 +61,15 @@ The following operators are implemented:
 * :jl:func:`laplace_x(b::PositionBasis)`
 * :jl:func:`laplace_p(b::PositionBasis)`
 
-The same is true for creating states::
+And functions for creating states::
+
+* :jl:func:`gaussianstate(b::PositionBasis, , , )`
 
     x0 = 0.
     p0 = 1.
     sigma = 2
     Psi_x = gaussianstate(b_position, x0, p0, sigma)
     Psi_p = gaussianstate(b_momentum, x0, p0, sigma)
-
-The implementation details can be found in the docstring:
-
-.. epigraph::
-
-    .. jl:autofunction:: particle.jl gaussianstate(b::PositionBasis, , , )
-
 
 Transforming a state from one basis into another can be done efficiently using the :jl:type:`FFTOperator` which can be used in the following way::
 

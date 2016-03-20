@@ -11,9 +11,11 @@ Quantumoptics.jl
     states
     operators
     superoperators
+    quantumsystems
     timeevolution
     steadystate
     correlations
     spectralanalysis
     examples
+    api
 

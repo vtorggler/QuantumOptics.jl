@@ -1,6 +1,6 @@
 
 *This notebook can be found on*
-`github <https://github.com/bastikr/Quantumoptics.jl/blob/master/examples/JaynesCummings.ipynb>`__
+`github <https://github.com/bastikr/Quantumoptics.jl/blob/master/examples/jaynes-cummings-model.ipynb>`__
 
 Jaynes-Cummings model
 =====================

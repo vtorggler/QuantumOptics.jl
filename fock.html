@@ -31,7 +31,7 @@
 
   
     <link rel="top" title="Julia Quantum Optics" href="index.html"/>
-        <link rel="up" title="Bases" href="bases.html"/>
+        <link rel="up" title="Quantum systems" href="quantumsystems.html"/>
         <link rel="next" title="Particle basis" href="particle.html"/>
         <link rel="prev" title="Spin basis" href="spin.html"/> 
 
@@ -85,20 +85,23 @@
                 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="bases.html">Bases</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="spin.html">Spin basis</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="">Fock Basis</a></li>
-<li class="toctree-l2"><a class="reference internal" href="particle.html">Particle basis</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="bases.html">Bases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="states.html">States</a></li>
 <li class="toctree-l1"><a class="reference internal" href="operators.html">Operators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="superoperators.html">Super-operators</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="quantumsystems.html">Quantum systems</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="spin.html">Spin basis</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Fock Basis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="particle.html">Particle basis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nparticles.html">N-Particles Basis</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="timeevolution.html">Time-evolution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="steadystate.html">Steady state</a></li>
 <li class="toctree-l1"><a class="reference internal" href="correlations.html">Two-time correlation functions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="spectralanalysis.html">Spectral Analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 </ul>
 
             
@@ -129,7 +132,7 @@
   <ul class="wy-breadcrumbs">
     <li><a href="index.html">Docs</a> &raquo;</li>
       
-          <li><a href="bases.html">Bases</a> &raquo;</li>
+          <li><a href="quantumsystems.html">Quantum systems</a> &raquo;</li>
       
     <li>Fock Basis</li>
       <li class="wy-breadcrumbs-aside">
@@ -147,7 +150,7 @@
             
   <div class="section" id="fock-basis">
 <span id="section-fock"></span><h1>Fock Basis<a class="headerlink" href="#fock-basis" title="Permalink to this headline">¶</a></h1>
-<p>To create a basis of a Fock space <strong>Quantumoptics.jl</strong> provides the <code class="xref jl jl-type docutils literal"><span class="pre">FockBasis</span></code> class which has to be supplied with an upper cutoff and optionally with a lower cutoff:</p>
+<p>To create a basis of a Fock space <strong>Quantumoptics.jl</strong> provides the <a class="reference internal" href="api.html#FockBasis" title="FockBasis"><code class="xref jl jl-type docutils literal"><span class="pre">FockBasis</span></code></a> class which has to be supplied with an upper cutoff and optionally with a lower cutoff:</p>
 <div class="highlight-julia"><div class="highlight"><pre><span></span><span class="n">Nmax</span> <span class="o">=</span> <span class="mi">10</span>
 <span class="n">b1</span> <span class="o">=</span> <span class="n">FockBasis</span><span class="p">(</span><span class="n">Nmax</span><span class="p">)</span>
 
@@ -157,7 +160,7 @@
 </pre></div>
 </div>
 <p>In this example even though the dimensions of the Hilbert spaces described by these bases are the same <code class="docutils literal"><span class="pre">b1</span></code> and <code class="docutils literal"><span class="pre">b2</span></code> are not and mixing operators in one bases with operators in the other basis will result in an explicit error.</p>
-<p>The definition of <code class="xref jl jl-type docutils literal"><span class="pre">FockBasis</span></code> is essentially:</p>
+<p>The definition of <a class="reference internal" href="api.html#FockBasis" title="FockBasis"><code class="xref jl jl-type docutils literal"><span class="pre">FockBasis</span></code></a> is essentially:</p>
 <div class="highlight-julia"><div class="highlight"><pre><span></span><span class="k">type</span><span class="nc"> FockBasis</span> <span class="o">&lt;:</span> <span class="n">Basis</span>
     <span class="n">shape</span><span class="p">::</span><span class="n">Vector</span><span class="p">{</span><span class="kt">Int</span><span class="p">}</span>
     <span class="n">Nmin</span><span class="p">::</span><span class="kt">Int</span>
@@ -167,14 +170,14 @@
 </div>
 <p>Many common operators are already defined:</p>
 <ul class="simple">
-<li><code class="xref jl jl-func docutils literal"><span class="pre">number</span></code></li>
-<li><code class="xref jl jl-func docutils literal"><span class="pre">destroy</span></code></li>
-<li><code class="xref jl jl-func docutils literal"><span class="pre">create</span></code></li>
+<li><a class="reference internal" href="api.html#number-066933f5a3f6aa5fd36ef8d0dbb37f8f" title="number"><code class="xref jl jl-func docutils literal"><span class="pre">number</span></code></a></li>
+<li><a class="reference internal" href="api.html#destroy-066933f5a3f6aa5fd36ef8d0dbb37f8f" title="destroy"><code class="xref jl jl-func docutils literal"><span class="pre">destroy</span></code></a></li>
+<li><a class="reference internal" href="api.html#create-066933f5a3f6aa5fd36ef8d0dbb37f8f" title="create"><code class="xref jl jl-func docutils literal"><span class="pre">create</span></code></a></li>
 </ul>
 <p>Fock states and coherent states can be created using the functions:</p>
 <ul class="simple">
-<li><code class="xref jl jl-func docutils literal"><span class="pre">fockstate</span></code></li>
-<li><code class="xref jl jl-func docutils literal"><span class="pre">coherentstate</span></code></li>
+<li><a class="reference internal" href="api.html#fockstate-f683047ee9916a4521b1498fe155667d" title="fockstate"><code class="xref jl jl-func docutils literal"><span class="pre">fockstate</span></code></a></li>
+<li><a class="reference internal" href="api.html#coherentstate-6394865a64fad4a3d45cef51d1379736" title="coherentstate"><code class="xref jl jl-func docutils literal"><span class="pre">coherentstate</span></code></a></li>
 </ul>
 <p>Additional functions:</p>
 <blockquote class="epigraph">

@@ -31,7 +31,7 @@
 
   
     <link rel="top" title="Julia Quantum Optics" href="index.html"/>
-        <link rel="next" title="Spin basis" href="spin.html"/>
+        <link rel="next" title="States" href="states.html"/>
         <link rel="prev" title="Installation" href="installation.html"/> 
 
   
@@ -85,19 +85,22 @@
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">Bases</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="spin.html">Spin basis</a></li>
-<li class="toctree-l2"><a class="reference internal" href="fock.html">Fock Basis</a></li>
-<li class="toctree-l2"><a class="reference internal" href="particle.html">Particle basis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#composite-bases">Composite bases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#subspace-basis">Subspace basis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#generic-bases">Generic bases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#implementing-new-bases">Implementing new bases</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="states.html">States</a></li>
 <li class="toctree-l1"><a class="reference internal" href="operators.html">Operators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="superoperators.html">Super-operators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quantumsystems.html">Quantum systems</a></li>
 <li class="toctree-l1"><a class="reference internal" href="timeevolution.html">Time-evolution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="steadystate.html">Steady state</a></li>
 <li class="toctree-l1"><a class="reference internal" href="correlations.html">Two-time correlation functions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="spectralanalysis.html">Spectral Analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 </ul>
 
             
@@ -144,31 +147,64 @@
             
   <div class="section" id="bases">
 <span id="section-bases"></span><h1>Bases<a class="headerlink" href="#bases" title="Permalink to this headline">¶</a></h1>
-<p>The primary purpose of bases in <strong>Quantumoptics.jl</strong> is to specify the dimension of the Hilbert space of the system and to make sure that quantum objects associated to distinct bases can&#8217;t be combined accidentally in an incorrect way. Many of the commonly used basis types like</p>
+<p>The primary purpose of bases in <strong>Quantumoptics.jl</strong> is to specify the dimension of the Hilbert space of the system and to make sure that quantum objects associated to distinct bases can&#8217;t be combined accidentally in an incorrect way. Many of the common types of bases used in quantum mechanics like</p>
 <ul class="simple">
 <li><a class="reference internal" href="spin.html#section-spin"><span>Spin basis</span></a></li>
-<li><a class="reference internal" href="fock.html#section-fock"><span>Fock Basis</span></a></li>
-<li><a class="reference internal" href="particle.html#section-particle"><span>Particle basis</span></a></li>
+<li><a class="reference internal" href="fock.html#section-fock"><span>Fock basis</span></a></li>
+<li><a class="reference internal" href="particle.html#section-particle"><span>Position basis and Momentum basis</span></a></li>
 </ul>
-<p>are already built into <strong>Quantumoptics.jl</strong>. Hilbert spaces of composite systems can be handled automatically with the <code class="xref jl jl-type docutils literal"><span class="pre">CompositeBasis</span></code> which can for example be created using the <cite>tensor</cite> function:</p>
+<p>are already imeplmented. The are treated in more detail in the section <a class="reference internal" href="quantumsystems.html#section-quantumsystems"><span>Quantum systems</span></a>.</p>
+<div class="section" id="composite-bases">
+<h2>Composite bases<a class="headerlink" href="#composite-bases" title="Permalink to this headline">¶</a></h2>
+<p>Hilbert spaces of composite systems can be handled automatically with the <a class="reference internal" href="api.html#CompositeBasis" title="CompositeBasis"><code class="xref jl jl-type docutils literal"><span class="pre">CompositeBasis</span></code></a> which can for example be created using the <cite>tensor</cite> function:</p>
 <div class="highlight-julia"><div class="highlight"><pre><span></span><span class="n">basis_fock</span> <span class="o">=</span> <span class="n">FockBasis</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
 <span class="n">basis_particle</span> <span class="o">=</span> <span class="n">MomentumBasis</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">10.</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
 <span class="n">basis</span> <span class="o">=</span> <span class="n">tensor</span><span class="p">(</span><span class="n">basis_fock</span><span class="p">,</span> <span class="n">basis_particle</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>For cases not covered by these one can either use the <code class="xref jl jl-type docutils literal"><span class="pre">bases.GenericBasis</span></code> or implement own special purpose bases by deriving from the abstract <code class="xref jl jl-abstract docutils literal"><span class="pre">Basis</span></code> type. The only mandatory property of all basis types is that they have a field <cite>shape</cite> which specifies the dimensionality of their Hilbert space. E.g. a spin 1/2 basis could be implemented as:</p>
+</div>
+<div class="section" id="subspace-basis">
+<h2>Subspace basis<a class="headerlink" href="#subspace-basis" title="Permalink to this headline">¶</a></h2>
+<p>Restricting a Hilbert space to a subspace is done using a <a class="reference internal" href="api.html#SubspaceBasis" title="SubspaceBasis"><code class="xref jl jl-type docutils literal"><span class="pre">SubspaceBasis</span></code></a>. It is defined by N, not necessarily orthogonal states that live in the embedding Hilbert space.</p>
+<div class="math">
+\[| x^\prime \rangle
+        = \sum_{u \in subspace}
+                |u_o \rangle \langle u^o
+                    | x \rangle\]</div>
+<p>Any SubspaceBasis can be made orthogonal with help of the <a class="reference internal" href="api.html#orthonormalize-bac7ce7e9a9ed729ad457782dc264d0d" title="orthonormalize"><code class="xref jl jl-func docutils literal"><span class="pre">orthonormalize</span></code></a> function which utilizes the numerical stable modified Gram-Schmidt algorithm.</p>
+<p>Changing between the superbasis and any subspaces bases can be done by first creating a projection operator with the <a class="reference internal" href="api.html#projector-887a875d30732b20e259aaec12da905a" title="projector"><code class="xref jl jl-func docutils literal"><span class="pre">projector</span></code></a> function:</p>
+<div class="highlight-julia"><div class="highlight"><pre><span></span><span class="n">b</span> <span class="o">=</span> <span class="n">FockBasis</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">b_sub</span> <span class="o">=</span> <span class="n">SubspaceBasis</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="p">[</span><span class="n">fockstate</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">fockstate</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="mi">2</span><span class="p">)])</span>
+
+<span class="n">P</span> <span class="o">=</span> <span class="n">projector</span><span class="p">(</span><span class="n">b_sub</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">coherentstate</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+<span class="n">x_sub1</span> <span class="o">=</span> <span class="n">P</span><span class="o">*</span><span class="n">x</span>
+</pre></div>
+</div>
+<p>The projection operation is irreversible if the original state was not already contained in the subspace. However, it is of course possible to represent any state in the subspace in the superbasis:</p>
+<div class="highlight-julia"><div class="highlight"><pre><span></span><span class="n">y</span> <span class="o">=</span> <span class="n">dagger</span><span class="p">(</span><span class="n">P</span><span class="p">)</span><span class="o">*</span><span class="n">x_sub1</span> <span class="c"># Not equal to x</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="generic-bases">
+<h2>Generic bases<a class="headerlink" href="#generic-bases" title="Permalink to this headline">¶</a></h2>
+<p>If the needed basis type is not available the quick and dirty way is to use a <a class="reference internal" href="api.html#GenericBasis" title="GenericBasis"><code class="xref jl jl-type docutils literal"><span class="pre">GenericBasis</span></code></a>. It just needs to know the dimension of the Hilbert space and its ready to go:</p>
+<div class="highlight-julia"><div class="highlight"><pre><span></span><span class="n">b</span> <span class="o">=</span> <span class="n">GenericBasis</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>However, since operators and states represented in any generic basis can be combined as long as the bases have the same dimension it might lead to errors that otherwise could have been caught easily.</p>
+</div>
+<div class="section" id="implementing-new-bases">
+<h2>Implementing new bases<a class="headerlink" href="#implementing-new-bases" title="Permalink to this headline">¶</a></h2>
+<p>The cleaner way is to implement own special purpose bases by deriving from the abstract <a class="reference internal" href="api.html#Basis" title="Basis"><code class="xref jl jl-abstract docutils literal"><span class="pre">Basis</span></code></a> type. The only mandatory property of all basis types is that they have a field <cite>shape</cite> which specifies the dimensionality of their Hilbert space. E.g. a spin 1/2 basis could be implemented as:</p>
 <div class="highlight-julia"><div class="highlight"><pre><span></span><span class="k">type</span><span class="nc"> SpinBasis</span> <span class="o">&lt;:</span> <span class="n">Basis</span>
     <span class="n">shape</span><span class="p">::</span><span class="n">Vector</span><span class="p">{</span><span class="kt">Int</span><span class="p">}</span>
     <span class="n">SpinBasis</span><span class="p">()</span> <span class="o">=</span> <span class="nb">new</span><span class="p">(</span><span class="kt">Int</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="c"># Constructor</span>
 <span class="k">end</span>
 </pre></div>
 </div>
-<p>The interaction with other bases can be determined by overloading the <cite>==</cite> operator as well as the <code class="xref jl jl-func docutils literal"><span class="pre">bases.multiplicable</span></code> function:</p>
-<div class="highlight-julia"><div class="highlight"><pre><span></span><span class="o">==</span><span class="p">(</span><span class="n">b1</span><span class="p">::</span><span class="n">SpinBasis</span><span class="p">,</span> <span class="n">b2</span><span class="p">::</span><span class="n">SpinBasis</span><span class="p">)</span> <span class="o">=</span> <span class="n">true</span>
-<span class="n">multiplicable</span><span class="p">(</span><span class="n">b1</span><span class="p">::</span><span class="n">SpinBasis</span><span class="p">,</span> <span class="n">b2</span><span class="p">::</span><span class="n">SpinBasis</span><span class="p">)</span> <span class="o">=</span> <span class="n">true</span>
-</pre></div>
-</div>
-<div class="toctree-wrapper compound">
+<p>The interaction with other bases can be determined by overloading the <cite>==</cite> operator as well as the <code class="xref jl jl-func docutils literal"><span class="pre">bases.multiplicable</span></code> function which allow to control the behaviour when interaction with other bases.</p>
 </div>
 </div>
 
@@ -179,7 +215,7 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="spin.html" class="btn btn-neutral float-right" title="Spin basis" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="states.html" class="btn btn-neutral float-right" title="States" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="installation.html" class="btn btn-neutral" title="Installation" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
