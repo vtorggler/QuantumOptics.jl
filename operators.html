@@ -164,41 +164,40 @@
 <span class="n">sx</span> <span class="o">*</span> <span class="n">sy</span>
 </pre></div>
 </div>
-<p>and also <code class="xref jl jl-func docutils literal"><span class="pre">dagger(::DenseOperator)</span></code>, <code class="xref jl jl-func docutils literal"><span class="pre">normalize(::DenseOperator)</span></code> and <code class="xref jl jl-func docutils literal"><span class="pre">normalize!(::DenseOperator)</span></code> are available.</p>
+<p>Implemented functions:</p>
+<p>Hermitian conjugate:</p>
 <ul class="simple">
-<li>Expectation values can be calculated with:</li>
+<li><a class="reference internal" href="api.html#dagger-d98956ae121df2d483d39cbcc674556a" title="dagger(::DenseOperator)"><code class="xref jl jl-func docutils literal"><span class="pre">dagger(::DenseOperator)</span></code></a></li>
 </ul>
-<blockquote class="epigraph">
-<div><dl class="function"><dt id="expect-a3c235865b6f231a3eb6b141e13770eb"><em class="property">function </em><code class="descname">expect</code><span class="sig-paren">(</span><em>op</em>, <em>state</em><span class="sig-paren">)</span><a class="headerlink" href="#expect-a3c235865b6f231a3eb6b141e13770eb" title="Permalink to this function">¶</a></dt><dd>Expectation value of the given operator for the specified state(s).</dd></dl><dl class="function"><dt id="expect-6c603930eb6f3b799d5946fe58020a87"><em class="property">function </em><code class="descname">expect</code><span class="sig-paren">(</span><em>op</em>, <em>states</em><span class="sig-paren">)</span><a class="headerlink" href="#expect-6c603930eb6f3b799d5946fe58020a87" title="Permalink to this function">¶</a></dt><dd></dd></dl><dl class="function"><dt id="expect-1ac4556d84f557a684c36a906189b1b2"><em class="property">function </em><code class="descname">expect</code><span class="sig-paren">(</span><em>op</em>, <em>state</em><span class="sig-paren">)</span><a class="headerlink" href="#expect-1ac4556d84f557a684c36a906189b1b2" title="Permalink to this function">¶</a></dt><dd></dd></dl><dl class="function"><dt id="expect-3c3945c7126535b01e124bc5c5a850ee"><em class="property">function </em><code class="descname">expect</code><span class="sig-paren">(</span><em>op</em>, <em>states</em><span class="sig-paren">)</span><a class="headerlink" href="#expect-3c3945c7126535b01e124bc5c5a850ee" title="Permalink to this function">¶</a></dt><dd></dd></dl></div></blockquote>
+<p>Normalization:</p>
 <ul class="simple">
-<li>Composite operators can be created with:</li>
+<li><a class="reference internal" href="api.html#trace-dfab148189320cff535d22d2608e877e" title="trace(::DenseOperator)"><code class="xref jl jl-func docutils literal"><span class="pre">trace(::DenseOperator)</span></code></a></li>
+<li><a class="reference internal" href="api.html#norm-d5324bf5a4fed71b7931f7aa2280da65" title="norm(::DenseOperator, )"><code class="xref jl jl-func docutils literal"><span class="pre">norm(::DenseOperator,</span> <span class="pre">)</span></code></a></li>
+<li><a class="reference internal" href="api.html#normalize-dfab148189320cff535d22d2608e877e" title="normalize(::DenseOperator)"><code class="xref jl jl-func docutils literal"><span class="pre">normalize(::DenseOperator)</span></code></a></li>
+<li><a class="reference internal" href="api.html#normalize!-dfab148189320cff535d22d2608e877e" title="normalize!(::DenseOperator)"><code class="xref jl jl-func docutils literal"><span class="pre">normalize!(::DenseOperator)</span></code></a></li>
 </ul>
-<blockquote class="epigraph">
-<div><dl class="function"><dt id="tensor-da5b811e9453697de055622229de1813"><em class="property">function </em><code class="descname">tensor</code><span class="sig-paren">(</span><em>a</em>, <em>b</em><span class="sig-paren">)</span><a class="headerlink" href="#tensor-da5b811e9453697de055622229de1813" title="Permalink to this function">¶</a></dt><dd>Tensor product of operators.</dd></dl><dl class="function"><dt id="tensor-5662811f2f9cf48a4c3ccf3f9be3a690"><em class="property">function </em><code class="descname">tensor</code><span class="sig-paren">(</span><em>a</em>, <em>b</em><span class="sig-paren">)</span><a class="headerlink" href="#tensor-5662811f2f9cf48a4c3ccf3f9be3a690" title="Permalink to this function">¶</a></dt><dd>Tensor product of a ket and a bra results in an operator.</dd></dl></div></blockquote>
+<p>Expectation values:</p>
 <ul class="simple">
-<li>The inverse operation - taking a partial trace is done with:</li>
+<li><a class="reference internal" href="api.html#expect-a0bc06887e1b873f45d106bde7e3bd31" title="expect(::Operator, ::DenseOperator)"><code class="xref jl jl-func docutils literal"><span class="pre">expect(::Operator,</span> <span class="pre">::DenseOperator)</span></code></a></li>
 </ul>
-<blockquote class="epigraph">
-<div><dl class="function"><dt id="ptrace-e488b69341c709b1c9510785af082861"><em class="property">function </em><code class="descname">ptrace</code><span class="sig-paren">(</span><em>a</em>, <em>indices</em><span class="sig-paren">)</span><a class="headerlink" href="#ptrace-e488b69341c709b1c9510785af082861" title="Permalink to this function">¶</a></dt><dd>Partial trace of the given operator over the specified indices.</dd></dl><dl class="function"><dt id="ptrace-bd0f46f5e8a3eaaf7653ecccfc129328"><em class="property">function </em><code class="descname">ptrace</code><span class="sig-paren">(</span><em>a</em>, <em>indices</em><span class="sig-paren">)</span><a class="headerlink" href="#ptrace-bd0f46f5e8a3eaaf7653ecccfc129328" title="Permalink to this function">¶</a></dt><dd></dd></dl></div></blockquote>
+<p>Tensor product:</p>
 <ul class="simple">
-<li>For creating operators of the type <span class="math">\(A = I \otimes I \otimes ... a_i ... \otimes I\)</span> the very useful embed function can be used:</li>
+<li><a class="reference internal" href="api.html#tensor-85ecaee770268f5005661b2cd2666857" title="tensor(::DenseOperator, ::DenseOperator)"><code class="xref jl jl-func docutils literal"><span class="pre">tensor(::DenseOperator,</span> <span class="pre">::DenseOperator)</span></code></a></li>
+<li><a class="reference internal" href="api.html#tensor-ae0eb618127240f708c51c9b7a14a797" title="tensor(::Ket, ::Bra)"><code class="xref jl jl-func docutils literal"><span class="pre">tensor(::Ket,</span> <span class="pre">::Bra)</span></code></a></li>
+<li><a class="reference internal" href="api.html#projector-ae0eb618127240f708c51c9b7a14a797" title="projector(::Ket, ::Bra)"><code class="xref jl jl-func docutils literal"><span class="pre">projector(::Ket,</span> <span class="pre">::Bra)</span></code></a></li>
 </ul>
-<blockquote class="epigraph">
-<div><dl class="function"><dt id="embed-ba4ce26d50746a4aab8574966e7bc994"><em class="property">function </em><code class="descname">embed</code><span class="sig-paren">(</span><em>basis</em>, <em>indices</em>, <em>operators</em><span class="sig-paren">)</span><a class="headerlink" href="#embed-ba4ce26d50746a4aab8574966e7bc994" title="Permalink to this function">¶</a></dt><dd><p>Tensor product of operators where all missing indices are identity operators.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>basis</strong> &#8211; CompositeBasis of the resulting operator.</li>
-<li><strong>indices</strong> &#8211; Indices of the subsystems in which the given operators live.</li>
-<li><strong>operators</strong> &#8211; Operators defined in the subsystems.</li>
+<p>Partial trace:</p>
+<ul class="simple">
+<li><a class="reference internal" href="api.html#ptrace-6dc3a58a6d3880af39715859b80b4245" title="ptrace(::DenseOperator, indices)"><code class="xref jl jl-func docutils literal"><span class="pre">ptrace(::DenseOperator,</span> <span class="pre">indices)</span></code></a></li>
+<li><a class="reference internal" href="api.html#ptrace-f15a198affe6577830d47da63af27d14" title="ptrace(::DenseOperator, index)"><code class="xref jl jl-func docutils literal"><span class="pre">ptrace(::DenseOperator,</span> <span class="pre">index)</span></code></a></li>
+<li><a class="reference internal" href="api.html#ptrace-93aa060d278d71ef2ffe0def3d23edf4" title="ptrace(::Ket, indices)"><code class="xref jl jl-func docutils literal"><span class="pre">ptrace(::Ket,</span> <span class="pre">indices)</span></code></a></li>
+<li><a class="reference internal" href="api.html#ptrace-07315504c06c5921d2ca196468ca8718" title="ptrace(::Bra, indices)"><code class="xref jl jl-func docutils literal"><span class="pre">ptrace(::Bra,</span> <span class="pre">indices)</span></code></a></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl><dl class="function"><dt id="embed-540a6c0833694fd78c90a1fb9f1596d4"><em class="property">function </em><code class="descname">embed{T <: Operator}</code><span class="sig-paren">(</span><em>basis</em>, <em>index</em>, <em>op</em><span class="sig-paren">)</span><a class="headerlink" href="#embed-540a6c0833694fd78c90a1fb9f1596d4" title="Permalink to this function">¶</a></dt><dd></dd></dl></div></blockquote>
+<p>For creating operators of the type <span class="math">\(A = I \otimes I \otimes ... a_i ... \otimes I\)</span> the very useful embed function can be used:</p>
+<ul class="simple">
+<li><a class="reference internal" href="api.html#embed-c2b36d7d971179e8c05dcf4fa6cff9f9" title="embed(basis, indices, operators)"><code class="xref jl jl-func docutils literal"><span class="pre">embed(basis,</span> <span class="pre">indices,</span> <span class="pre">operators)</span></code></a></li>
+<li><a class="reference internal" href="api.html#embed-4fbc9c230a0b2ef6b20523aea8caceb9" title="embed(basis, index, op)"><code class="xref jl jl-func docutils literal"><span class="pre">embed(basis,</span> <span class="pre">index,</span> <span class="pre">op)</span></code></a></li>
+</ul>
 <div class="section" id="dense-operators">
 <span id="subsection-denseoperators"></span><h2>Dense operators<a class="headerlink" href="#dense-operators" title="Permalink to this headline">¶</a></h2>
 </div>

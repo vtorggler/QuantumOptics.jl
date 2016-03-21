@@ -141,7 +141,7 @@
             
   <div class="section" id="two-time-correlation-functions">
 <span id="section-correlationfunctions"></span><h1>Two-time correlation functions<a class="headerlink" href="#two-time-correlation-functions" title="Permalink to this headline">¶</a></h1>
-<dl class="function"><dt id="correlation-f58ec6e36ce33a613213903ef63945f5"><em class="property">function </em><code class="descname">correlation</code><span class="sig-paren">(</span><em>tspan</em>, <em>rho0</em>, <em>H</em>, <em>J</em>, <em>op1</em>, <em>op2</em>; <em>Gamma</em>, <em>Jdagger</em>, <em>tmp</em><span class="sig-paren">)</span><a class="headerlink" href="#correlation-f58ec6e36ce33a613213903ef63945f5" title="Permalink to this function">¶</a></dt><dd><p>Calculate two time correlation values <span class="math">\(\langle A(t) B(0) \rangle\)</span></p>
+<dl class="function"><dt id="correlation-007910c4cedd2b3134c0e9cb29b9d941"><em class="property">function </em><code class="descname">correlation</code><span class="sig-paren">(</span><em>tspan</em>, <em>rho0</em>, <em>H</em>, <em>J</em>, <em>op1</em>, <em>op2</em>; <em>Gamma</em>, <em>Jdagger</em>, <em>tmp</em><span class="sig-paren">)</span><a class="headerlink" href="#correlation-007910c4cedd2b3134c0e9cb29b9d941" title="Permalink to this function">¶</a></dt><dd><p><p>Calculate two time correlation values <span class="math">\(\langle A(t) B(0) \rangle\)</span></p>
 <p>The calculation is done by multiplying the initial density operator
 with <span class="math">\(B\)</span> performing a time evolution according to a master equation
 and then calculating the expectation value <span class="math">\(\mathrm{Tr} \{ A \rho \}\)</span></p>
@@ -173,7 +173,41 @@ Further arguments are passed on to the ode solver.</li>
 </tr>
 </tbody>
 </table>
-</dd></dl><dl class="function"><dt id="correlation-8fcb1ff2f44cb9107045101c56a5f088"><em class="property">function </em><code class="descname">correlation</code><span class="sig-paren">(</span><em>rho0</em>, <em>H</em>, <em>J</em>, <em>op1</em>, <em>op2</em>; <em>eps</em>, <em>h0</em>, <em>Gamma</em>, <em>Jdagger</em>, <em>tmp</em><span class="sig-paren">)</span><a class="headerlink" href="#correlation-8fcb1ff2f44cb9107045101c56a5f088" title="Permalink to this function">¶</a></dt><dd><p>Calculate two time correlation values <span class="math">\(\langle A(t) B(0) \rangle\)</span></p>
+</p>
+<p><p>Calculate two time correlation values <span class="math">\(\langle A(t) B(0) \rangle\)</span></p>
+<p>The calculation is done by multiplying the initial density operator
+with <span class="math">\(B\)</span> performing a time evolution according to a master equation
+and then calculating the expectation value <span class="math">\(\mathrm{Tr} \{ A \rho \}\)</span></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>tspan</strong> &#8211; Points of time at which the correlation should be calculated.</li>
+<li><strong>rho0</strong> &#8211; Initial density operator.</li>
+<li><strong>H</strong> &#8211; Operator specifying the Hamiltonian.</li>
+<li><strong>J</strong> &#8211; Vector of jump operators.</li>
+<li><strong>op1</strong> &#8211; Operator at time t.</li>
+<li><strong>op2</strong> &#8211; Operator at time t=0.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><ul class="first last simple">
+<li><strong>Gamma</strong> &#8211;
+Vector or matrix specifying the coefficients for the jump operators.</li>
+<li><strong>Jdagger (optional)</strong> &#8211;
+Vector containing the hermitian conjugates of the jump operators. If they
+are not given they are calculated automatically.</li>
+<li><strong>kwargs</strong> &#8211;
+Further arguments are passed on to the ode solver.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</p>
+</dd></dl><dl class="function"><dt id="correlation-def4ca215a52b2fa43f7b837949e2b4e"><em class="property">function </em><code class="descname">correlation</code><span class="sig-paren">(</span><em>rho0</em>, <em>H</em>, <em>J</em>, <em>op1</em>, <em>op2</em>; <em>eps</em>, <em>h0</em>, <em>Gamma</em>, <em>Jdagger</em>, <em>tmp</em><span class="sig-paren">)</span><a class="headerlink" href="#correlation-def4ca215a52b2fa43f7b837949e2b4e" title="Permalink to this function">¶</a></dt><dd><p><p>Calculate two time correlation values <span class="math">\(\langle A(t) B(0) \rangle\)</span></p>
 <p>The calculation is done by multiplying the initial density operator
 with <span class="math">\(B\)</span> performing a time evolution according to a master equation
 and then calculating the expectation value <span class="math">\(\mathrm{Tr} \{ A \rho \}\)</span>.
@@ -211,6 +245,46 @@ Further arguments are passed on to the ode solver.</li>
 </tr>
 </tbody>
 </table>
+</p>
+<p><p>Calculate two time correlation values <span class="math">\(\langle A(t) B(0) \rangle\)</span></p>
+<p>The calculation is done by multiplying the initial density operator
+with <span class="math">\(B\)</span> performing a time evolution according to a master equation
+and then calculating the expectation value <span class="math">\(\mathrm{Tr} \{ A \rho \}\)</span>.
+The points of time are chosen automatically from the ode solver and the final
+time is determined by the steady state termination criterion specified in
+<code class="xref jl jl-func docutils literal"><span class="pre">steadystate.master</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>rho0</strong> &#8211; Initial density operator.</li>
+<li><strong>H</strong> &#8211; Operator specifying the Hamiltonian.</li>
+<li><strong>J</strong> &#8211; Vector of jump operators.</li>
+<li><strong>op1</strong> &#8211; Operator at time t.</li>
+<li><strong>op2</strong> &#8211; Operator at time t=0.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><ul class="first last simple">
+<li><strong>eps</strong> &#8211;
+Tracedistance used as termination criterion.</li>
+<li><strong>h0</strong> &#8211;
+Initial time step used in the time evolution.</li>
+<li><strong>Gamma</strong> &#8211;
+Vector or matrix specifying the coefficients for the jump operators.</li>
+<li><strong>Jdagger (optional)</strong> &#8211;
+Vector containing the hermitian conjugates of the jump operators. If they
+are not given they are calculated automatically.</li>
+<li><strong>kwargs</strong> &#8211;
+Further arguments are passed on to the ode solver.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</p>
 </dd></dl></div>
 
 

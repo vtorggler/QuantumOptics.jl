@@ -158,30 +158,10 @@
 <p>The Schroedinger equation as one of the basic postulates of quantum mechanics describes the dynamics of a quantum state in a closed quantum system. In Dirac notation the Schroedinger equation and its adjoint equation read</p>
 <div class="math">
 \[i\hbar\frac{\mathrm{d}}{\mathrm{d} t} |\Psi(t)\rangle = H |\Psi(t)\rangle\]\[- i\hbar\frac{\mathrm{d}}{\mathrm{d} t} \langle \Psi(t)| = \langle\Psi(t)| H\]</div>
-<p>Both versions are implemented and are chosen automatically depending on the type of the provided initial state (Bra or Ket).</p>
-<blockquote class="epigraph">
-<div><dl class="function"><dt id="schroedinger-eb1b578f20b1e40604e6bfeb0991cff3"><em class="property">function </em><code class="descname">schroedinger{T <: StateVector}</code><span class="sig-paren">(</span><em>tspan</em>, <em>psi0</em>, <em>H</em>; <em>fout</em><span class="sig-paren">)</span><a class="headerlink" href="#schroedinger-eb1b578f20b1e40604e6bfeb0991cff3" title="Permalink to this function">¶</a></dt><dd><p>Integrate Schroedinger equation.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>tspan</strong> &#8211; Vector specifying the points of time for which output should be displayed.</li>
-<li><strong>psi0</strong> &#8211; Initial state vector (can be a bra or a ket).</li>
-<li><strong>H</strong> &#8211; DenseOperator specifying the Hamiltonian.</li>
+<p>Both versions are implemented and are chosen automatically depending on the type of the provided initial state (Bra or Ket):</p>
+<ul class="simple">
+<li><code class="xref jl jl-func docutils literal"><span class="pre">timeevolution.schroedinger</span></code></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
-<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><p class="first last"><strong>fout (optional)</strong> &#8211;
-If given this function fout(t, psi) is called every time an output should
-be displayed. To limit copying to a minimum the given state psi
-is further used and therefore must not be changed.</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl></div></blockquote>
 </div>
 <div class="section" id="master-time-evolution">
 <span id="section-master"></span><h2>Master time evolution<a class="headerlink" href="#master-time-evolution" title="Permalink to this headline">¶</a></h2>
@@ -197,50 +177,12 @@ is further used and therefore must not be changed.</p>
 <div class="math">
 \[\dot{\rho} = -\frac{i}{\hbar} \big[H_\mathrm{nh},\rho\big]
              + \sum_i J_i \rho J_i^\dagger\]</div>
-<p>If for any reason this behavior is unwanted, e.g. special operators are used that don&#8217;t support addition, the function <a class="reference internal" href="#master_h-643009f97b8ffb8f6cbf8515f2c33fbc" title="master_h"><code class="xref jl jl-func docutils literal"><span class="pre">master_h</span></code></a> (h for hermitian) can be used.</p>
-<blockquote class="epigraph">
-<div><dl class="function"><dt id="master-643009f97b8ffb8f6cbf8515f2c33fbc"><em class="property">function </em><code class="descname">master</code><span class="sig-paren">(</span><em>tspan</em>, <em>rho0</em>, <em>H</em>, <em>J</em>; <em>Gamma</em>, <em>Jdagger</em>, <em>fout</em>, <em>tmp</em><span class="sig-paren">)</span><a class="headerlink" href="#master-643009f97b8ffb8f6cbf8515f2c33fbc" title="Permalink to this function">¶</a></dt><dd><p>Integrate the master equation with dmaster_nh as derivative function.</p>
-<p>There are two implementations for integrating the master equation:</p>
+<p>If for any reason this behavior is unwanted, e.g. special operators are used that don&#8217;t support addition, the function master_h (h for hermitian) can be used.</p>
 <ul class="simple">
-<li><code class="docutils literal"><span class="pre">master_h</span></code>: Usual formulation of the master equation.</li>
-<li><code class="docutils literal"><span class="pre">master_nh</span></code>: Variant with non-hermitian Hamiltonian.</li>
+<li><a class="reference internal" href="api.html#master-ba24c2fffbe32ab8cb2efcd34a0bbe8b" title="master(tspan, rho0::DenseOperator, H::Operator, J::Vector)"><code class="xref jl jl-func docutils literal"><span class="pre">master(tspan,</span> <span class="pre">rho0::DenseOperator,</span> <span class="pre">H::Operator,</span> <span class="pre">J::Vector)</span></code></a></li>
+<li><a class="reference internal" href="api.html#master_h-ba24c2fffbe32ab8cb2efcd34a0bbe8b" title="master_h(tspan, rho0::DenseOperator, H::Operator, J::Vector)"><code class="xref jl jl-func docutils literal"><span class="pre">master_h(tspan,</span> <span class="pre">rho0::DenseOperator,</span> <span class="pre">H::Operator,</span> <span class="pre">J::Vector)</span></code></a></li>
+<li><code class="xref jl jl-func docutils literal"><span class="pre">master_nh(tspan,</span> <span class="pre">rho0::DenseOperator,</span> <span class="pre">H::Operator,</span> <span class="pre">J::Vector)</span></code></li>
 </ul>
-<p>The <code class="docutils literal"><span class="pre">master</span></code> function takes a normal Hamiltonian, calculates the
-non-hermitian Hamiltonian and then calls master_nh which is slightly faster.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>tspan</strong> &#8211; Vector specifying the points of time for which output should be displayed.</li>
-<li><strong>rho0</strong> &#8211; Initial density operator (must be a dense operator). Can also be a
-state vector which is automatically converted into a density operator.</li>
-<li><strong>H</strong> &#8211; DenseOperator specifying the Hamiltonian.</li>
-<li><strong>J</strong> &#8211; Vector containing all jump operators.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
-<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><ul class="first last simple">
-<li><strong>Gamma (optional)</strong> &#8211;
-Vector or matrix specifying the coefficients for the jump operators.</li>
-<li><strong>Jdagger (optional)</strong> &#8211;
-Vector containing the hermitian conjugates of the jump operators. If they
-are not given they are calculated automatically.</li>
-<li><strong>fout (optional)</strong> &#8211;
-If given this function fout(t, rho) is called every time an output should
-be displayed. To limit copying to a minimum the given density operator rho
-is further used and therefore must not be changed.</li>
-<li><strong>kwargs</strong> &#8211;
-Further arguments are passed on to the ode solver.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl><dl class="function"><dt id="master_h-643009f97b8ffb8f6cbf8515f2c33fbc"><em class="property">function </em><code class="descname">master_h</code><span class="sig-paren">(</span><em>tspan</em>, <em>rho0</em>, <em>H</em>, <em>J</em>; <em>Gamma</em>, <em>Jdagger</em>, <em>fout</em>, <em>tmp</em><span class="sig-paren">)</span><a class="headerlink" href="#master_h-643009f97b8ffb8f6cbf8515f2c33fbc" title="Permalink to this function">¶</a></dt><dd><p>Integrate the master equation with dmaster_h as derivative function.</p>
-<p>For further information look at <a class="reference internal" href="#master-643009f97b8ffb8f6cbf8515f2c33fbc" title="master(,::DenseOperator,::Operator,)"><code class="xref jl jl-func docutils literal"><span class="pre">master(,::DenseOperator,::Operator,)</span></code></a></p>
-</dd></dl></div></blockquote>
 </div>
 <div class="section" id="mcwf-time-evolution">
 <span id="section-mcwf"></span><h2>MCWF time evolution<a class="headerlink" href="#mcwf-time-evolution" title="Permalink to this headline">¶</a></h2>
@@ -281,51 +223,9 @@ Further arguments are passed on to the ode solver.</li>
 <div class="math">
 \[\lim\limits_{N \rightarrow \infty}\frac{1}{N} \sum_{k=1}^N \langle\Psi^k(t)| A |\Psi^k(t)\rangle = \mathrm{Tr}\big\{A \rho(t)\big\}\]</div>
 <p>avoiding explicit calculations of density matrices.</p>
-<blockquote class="epigraph">
-<div><dl class="function"><dt id="mcwf-693f468a8fe94d8b46fef69d97cb7a87"><em class="property">function </em><code class="descname">mcwf</code><span class="sig-paren">(</span><em>tspan</em>, <em>psi0</em>, <em>H</em>, <em>J</em>; <em>seed</em>, <em>fout</em>, <em>Jdagger</em>, <em>display_beforeevent</em>, <em>display_afterevent</em><span class="sig-paren">)</span><a class="headerlink" href="#mcwf-693f468a8fe94d8b46fef69d97cb7a87" title="Permalink to this function">¶</a></dt><dd><p>Integrate the master equation using the MCWF method.</p>
-<p>There are two implementations for integrating the non-hermitian
-schroedinger equation:</p>
 <ul class="simple">
-<li><code class="docutils literal"><span class="pre">mcwf_h</span></code>: Usual formulation with Hamiltonian + jump operators separately.</li>
-<li><code class="docutils literal"><span class="pre">mcwf_nh</span></code>: Variant with non-hermitian Hamiltonian.</li>
+<li><a class="reference internal" href="api.html#master-56cfeacc86d4f8398740b9219403c145" title="master(tspan, psi0::Ket, H::Operator, J::Vector)"><code class="xref jl jl-func docutils literal"><span class="pre">master(tspan,</span> <span class="pre">psi0::Ket,</span> <span class="pre">H::Operator,</span> <span class="pre">J::Vector)</span></code></a></li>
 </ul>
-<p>The <code class="docutils literal"><span class="pre">mcwf</span></code> function takes a normal Hamiltonian, calculates the
-non-hermitian Hamiltonian and then calls mcwf_nh which is slightly faster.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>tspan</strong> &#8211; Vector specifying the points of time for which output should be displayed.</li>
-<li><strong>psi0</strong> &#8211; Initial state vector.</li>
-<li><strong>H</strong> &#8211; DenseOperator specifying the Hamiltonian.</li>
-<li><strong>J</strong> &#8211; Vector containing all jump operators.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
-<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><ul class="first last simple">
-<li><strong>seed (optional)</strong> &#8211;
-Seed used for the random number generator to make trajectories repeatable.</li>
-<li><strong>fout (optional)</strong> &#8211;
-If given this function fout(t, psi) is called every time an output should
-be displayed. To limit copying to a minimum the given state psi
-is further used and therefore must not be changed.</li>
-<li><strong>Jdagger (optional)</strong> &#8211;
-Vector containing the hermitian conjugates of the jump operators. If they
-are not given they are calculated automatically.</li>
-<li><strong>display_beforeevent [false]</strong> &#8211;
-fout is called before every jump.</li>
-<li><strong>display_afterevent [false]</strong> &#8211;
-fout is called after every jump.</li>
-<li><strong>kwargs</strong> &#8211;
-Further arguments are passed on to the ode solver.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl></div></blockquote>
 </div>
 </div>
 

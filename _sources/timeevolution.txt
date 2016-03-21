@@ -25,11 +25,9 @@ The Schroedinger equation as one of the basic postulates of quantum mechanics de
 
     - i\hbar\frac{\mathrm{d}}{\mathrm{d} t} \langle \Psi(t)| = \langle\Psi(t)| H
 
-Both versions are implemented and are chosen automatically depending on the type of the provided initial state (Bra or Ket).
+Both versions are implemented and are chosen automatically depending on the type of the provided initial state (Bra or Ket):
 
-.. epigraph::
-
-    .. jl:autofunction:: timeevolution.jl schroedinger
+* :jl:func:`timeevolution.schroedinger`
 
 
 .. _section-master:
@@ -55,13 +53,13 @@ For performance reasons the solver internally first creates the non-hermitian Ha
     \dot{\rho} = -\frac{i}{\hbar} \big[H_\mathrm{nh},\rho\big]
                  + \sum_i J_i \rho J_i^\dagger
 
-If for any reason this behavior is unwanted, e.g. special operators are used that don't support addition, the function :func:`master_h` (h for hermitian) can be used.
+If for any reason this behavior is unwanted, e.g. special operators are used that don't support addition, the function master_h (h for hermitian) can be used.
 
-.. epigraph::
+* :func:`master(tspan, rho0::DenseOperator, H::Operator, J::Vector)`
 
-    .. jl:autofunction:: timeevolution.jl master(tspan, rho0::DenseOperator, H::Operator, J::Vector)
+* :func:`master_h(tspan, rho0::DenseOperator, H::Operator, J::Vector)`
 
-    .. jl:autofunction:: timeevolution.jl master_h(tspan, rho0::DenseOperator, H::Operator, J::Vector)
+* :func:`master_nh(tspan, rho0::DenseOperator, H::Operator, J::Vector)`
 
 
 .. _section-mcwf:
@@ -118,6 +116,4 @@ and also the stochastic average of the single trajectory expectation values is e
 
 avoiding explicit calculations of density matrices.
 
-.. epigraph::
-
-    .. jl:autofunction:: timeevolution.jl mcwf
+* :func:`master(tspan, psi0::Ket, H::Operator, J::Vector)`

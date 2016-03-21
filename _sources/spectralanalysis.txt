@@ -3,12 +3,8 @@
 Spectral Analysis
 =================
 
-.. jl:autofunction:: spectralanalysis.jl operatorspectrum_hermitian(::DenseOperator)
-
-.. jl:autofunction:: spectralanalysis.jl operatorspectrum(::DenseOperator)
-
-.. jl:autofunction:: spectralanalysis.jl eigenbasis_hermitian(::DenseOperator)
-
-.. jl:autofunction:: spectralanalysis.jl eigenbasis(::DenseOperator)
-
-.. jl:autofunction:: spectralanalysis.jl groundstate
+* :jl:func:`operatorspectrum(::DenseOperator)`
+* :jl:func:`operatorspectrum_hermitian(::DenseOperator)`
+* :jl:func:`eigenbasis(::DenseOperator)`
+* :jl:func:`eigenbasis_hermitian(::DenseOperator)`
+* :jl:func:`groundstate`

@@ -24,33 +24,42 @@ All of them have the same interface and can in most cases be used interchangeabl
     sx + sy
     sx * sy
 
-and also :jl:func:`dagger(::DenseOperator)`, :jl:func:`normalize(::DenseOperator)` and :jl:func:`normalize!(::DenseOperator)` are available.
+Implemented functions:
 
-* Expectation values can be calculated with:
+Hermitian conjugate:
 
-.. epigraph::
+* :jl:func:`dagger(::DenseOperator)`
 
-    .. jl:autofunction:: operators.jl expect
 
-* Composite operators can be created with:
+Normalization:
 
-.. epigraph::
+* :jl:func:`trace(::DenseOperator)`
+* :jl:func:`norm(::DenseOperator, )`
+* :jl:func:`normalize(::DenseOperator)`
+* :jl:func:`normalize!(::DenseOperator)`
 
-    .. jl:autofunction:: operators.jl tensor(::DenseOperator, ::DenseOperator)
+Expectation values:
 
-    .. jl:autofunction:: operators.jl tensor(::Ket, ::Bra)
+* :jl:func:`expect(::Operator, ::DenseOperator)`
 
-* The inverse operation - taking a partial trace is done with:
 
-.. epigraph::
+Tensor product:
 
-    .. jl:autofunction:: operators.jl ptrace(::DenseOperator, indices)
+* :jl:func:`tensor(::DenseOperator, ::DenseOperator)`
+* :jl:func:`tensor(::Ket, ::Bra)`
+* :jl:func:`projector(::Ket, ::Bra)`
 
-* For creating operators of the type :math:`A = I \otimes I \otimes ... a_i ... \otimes I` the very useful embed function can be used:
+Partial trace:
 
-.. epigraph::
+* :jl:func:`ptrace(::DenseOperator, indices)`
+* :jl:func:`ptrace(::DenseOperator, index)`
+* :jl:func:`ptrace(::Ket, indices)`
+* :jl:func:`ptrace(::Bra, indices)`
 
-    .. jl:autofunction:: operators.jl embed
+For creating operators of the type :math:`A = I \otimes I \otimes ... a_i ... \otimes I` the very useful embed function can be used:
+
+* :jl:func:`embed(basis, indices, operators)`
+* :jl:func:`embed(basis, index, op)`
 
 
 .. _subsection-denseoperators:

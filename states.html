@@ -153,7 +153,7 @@
 <span class="n">y</span> <span class="o">=</span> <span class="n">Bra</span><span class="p">(</span><span class="n">basis</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
 </pre></div>
 </div>
-<p>Many commonly used states are already implemented for the various bases, like e.g. <a class="reference internal" href="api.html#fockstate-f683047ee9916a4521b1498fe155667d" title="fockstate"><code class="xref jl jl-func docutils literal"><span class="pre">fockstate</span></code></a> or <code class="xref jl jl-func docutils literal"><span class="pre">gaussianstate</span> <span class="pre">gaussianstate(::MomentumBasis,</span> <span class="pre">x0,</span> <span class="pre">p0,</span> <span class="pre">sigma)</span></code>.</p>
+<p>Many commonly used states are already implemented for the various bases, like e.g. <a class="reference internal" href="api.html#fockstate-7ee867be3744044ff7efc0ee9ef93b66" title="fockstate"><code class="xref jl jl-func docutils literal"><span class="pre">fockstate</span></code></a> or <code class="xref jl jl-func docutils literal"><span class="pre">gaussianstate</span> <span class="pre">gaussianstate(::MomentumBasis,</span> <span class="pre">x0,</span> <span class="pre">p0,</span> <span class="pre">sigma)</span></code>.</p>
 <p>All expected arithmetic functions like *, /, +, - are implemented:</p>
 <div class="highlight-julia"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">+</span> <span class="n">x</span>
 <span class="n">x</span> <span class="o">-</span> <span class="n">x</span>
@@ -161,11 +161,11 @@
 <span class="n">y</span><span class="o">*</span><span class="n">x</span> <span class="c"># Inner product</span>
 </pre></div>
 </div>
-<p>The hermitian conjugate is performed by the <code class="xref jl jl-func docutils literal"><span class="pre">dagger(::Ket)</span></code> function which transforms a bra in a ket and vice versa:</p>
+<p>The hermitian conjugate is performed by the <a class="reference internal" href="api.html#dagger-4560a2c40cf6309a1d6c78ce87ce746c" title="dagger(::Ket)"><code class="xref jl jl-func docutils literal"><span class="pre">dagger(::Ket)</span></code></a> function which transforms a bra in a ket and vice versa:</p>
 <div class="highlight-julia"><div class="highlight"><pre><span></span><span class="n">dagger</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="c"># Bra(basis, [1,1,1])</span>
 </pre></div>
 </div>
-<p>Composite states can be created with the <code class="xref jl jl-func docutils literal"><span class="pre">tensor(::Ket)</span></code> function or with the equivalent <span class="math">\(\otimes\)</span> operator:</p>
+<p>Composite states can be created with the <code class="xref jl jl-func docutils literal"><span class="pre">tensor(::Ket,</span> <span class="pre">::Ket)</span></code> function or with the equivalent <span class="math">\(\otimes\)</span> operator:</p>
 <div class="highlight-julia"><div class="highlight"><pre><span></span><span class="n">tensor</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
 <span class="n">x</span> <span class="n">⊗</span> <span class="n">x</span>
 <span class="n">tensor</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
@@ -173,7 +173,13 @@
 </div>
 <p>Normalization functions:</p>
 <blockquote class="epigraph">
-<div><dl class="function"><dt id="norm-d3695a0e8b2f02c5a55f56fb99d701ed"><em class="property">function </em><code class="descname">norm</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="headerlink" href="#norm-d3695a0e8b2f02c5a55f56fb99d701ed" title="Permalink to this function">¶</a></dt><dd>Norm of the given state vector.</dd></dl><dl class="function"><dt id="normalize-d3695a0e8b2f02c5a55f56fb99d701ed"><em class="property">function </em><code class="descname">normalize</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="headerlink" href="#normalize-d3695a0e8b2f02c5a55f56fb99d701ed" title="Permalink to this function">¶</a></dt><dd>Normalized copy of the given state vector.</dd></dl><dl class="function"><dt id="normalize!-d3695a0e8b2f02c5a55f56fb99d701ed"><em class="property">function </em><code class="descname">normalize!</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="headerlink" href="#normalize!-d3695a0e8b2f02c5a55f56fb99d701ed" title="Permalink to this function">¶</a></dt><dd>Normalize the given state vector.</dd></dl></div></blockquote>
+<div><dl class="function"><dt id="norm-bf815e25013cea8c1ee6dc502cca3988"><em class="property">function </em><code class="descname">norm</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="headerlink" href="#norm-bf815e25013cea8c1ee6dc502cca3988" title="Permalink to this function">¶</a></dt><dd><p>Norm of the given state vector.</p>
+<p>Norm of the given state vector.</p>
+</dd></dl><dl class="function"><dt id="normalize-bf815e25013cea8c1ee6dc502cca3988"><em class="property">function </em><code class="descname">normalize</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="headerlink" href="#normalize-bf815e25013cea8c1ee6dc502cca3988" title="Permalink to this function">¶</a></dt><dd><p>Normalized copy of the given state vector.</p>
+<p>Normalized copy of the given state vector.</p>
+</dd></dl><dl class="function"><dt id="normalize!-bf815e25013cea8c1ee6dc502cca3988"><em class="property">function </em><code class="descname">normalize!</code><span class="sig-paren">(</span><em>x</em>, <em>p</em><span class="sig-paren">)</span><a class="headerlink" href="#normalize!-bf815e25013cea8c1ee6dc502cca3988" title="Permalink to this function">¶</a></dt><dd><p>Normalize the given state vector.</p>
+<p>Normalize the given state vector.</p>
+</dd></dl></div></blockquote>
 </div>
 
 

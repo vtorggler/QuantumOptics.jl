@@ -36,7 +36,7 @@ Restricting a Hilbert space to a subspace is done using a :jl:type:`SubspaceBasi
 
 Any SubspaceBasis can be made orthogonal with help of the :jl:func:`orthonormalize` function which utilizes the numerical stable modified Gram-Schmidt algorithm.
 
-Changing between the superbasis and any subspaces bases can be done by first creating a projection operator with the :jl:func:`projector` function::
+Changing between the superbasis and any subspaces bases can be done by first creating a projection operator with the :jl:func:`projector(::SubspaceBasis, ::Basis)` function::
 
     b = FockBasis(5)
     b_sub = SubspaceBasis(b, [fockstate(b, 1), fockstate(b, 2)])

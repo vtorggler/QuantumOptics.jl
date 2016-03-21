@@ -34,7 +34,7 @@ The hermitian conjugate is performed by the :jl:func:`dagger(::Ket)` function wh
 
     dagger(x) # Bra(basis, [1,1,1])
 
-Composite states can be created with the :jl:func:`tensor(::Ket)` function or with the equivalent :math:`\otimes` operator::
+Composite states can be created with the :jl:func:`tensor(::Ket, ::Ket)` function or with the equivalent :math:`\otimes` operator::
 
     tensor(x, x)
     x ⊗ x
