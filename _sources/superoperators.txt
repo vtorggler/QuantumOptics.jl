@@ -46,14 +46,11 @@ The coefficients are then connected by
 
     A_{uv} &= \sum_{mn} S_{uvmn} B_{mn}
 
-The implementation of super-operators in **Quantumoptics.jl** is based on the basis specific concept, which means it has to consider 4 possibly different bases. The two basis choices for the output are stored in the ``basis_l`` field and the two basis choices for the input are stored in the ``basis_r`` field. At the moment there are two concrete super-operator types implemented, a dense version :jl:type:`SuperOperator` and a sparse version :jl:type:`SparseSuperOperator`.
+The implementation of super-operators in **Quantumoptics.jl** is based on the basis specific concept, which means it has to consider 4 possibly different bases. The two basis choices for the output are stored in the ``basis_l`` field and the two basis choices for the input are stored in the ``basis_r`` field. At the moment there are two concrete super-operator types implemented, a dense version :jl:type:`DenseSuperOperator` and a sparse version :jl:type:`SparseSuperOperator`, both inheriting from the abstract :jl:abstract:`SuperOperator` type.
 
 Besides the expected algebraic operations there are a few additional functions that help creating and working with super-operators:
 
-.. jl:autofunction:: superoperators.jl spre
-
-.. jl:autofunction:: superoperators.jl spost
-
-.. jl:autofunction:: superoperators.jl liouvillian
-
-.. jl:autofunction:: superoperators.jl expm
+* :jl:func:`spre(::DenseOperator)`
+* :jl:func:`spost(::DenseOperator)`
+* :jl:func:`liouvillian(H, J)`
+* :jl:func:`expm`

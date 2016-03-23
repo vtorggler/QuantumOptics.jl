@@ -3,7 +3,7 @@
 States
 ======
 
-State vectors in **Quantumoptics.jl** are interpreted as coefficients in respect to a certain :ref:`basis <section-bases>`. For example the state :math:`|\Psi\rangle` can be represented in a (discrete) real space basis :math:`\{|x_i\rangle\}_i` as :math:`\Psi(x_i)`. These quantities are connected by
+State vectors in **Quantumoptics.jl** are interpreted as coefficients in respect to a certain :ref:`basis <section-bases>`. For example the particle state :math:`|\Psi\rangle` can be represented in a (discrete) real space basis :math:`\{|x_i\rangle\}_i` as :math:`\Psi(x_i)`. These quantities are connected by
 
 .. math::
 
@@ -21,7 +21,7 @@ The distinction between coefficients in respect to bra or ket states is strictly
     x = Ket(basis, [1,1,1]) # Not necessarily normalized
     y = Bra(basis, [0,1,0])
 
-Many commonly used states are already implemented for the various bases, like e.g. :jl:func:`fockstate` or :jl:func:`gaussianstate gaussianstate(::MomentumBasis, x0, p0, sigma)`.
+Many commonly used states are already implemented for various systems, like e.g. :jl:func:`fockstate` or :jl:func:`gaussianstate(::MomentumBasis, x0, p0, sigma)`.
 
 All expected arithmetic functions like \*, /, +, - are implemented::
 

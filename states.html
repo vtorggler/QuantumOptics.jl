@@ -141,7 +141,7 @@
             
   <div class="section" id="states">
 <span id="section-states"></span><h1>States<a class="headerlink" href="#states" title="Permalink to this headline">¶</a></h1>
-<p>State vectors in <strong>Quantumoptics.jl</strong> are interpreted as coefficients in respect to a certain <a class="reference internal" href="bases.html#section-bases"><span>basis</span></a>. For example the state <span class="math">\(|\Psi\rangle\)</span> can be represented in a (discrete) real space basis <span class="math">\(\{|x_i\rangle\}_i\)</span> as <span class="math">\(\Psi(x_i)\)</span>. These quantities are connected by</p>
+<p>State vectors in <strong>Quantumoptics.jl</strong> are interpreted as coefficients in respect to a certain <a class="reference internal" href="bases.html#section-bases"><span>basis</span></a>. For example the particle state <span class="math">\(|\Psi\rangle\)</span> can be represented in a (discrete) real space basis <span class="math">\(\{|x_i\rangle\}_i\)</span> as <span class="math">\(\Psi(x_i)\)</span>. These quantities are connected by</p>
 <div class="math">
 \[|\Psi\rangle = \sum_i \Psi(x) |x_i\rangle\]</div>
 <p>and the conjugate equation</p>
@@ -153,7 +153,7 @@
 <span class="n">y</span> <span class="o">=</span> <span class="n">Bra</span><span class="p">(</span><span class="n">basis</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
 </pre></div>
 </div>
-<p>Many commonly used states are already implemented for the various bases, like e.g. <a class="reference internal" href="api.html#fockstate-7ee867be3744044ff7efc0ee9ef93b66" title="fockstate"><code class="xref jl jl-func docutils literal"><span class="pre">fockstate</span></code></a> or <code class="xref jl jl-func docutils literal"><span class="pre">gaussianstate</span> <span class="pre">gaussianstate(::MomentumBasis,</span> <span class="pre">x0,</span> <span class="pre">p0,</span> <span class="pre">sigma)</span></code>.</p>
+<p>Many commonly used states are already implemented for various systems, like e.g. <a class="reference internal" href="api.html#fockstate-7ee867be3744044ff7efc0ee9ef93b66" title="fockstate"><code class="xref jl jl-func docutils literal"><span class="pre">fockstate</span></code></a> or <a class="reference internal" href="api.html#gaussianstate-f12887d4d0d5b315bf0ca5995bee7118" title="gaussianstate(::MomentumBasis, x0, p0, sigma)"><code class="xref jl jl-func docutils literal"><span class="pre">gaussianstate(::MomentumBasis,</span> <span class="pre">x0,</span> <span class="pre">p0,</span> <span class="pre">sigma)</span></code></a>.</p>
 <p>All expected arithmetic functions like *, /, +, - are implemented:</p>
 <div class="highlight-julia"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">+</span> <span class="n">x</span>
 <span class="n">x</span> <span class="o">-</span> <span class="n">x</span>

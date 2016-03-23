@@ -168,97 +168,15 @@ S &amp;= \sum_{uvmn} S_{uvmn} |v \rangle \langle u| \otimes
 <p>The coefficients are then connected by</p>
 <div class="math">
 \[\begin{split}A_{uv} &amp;= \sum_{mn} S_{uvmn} B_{mn}\end{split}\]</div>
-<p>The implementation of super-operators in <strong>Quantumoptics.jl</strong> is based on the basis specific concept, which means it has to consider 4 possibly different bases. The two basis choices for the output are stored in the <code class="docutils literal"><span class="pre">basis_l</span></code> field and the two basis choices for the input are stored in the <code class="docutils literal"><span class="pre">basis_r</span></code> field. At the moment there are two concrete super-operator types implemented, a dense version <code class="xref jl jl-type docutils literal"><span class="pre">SuperOperator</span></code> and a sparse version <a class="reference internal" href="api.html#SparseSuperOperator" title="SparseSuperOperator"><code class="xref jl jl-type docutils literal"><span class="pre">SparseSuperOperator</span></code></a>.</p>
+<p>The implementation of super-operators in <strong>Quantumoptics.jl</strong> is based on the basis specific concept, which means it has to consider 4 possibly different bases. The two basis choices for the output are stored in the <code class="docutils literal"><span class="pre">basis_l</span></code> field and the two basis choices for the input are stored in the <code class="docutils literal"><span class="pre">basis_r</span></code> field. At the moment there are two concrete super-operator types implemented, a dense version <a class="reference internal" href="api.html#DenseSuperOperator" title="DenseSuperOperator"><code class="xref jl jl-type docutils literal"><span class="pre">DenseSuperOperator</span></code></a> and a sparse version <a class="reference internal" href="api.html#SparseSuperOperator" title="SparseSuperOperator"><code class="xref jl jl-type docutils literal"><span class="pre">SparseSuperOperator</span></code></a>, both inheriting from the abstract <a class="reference internal" href="api.html#SuperOperator" title="SuperOperator"><code class="xref jl jl-abstract docutils literal"><span class="pre">SuperOperator</span></code></a> type.</p>
 <p>Besides the expected algebraic operations there are a few additional functions that help creating and working with super-operators:</p>
-<dl class="function"><dt id="spre-dfab148189320cff535d22d2608e877e"><em class="property">function </em><code class="descname">spre</code><span class="sig-paren">(</span><em>op</em><span class="sig-paren">)</span><a class="headerlink" href="#spre-dfab148189320cff535d22d2608e877e" title="Permalink to this function">¶</a></dt><dd><p><p>Create a super-operator equivalent for right side operator multiplication.</p>
-<p>For operators <span class="math">\(A\)</span>, <span class="math">\(B\)</span> the relation</p>
-<div class="math">
-\[\mathrm{spre}(A) B = A B\]</div>
-<p>holds.</p>
-</p>
-<p><p>Create a super-operator equivalent for right side operator multiplication.</p>
-<p>For operators <span class="math">\(A\)</span>, <span class="math">\(B\)</span> the relation</p>
-<div class="math">
-\[\mathrm{spre}(A) B = A B\]</div>
-<p>holds.</p>
-</p>
-</dd></dl><dl class="function"><dt id="spre-6b87824c14136ddbb17be9d4c3b37312"><em class="property">function </em><code class="descname">spre</code><span class="sig-paren">(</span><em>op</em><span class="sig-paren">)</span><a class="headerlink" href="#spre-6b87824c14136ddbb17be9d4c3b37312" title="Permalink to this function">¶</a></dt><dd><p></p>
-<p></p>
-</dd></dl><dl class="function"><dt id="spost-dfab148189320cff535d22d2608e877e"><em class="property">function </em><code class="descname">spost</code><span class="sig-paren">(</span><em>op</em><span class="sig-paren">)</span><a class="headerlink" href="#spost-dfab148189320cff535d22d2608e877e" title="Permalink to this function">¶</a></dt><dd><p><p>Create a super-operator equivalent for left side operator multiplication.</p>
-<p>For operators <span class="math">\(A\)</span>, <span class="math">\(B\)</span> the relation</p>
-<div class="math">
-\[\mathrm{spost}(A) B = B A\]</div>
-<p>holds.</p>
-</p>
-<p><p>Create a super-operator equivalent for left side operator multiplication.</p>
-<p>For operators <span class="math">\(A\)</span>, <span class="math">\(B\)</span> the relation</p>
-<div class="math">
-\[\mathrm{spost}(A) B = B A\]</div>
-<p>holds.</p>
-</p>
-</dd></dl><dl class="function"><dt id="spost-6b87824c14136ddbb17be9d4c3b37312"><em class="property">function </em><code class="descname">spost</code><span class="sig-paren">(</span><em>op</em><span class="sig-paren">)</span><a class="headerlink" href="#spost-6b87824c14136ddbb17be9d4c3b37312" title="Permalink to this function">¶</a></dt><dd><p></p>
-<p></p>
-</dd></dl><dl class="function"><dt id="liouvillian-79d7f7a514932b76465b6a4024d8e493"><em class="property">function </em><code class="descname">liouvillian{T <: Operator}</code><span class="sig-paren">(</span><em>H</em>, <em>J</em>; <em>Gamma</em>, <em>Jdagger</em><span class="sig-paren">)</span><a class="headerlink" href="#liouvillian-79d7f7a514932b76465b6a4024d8e493" title="Permalink to this function">¶</a></dt><dd><p><p>Create a super-operator equivalent to the master equation.</p>
-<p>The  so that <span class="math">\(\dot \rho = S \rho\)</span></p>
-<p>The super-operator <span class="math">\(S\)</span> is defined by</p>
-<div class="math">
-\[\dot \rho = S \rho = -\frac{i}{\hbar} [H,\rho]
-        + 2 J \rho J^\dagger - J^\dagger J \rho - \rho J^\dagger J\]</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>H</strong> &#8211; Hamiltonian</li>
-<li><strong>J</strong> &#8211; Vector of jump operators</li>
+<ul class="simple">
+<li><a class="reference internal" href="api.html#spre-dfab148189320cff535d22d2608e877e" title="spre(::DenseOperator)"><code class="xref jl jl-func docutils literal"><span class="pre">spre(::DenseOperator)</span></code></a></li>
+<li><a class="reference internal" href="api.html#spost-dfab148189320cff535d22d2608e877e" title="spost(::DenseOperator)"><code class="xref jl jl-func docutils literal"><span class="pre">spost(::DenseOperator)</span></code></a></li>
+<li><a class="reference internal" href="api.html#liouvillian-79d7f7a514932b76465b6a4024d8e493" title="liouvillian(H, J)"><code class="xref jl jl-func docutils literal"><span class="pre">liouvillian(H,</span> <span class="pre">J)</span></code></a></li>
+<li><a class="reference internal" href="api.html#expm-3813e1e3b37ffaa43d1606564adbbb47" title="expm"><code class="xref jl jl-func docutils literal"><span class="pre">expm</span></code></a></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
-<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><ul class="first last simple">
-<li><strong>Gamma (optional)</strong> &#8211;
-Vector or matrix specifying the coefficients for the jump operators.</li>
-<li><strong>Jdagger (optional)</strong> &#8211;
-Vector containing the hermitian conjugates of the jump operators. If they
-are not given they are calculated automatically.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</p>
-<p><p>Create a super-operator equivalent to the master equation.</p>
-<p>The  so that <span class="math">\(\dot \rho = S \rho\)</span></p>
-<p>The super-operator <span class="math">\(S\)</span> is defined by</p>
-<div class="math">
-\[\dot \rho = S \rho = -\frac{i}{\hbar} [H,\rho]
-        + 2 J \rho J^\dagger - J^\dagger J \rho - \rho J^\dagger J\]</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>H</strong> &#8211; Hamiltonian</li>
-<li><strong>J</strong> &#8211; Vector of jump operators</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
-<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><ul class="first last simple">
-<li><strong>Gamma (optional)</strong> &#8211;
-Vector or matrix specifying the coefficients for the jump operators.</li>
-<li><strong>Jdagger (optional)</strong> &#8211;
-Vector containing the hermitian conjugates of the jump operators. If they
-are not given they are calculated automatically.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</p>
-</dd></dl><dl class="function"><dt id="expm-3813e1e3b37ffaa43d1606564adbbb47"><em class="property">function </em><code class="descname">expm</code><span class="sig-paren">(</span><em>op</em><span class="sig-paren">)</span><a class="headerlink" href="#expm-3813e1e3b37ffaa43d1606564adbbb47" title="Permalink to this function">¶</a></dt><dd><p></p>
-<p></p>
-</dd></dl></div>
+</div>
 
 
            </div>

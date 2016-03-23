@@ -317,9 +317,9 @@ Spectral analysis
 
 .. jl:autofunction:: spectralanalysis.jl operatorspectrum
 
-.. jl:autofunction:: spectralanalysis.jl eigenbasis_hermitian
+.. jl:autofunction:: spectralanalysis.jl eigenstates_hermitian
 
-.. jl:autofunction:: spectralanalysis.jl eigenbasis
+.. jl:autofunction:: spectralanalysis.jl eigenstates
 
 .. jl:autofunction:: spectralanalysis.jl groundstate
 

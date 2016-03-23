@@ -1,3 +1,5 @@
+.. _section-nparticles:
+
 N-Particles Basis
 =================
 

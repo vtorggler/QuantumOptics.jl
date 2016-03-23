@@ -146,17 +146,24 @@
             
   <div class="section" id="operators">
 <span id="section-operators"></span><h1>Operators<a class="headerlink" href="#operators" title="Permalink to this headline">¶</a></h1>
-<p>Operators can be defined as linear mappings from one Hilbert space to another. However, equivalently to states, operators in <strong>Quantumoptics.jl</strong> are interpreted as coefficients of an abstract operator in respect to one (or more generally two, possibly distinct) <a class="reference internal" href="bases.html#section-bases"><span>basis</span></a>. For a certain choice of bases <span class="math">\(\{|u_i\rangle\}_i\)</span> and <span class="math">\(\{|v_j\rangle\}_j\)</span> an abstract operator <span class="math">\(A\)</span> has the coefficients <span class="math">\(A_{ij}\)</span> which are connected by the relation</p>
+<p>Operators can be defined as linear mappings from one Hilbert space to another. However, equivalently to states, operators in <strong>Quantumoptics.jl</strong> are interpreted as coefficients of an abstract operator in respect to one or more generally two, possibly distinct <a class="reference internal" href="bases.html#section-bases"><span>bases</span></a>. For a certain choice of bases <span class="math">\(\{|u_i\rangle\}_i\)</span> and <span class="math">\(\{|v_j\rangle\}_j\)</span> an abstract operator <span class="math">\(A\)</span> has the coefficients <span class="math">\(A_{ij}\)</span> which are connected by the relation</p>
 <div class="math">
 \[A =  \sum_{ij} A_{ij} | u_i \rangle \langle v_j |\]</div>
-<p>For performance reasons there are several different implementation of operators in <strong>Quantumoptics.jl</strong> all inheriting from the abstract <a class="reference internal" href="api.html#Operator" title="Operator"><code class="xref jl jl-abstract docutils literal"><span class="pre">Operator</span></code></a> type:</p>
+<p>For this reason all operators  define a left hand as well as a right hand basis:</p>
+<div class="highlight-julia"><div class="highlight"><pre><span></span><span class="k">type</span><span class="nc"> MyOperator</span> <span class="o">&lt;:</span> <span class="n">Operator</span>
+    <span class="n">basis_l</span><span class="p">::</span><span class="n">Basis</span>
+    <span class="n">basis_r</span><span class="p">::</span><span class="n">Basis</span>
+    <span class="o">...</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p>For performance reasons there are several different implementations of operators in <strong>Quantumoptics.jl</strong>, all inheriting from the abstract <a class="reference internal" href="api.html#Operator" title="Operator"><code class="xref jl jl-abstract docutils literal"><span class="pre">Operator</span></code></a> type:</p>
 <ul class="simple">
 <li><a class="reference internal" href="#subsection-denseoperators"><span>Dense operators</span></a></li>
 <li><a class="reference internal" href="#subsection-sparseoperators"><span>Sparse operators</span></a></li>
 <li><a class="reference internal" href="#subsection-lazyoperators"><span>Lazy operators</span></a></li>
 </ul>
-<p>All of them have the same interface and can in most cases be used interchangeably. E.g. all of them implement the expected arithmetic functions
-*, /, +, -:</p>
+<p>They have the same interface and can in most cases be used interchangeably, e.g. they can be combined using arithmetic functions *, /, +, -:</p>
 <div class="highlight-julia"><div class="highlight"><pre><span></span><span class="n">b</span> <span class="o">=</span> <span class="n">SpinBasis</span><span class="p">(</span><span class="mi">1</span><span class="o">//</span><span class="mi">2</span><span class="p">)</span>
 <span class="n">sx</span> <span class="o">=</span> <span class="n">sigmax</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
 <span class="n">sy</span> <span class="o">=</span> <span class="n">sigmay</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
@@ -164,7 +171,7 @@
 <span class="n">sx</span> <span class="o">*</span> <span class="n">sy</span>
 </pre></div>
 </div>
-<p>and additionally implement the following functions:</p>
+<p>Additionally the following functions are implemented:</p>
 <ul>
 <li><dl class="first docutils">
 <dt>Hermitian conjugate:</dt>
@@ -220,8 +227,8 @@
 <span class="k">end</span>
 </pre></div>
 </div>
-<p>The data is stored as complex (dense) matrix in the <em>data</em> field.</p>
-<p>The <code class="xref jl jl-func docutils literal"><span class="pre">full(Operator)</span></code> can be used to convert other types of operators to dense operators.</p>
+<p>where the data is stored as complex (dense) matrix in the <code class="docutils literal"><span class="pre">data</span></code> field.</p>
+<p>The <a class="reference internal" href="api.html#full-34c36c682b3e953069b454faefcc0032" title="full(::Operator)"><code class="xref jl jl-func docutils literal"><span class="pre">full(::Operator)</span></code></a> function can be used to convert other types of operators to dense operators.</p>
 </div>
 <div class="section" id="sparse-operators">
 <span id="subsection-sparseoperators"></span><h2>Sparse operators<a class="headerlink" href="#sparse-operators" title="Permalink to this headline">¶</a></h2>
@@ -233,11 +240,11 @@
 <span class="k">end</span>
 </pre></div>
 </div>
-<p>To convert other operators to sparse operators the <a class="reference internal" href="api.html#sparse-da52dd11746b5faf953352237b07824c" title="sparse(::Operator)"><code class="xref jl jl-func docutils literal"><span class="pre">sparse(::Operator)</span></code></a> can be used.</p>
+<p>To convert other operators to sparse operators the <a class="reference internal" href="api.html#sparse-da52dd11746b5faf953352237b07824c" title="sparse(::Operator)"><code class="xref jl jl-func docutils literal"><span class="pre">sparse(::Operator)</span></code></a> function can be used.</p>
 </div>
 <div class="section" id="lazy-operators">
 <span id="subsection-lazyoperators"></span><h2>Lazy operators<a class="headerlink" href="#lazy-operators" title="Permalink to this headline">¶</a></h2>
-<p>Lazy operators allow delayed evaluation of certain operations. This is for useful when combining two operators is numerically expensive but separate application on states is cheap. This is for example the case for the <a class="reference internal" href="api.html#FFTOperator" title="FFTOperator"><code class="xref jl jl-type docutils literal"><span class="pre">FFTOperator</span></code></a> operator implemented for particles. It allows using FFT transformation to convert a state from real space to momentum space applying a diagonal operator and converting it back. This is only fast if the the order of operations is <span class="math">\(\mathrm{IFFT}*(D*(\mathrm{FFT}*\psi))\)</span>. To create a Hamiltonian that uses this calculation order, lazy evaluation is needed:</p>
+<p>Lazy operators allow delayed evaluation of certain operations. This is useful when combining two operators is numerically expensive but separate multiplication with states is relatively cheap. A nice example is the <a class="reference internal" href="api.html#FFTOperator" title="FFTOperator"><code class="xref jl jl-type docutils literal"><span class="pre">FFTOperator</span></code></a> operator implemented for particles. It allows using a fast fourier transformation to convert a state from real space to momentum space, applying a diagonal operator and converting it back. Doing this in operator notation is only fast if the the order of operations is <span class="math">\(\mathrm{IFFT}*(D*(\mathrm{FFT}*\psi))\)</span>. To create a Hamiltonian that uses this calculation order, lazy evaluation is needed:</p>
 <div class="highlight-julia"><div class="highlight"><pre><span></span><span class="n">xmin</span> <span class="o">=</span> <span class="o">-</span><span class="mi">5</span>
 <span class="n">xmax</span> <span class="o">=</span> <span class="mi">5</span>
 <span class="n">Npoints</span> <span class="o">=</span> <span class="mi">100</span>
