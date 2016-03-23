@@ -132,6 +132,8 @@ SparseOperators
 
 .. jl:autofunction:: operators_sparse.jl SparseOperator
 
+.. jl:autofunction:: operators_sparse.jl sparse
+
 
 .. _section-api-lazyoperators:
 

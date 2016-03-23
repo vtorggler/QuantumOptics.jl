@@ -42,10 +42,6 @@ Composite states can be created with the :jl:func:`tensor(::Ket, ::Ket)` functio
 
 Normalization functions:
 
-.. epigraph::
-
-    .. jl:autofunction:: states.jl norm
-
-    .. jl:autofunction:: states.jl normalize
-
-    .. jl:autofunction:: states.jl normalize!
+* :jl:func:`norm(::StateVector, p=2)`
+* :jl:func:`normalize(::StateVector, p=2)`
+* :jl:func:`normalize!(::StateVector, p=2)`
