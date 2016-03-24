@@ -3,7 +3,7 @@
 Time-evolution
 ==============
 
-**Quantumoptics.jl** implements solver for dynamics of closed and open quantum systems:
+**QuantumOptics.jl** implements solver for dynamics of closed and open quantum systems:
 
 * :ref:`Schroedinger equation<section-schroedinger>`
 * :ref:`Master equation<section-master>`

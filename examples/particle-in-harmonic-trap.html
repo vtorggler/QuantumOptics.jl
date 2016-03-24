@@ -51,7 +51,7 @@
           
 
           
-            <a href="../index.html" class="icon icon-home"> Quantumoptics.jl
+            <a href="../index.html" class="icon icon-home"> QuantumOptics.jl
           
 
           
@@ -113,7 +113,7 @@
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="../index.html">Quantumoptics.jl</a>
+        <a href="../index.html">QuantumOptics.jl</a>
       </nav>
 
 
@@ -147,7 +147,7 @@
            <div itemprop="articleBody">
             
   <p><em>This notebook can be found on</em>
-<a class="reference external" href="https://github.com/bastikr/Quantumoptics.jl/blob/master/examples/particle-in-harmonic-trap.ipynb">github</a></p>
+<a class="reference external" href="https://github.com/bastikr/QuantumOptics.jl/blob/master/examples/particle-in-harmonic-trap.ipynb">github</a></p>
 <div class="section" id="particle-in-harmonic-trap-potential">
 <h1>Particle in harmonic trap potential<a class="headerlink" href="#particle-in-harmonic-trap-potential" title="Permalink to this headline">¶</a></h1>
 <p>A particle in a harmonic trap is described by a Hamiltonian of the form</p>
@@ -156,7 +156,7 @@
 <p>For numerical simulations we are forced to work in a basis. For
 particles there are two common choices. We can either work in real space
 or alternatively in momentum space.</p>
-<div class="code python highlight-julia"><div class="highlight"><pre><span></span><span class="k">using</span> <span class="n">Quantumoptics</span>
+<div class="code python highlight-julia"><div class="highlight"><pre><span></span><span class="k">using</span> <span class="n">QuantumOptics</span>
 <span class="k">using</span> <span class="n">PyPlot</span>
 </pre></div>
 </div>
@@ -179,7 +179,7 @@ or alternatively in momentum space.</p>
 </pre></div>
 </div>
 <p>Of course we could also choose to work in momentum space:</p>
-<p>From a PositionBasis <strong>Quantumoptics.jl</strong> can automatically infere the
+<p>From a PositionBasis <strong>QuantumOptics.jl</strong> can automatically infere the
 corresponding MomentumBasis by calculating
 <span class="math">\(p_\mathrm{min} = -\pi/dx\)</span> and <span class="math">\(p_\mathrm{max} = \pi/dx\)</span>
 where <span class="math">\(dx = (x_\mathrm{max} - x_\mathrm{min})/N\)</span></p>

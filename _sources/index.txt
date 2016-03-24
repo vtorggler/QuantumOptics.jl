@@ -1,5 +1,5 @@
 ================
-Quantumoptics.jl
+QuantumOptics.jl
 ================
 
 .. toctree::

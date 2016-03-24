@@ -50,7 +50,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> Quantumoptics.jl
+            <a href="index.html" class="icon icon-home"> QuantumOptics.jl
           
 
           
@@ -113,7 +113,7 @@
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="index.html">Quantumoptics.jl</a>
+        <a href="index.html">QuantumOptics.jl</a>
       </nav>
 
 
@@ -146,7 +146,7 @@
             
   <div class="section" id="operators">
 <span id="section-operators"></span><h1>Operators<a class="headerlink" href="#operators" title="Permalink to this headline">¶</a></h1>
-<p>Operators can be defined as linear mappings from one Hilbert space to another. However, equivalently to states, operators in <strong>Quantumoptics.jl</strong> are interpreted as coefficients of an abstract operator in respect to one or more generally two, possibly distinct <a class="reference internal" href="bases.html#section-bases"><span>bases</span></a>. For a certain choice of bases <span class="math">\(\{|u_i\rangle\}_i\)</span> and <span class="math">\(\{|v_j\rangle\}_j\)</span> an abstract operator <span class="math">\(A\)</span> has the coefficients <span class="math">\(A_{ij}\)</span> which are connected by the relation</p>
+<p>Operators can be defined as linear mappings from one Hilbert space to another. However, equivalently to states, operators in <strong>QuantumOptics.jl</strong> are interpreted as coefficients of an abstract operator in respect to one or more generally two, possibly distinct <a class="reference internal" href="bases.html#section-bases"><span>bases</span></a>. For a certain choice of bases <span class="math">\(\{|u_i\rangle\}_i\)</span> and <span class="math">\(\{|v_j\rangle\}_j\)</span> an abstract operator <span class="math">\(A\)</span> has the coefficients <span class="math">\(A_{ij}\)</span> which are connected by the relation</p>
 <div class="math">
 \[A =  \sum_{ij} A_{ij} | u_i \rangle \langle v_j |\]</div>
 <p>For this reason all operators  define a left hand as well as a right hand basis:</p>
@@ -157,7 +157,7 @@
 <span class="k">end</span>
 </pre></div>
 </div>
-<p>For performance reasons there are several different implementations of operators in <strong>Quantumoptics.jl</strong>, all inheriting from the abstract <a class="reference internal" href="api.html#Operator" title="Operator"><code class="xref jl jl-abstract docutils literal"><span class="pre">Operator</span></code></a> type:</p>
+<p>For performance reasons there are several different implementations of operators in <strong>QuantumOptics.jl</strong>, all inheriting from the abstract <a class="reference internal" href="api.html#Operator" title="Operator"><code class="xref jl jl-abstract docutils literal"><span class="pre">Operator</span></code></a> type:</p>
 <ul class="simple">
 <li><a class="reference internal" href="#subsection-denseoperators"><span>Dense operators</span></a></li>
 <li><a class="reference internal" href="#subsection-sparseoperators"><span>Sparse operators</span></a></li>
@@ -232,7 +232,7 @@
 </div>
 <div class="section" id="sparse-operators">
 <span id="subsection-sparseoperators"></span><h2>Sparse operators<a class="headerlink" href="#sparse-operators" title="Permalink to this headline">¶</a></h2>
-<p><a class="reference internal" href="api.html#SparseOperator" title="SparseOperator"><code class="xref jl jl-type docutils literal"><span class="pre">SparseOperator</span></code></a> is the default type used in <strong>Quantumoptics.jl</strong>. The reason is that in many quantum systems the Hamiltonians in respect to the commonly used bases are sparse. They are implemented as:</p>
+<p><a class="reference internal" href="api.html#SparseOperator" title="SparseOperator"><code class="xref jl jl-type docutils literal"><span class="pre">SparseOperator</span></code></a> is the default type used in <strong>QuantumOptics.jl</strong>. The reason is that in many quantum systems the Hamiltonians in respect to the commonly used bases are sparse. They are implemented as:</p>
 <div class="highlight-julia"><div class="highlight"><pre><span></span><span class="k">type</span><span class="nc"> SparseOperator</span> <span class="o">&lt;:</span> <span class="n">Operator</span>
     <span class="n">basis_l</span><span class="p">::</span><span class="n">Basis</span>
     <span class="n">basis_r</span><span class="p">::</span><span class="n">Basis</span>

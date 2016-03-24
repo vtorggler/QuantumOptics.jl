@@ -3,7 +3,7 @@
 Particle basis
 ==============
 
-For particles **Quantumoptics.jl** provides two different choices - either the calculations can be done in real space or they can be done in momentum space by using :jl:type:`PositionBasis` or :jl:type:`MomentumBasis` respectively. To create a particle basis, a left boundary :math:`x_\mathrm{min}`, a right boundary :math:`x_\mathrm{max}` and the number of discretization points have to be provided::
+For particles **QuantumOptics.jl** provides two different choices - either the calculations can be done in real space or they can be done in momentum space by using :jl:type:`PositionBasis` or :jl:type:`MomentumBasis` respectively. To create a particle basis, a left boundary :math:`x_\mathrm{min}`, a right boundary :math:`x_\mathrm{max}` and the number of discretization points have to be provided::
 
     xmin = -2.
     xmax = 4.
@@ -49,7 +49,7 @@ For convenience a few functions make it easier to work with bases:
     .. jl:autofunction:: particle.jl samplepoints
 
 
-All operators defined in **Quantumoptics.jl** can be created in respect to both bases, e.g.::
+All operators defined in **QuantumOptics.jl** can be created in respect to both bases, e.g.::
 
     p_position = momentumoperator(b_position)
     p_momentum = momentumoperator(b_momentum)

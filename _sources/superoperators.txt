@@ -1,7 +1,7 @@
 Super-operators
 ===============
 
-If states are defined as abstract elements of the Hilbert space :math:`\mathcal{H}` then operators are mappings from this Hilbert space to itself, :math:`\mathcal{H} \rightarrow \mathcal{H}`. However, in **Quantumoptics.jl** states are specified as coefficients in respect to a specific basis and therefore operators are mappings from elements of the Hilbert space in a certain basis to a elements of the same Hilbert space but possibly in a different basis. The basis free definition is
+If states are defined as abstract elements of the Hilbert space :math:`\mathcal{H}` then operators are mappings from this Hilbert space to itself, :math:`\mathcal{H} \rightarrow \mathcal{H}`. However, in **QuantumOptics.jl** states are specified as coefficients in respect to a specific basis and therefore operators are mappings from elements of the Hilbert space in a certain basis to a elements of the same Hilbert space but possibly in a different basis. The basis free definition is
 
 .. math::
 
@@ -46,7 +46,7 @@ The coefficients are then connected by
 
     A_{uv} &= \sum_{mn} S_{uvmn} B_{mn}
 
-The implementation of super-operators in **Quantumoptics.jl** is based on the basis specific concept, which means it has to consider 4 possibly different bases. The two basis choices for the output are stored in the ``basis_l`` field and the two basis choices for the input are stored in the ``basis_r`` field. At the moment there are two concrete super-operator types implemented, a dense version :jl:type:`DenseSuperOperator` and a sparse version :jl:type:`SparseSuperOperator`, both inheriting from the abstract :jl:abstract:`SuperOperator` type.
+The implementation of super-operators in **QuantumOptics.jl** is based on the basis specific concept, which means it has to consider 4 possibly different bases. The two basis choices for the output are stored in the ``basis_l`` field and the two basis choices for the input are stored in the ``basis_r`` field. At the moment there are two concrete super-operator types implemented, a dense version :jl:type:`DenseSuperOperator` and a sparse version :jl:type:`SparseSuperOperator`, both inheriting from the abstract :jl:abstract:`SuperOperator` type.
 
 Besides the expected algebraic operations there are a few additional functions that help creating and working with super-operators:
 

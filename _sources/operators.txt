@@ -3,7 +3,7 @@
 Operators
 =========
 
-Operators can be defined as linear mappings from one Hilbert space to another. However, equivalently to states, operators in **Quantumoptics.jl** are interpreted as coefficients of an abstract operator in respect to one or more generally two, possibly distinct :ref:`bases <section-bases>`. For a certain choice of bases :math:`\{|u_i\rangle\}_i` and :math:`\{|v_j\rangle\}_j` an abstract operator :math:`A` has the coefficients :math:`A_{ij}` which are connected by the relation
+Operators can be defined as linear mappings from one Hilbert space to another. However, equivalently to states, operators in **QuantumOptics.jl** are interpreted as coefficients of an abstract operator in respect to one or more generally two, possibly distinct :ref:`bases <section-bases>`. For a certain choice of bases :math:`\{|u_i\rangle\}_i` and :math:`\{|v_j\rangle\}_j` an abstract operator :math:`A` has the coefficients :math:`A_{ij}` which are connected by the relation
 
 .. math::
 
@@ -17,7 +17,7 @@ For this reason all operators  define a left hand as well as a right hand basis:
         ...
     end
 
-For performance reasons there are several different implementations of operators in **Quantumoptics.jl**, all inheriting from the abstract :jl:abstract:`Operator` type:
+For performance reasons there are several different implementations of operators in **QuantumOptics.jl**, all inheriting from the abstract :jl:abstract:`Operator` type:
 
 * :ref:`subsection-denseoperators`
 * :ref:`subsection-sparseoperators`
@@ -86,7 +86,7 @@ The :jl:func:`full(::Operator)` function can be used to convert other types of o
 Sparse operators
 ^^^^^^^^^^^^^^^^
 
-:jl:type:`SparseOperator` is the default type used in **Quantumoptics.jl**. The reason is that in many quantum systems the Hamiltonians in respect to the commonly used bases are sparse. They are implemented as::
+:jl:type:`SparseOperator` is the default type used in **QuantumOptics.jl**. The reason is that in many quantum systems the Hamiltonians in respect to the commonly used bases are sparse. They are implemented as::
 
     type SparseOperator <: Operator
         basis_l::Basis

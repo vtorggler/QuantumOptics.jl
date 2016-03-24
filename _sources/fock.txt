@@ -3,7 +3,7 @@
 Fock Basis
 ==========
 
-To create a basis of a Fock space **Quantumoptics.jl** provides the :jl:type:`FockBasis` class which has to be supplied with an upper cutoff and optionally with a lower cutoff::
+To create a basis of a Fock space **QuantumOptics.jl** provides the :jl:type:`FockBasis` class which has to be supplied with an upper cutoff and optionally with a lower cutoff::
 
     Nmax = 10
     b1 = FockBasis(Nmax)

@@ -3,7 +3,7 @@
 Bases
 =====
 
-The primary purpose of bases in **Quantumoptics.jl** is to specify the dimension of the Hilbert space of the system and to make sure that quantum objects associated to distinct bases can't be combined accidentally in an incorrect way. Many of the common types of bases used in quantum mechanics like
+The primary purpose of bases in **QuantumOptics.jl** is to specify the dimension of the Hilbert space of the system and to make sure that quantum objects associated to distinct bases can't be combined accidentally in an incorrect way. Many of the common types of bases used in quantum mechanics like
 
 * :ref:`Spin basis <section-spin>`
 * :ref:`Fock basis <section-fock>`

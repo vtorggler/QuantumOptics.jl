@@ -51,7 +51,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> Quantumoptics.jl
+            <a href="index.html" class="icon icon-home"> QuantumOptics.jl
           
 
           
@@ -115,7 +115,7 @@
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="index.html">Quantumoptics.jl</a>
+        <a href="index.html">QuantumOptics.jl</a>
       </nav>
 
 
@@ -150,7 +150,7 @@
             
   <div class="section" id="particle-basis">
 <span id="section-particle"></span><h1>Particle basis<a class="headerlink" href="#particle-basis" title="Permalink to this headline">¶</a></h1>
-<p>For particles <strong>Quantumoptics.jl</strong> provides two different choices - either the calculations can be done in real space or they can be done in momentum space by using <a class="reference internal" href="api.html#PositionBasis" title="PositionBasis"><code class="xref jl jl-type docutils literal"><span class="pre">PositionBasis</span></code></a> or <a class="reference internal" href="api.html#MomentumBasis" title="MomentumBasis"><code class="xref jl jl-type docutils literal"><span class="pre">MomentumBasis</span></code></a> respectively. To create a particle basis, a left boundary <span class="math">\(x_\mathrm{min}\)</span>, a right boundary <span class="math">\(x_\mathrm{max}\)</span> and the number of discretization points have to be provided:</p>
+<p>For particles <strong>QuantumOptics.jl</strong> provides two different choices - either the calculations can be done in real space or they can be done in momentum space by using <a class="reference internal" href="api.html#PositionBasis" title="PositionBasis"><code class="xref jl jl-type docutils literal"><span class="pre">PositionBasis</span></code></a> or <a class="reference internal" href="api.html#MomentumBasis" title="MomentumBasis"><code class="xref jl jl-type docutils literal"><span class="pre">MomentumBasis</span></code></a> respectively. To create a particle basis, a left boundary <span class="math">\(x_\mathrm{min}\)</span>, a right boundary <span class="math">\(x_\mathrm{max}\)</span> and the number of discretization points have to be provided:</p>
 <div class="highlight-julia"><div class="highlight"><pre><span></span><span class="n">xmin</span> <span class="o">=</span> <span class="o">-</span><span class="mf">2.</span>
 <span class="n">xmax</span> <span class="o">=</span> <span class="mf">4.</span>
 <span class="n">N</span> <span class="o">=</span> <span class="mi">10</span>
@@ -189,7 +189,7 @@
 <p>For convenience a few functions make it easier to work with bases:</p>
 <blockquote class="epigraph">
 <div><dl class="function"><dt id="spacing-df9e1eb128cc4b663293b56aa84ea4ce"><em class="property">function </em><code class="descname">spacing</code><span class="sig-paren">(</span><em>b</em><span class="sig-paren">)</span><a class="headerlink" href="#spacing-df9e1eb128cc4b663293b56aa84ea4ce" title="Permalink to this function">¶</a></dt><dd>Distance between two adjacent points of the real space basis.</dd></dl><dl class="function"><dt id="spacing-bfe77158bf8d7a7d2facdf327b56a9fc"><em class="property">function </em><code class="descname">spacing</code><span class="sig-paren">(</span><em>b</em><span class="sig-paren">)</span><a class="headerlink" href="#spacing-bfe77158bf8d7a7d2facdf327b56a9fc" title="Permalink to this function">¶</a></dt><dd>Momentum difference between two adjacent points of the momentum basis.</dd></dl><dl class="function"><dt id="samplepoints-bfe77158bf8d7a7d2facdf327b56a9fc"><em class="property">function </em><code class="descname">samplepoints</code><span class="sig-paren">(</span><em>b</em><span class="sig-paren">)</span><a class="headerlink" href="#samplepoints-bfe77158bf8d7a7d2facdf327b56a9fc" title="Permalink to this function">¶</a></dt><dd>x values of the real space basis.</dd></dl><dl class="function"><dt id="samplepoints-df9e1eb128cc4b663293b56aa84ea4ce"><em class="property">function </em><code class="descname">samplepoints</code><span class="sig-paren">(</span><em>b</em><span class="sig-paren">)</span><a class="headerlink" href="#samplepoints-df9e1eb128cc4b663293b56aa84ea4ce" title="Permalink to this function">¶</a></dt><dd>p values of the momentum basis.</dd></dl></div></blockquote>
-<p>All operators defined in <strong>Quantumoptics.jl</strong> can be created in respect to both bases, e.g.:</p>
+<p>All operators defined in <strong>QuantumOptics.jl</strong> can be created in respect to both bases, e.g.:</p>
 <div class="highlight-julia"><div class="highlight"><pre><span></span><span class="n">p_position</span> <span class="o">=</span> <span class="n">momentumoperator</span><span class="p">(</span><span class="n">b_position</span><span class="p">)</span>
 <span class="n">p_momentum</span> <span class="o">=</span> <span class="n">momentumoperator</span><span class="p">(</span><span class="n">b_momentum</span><span class="p">)</span>
 </pre></div>
