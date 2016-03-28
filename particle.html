@@ -202,15 +202,17 @@
 <li><a class="reference internal" href="api.html#laplace_p-bfe77158bf8d7a7d2facdf327b56a9fc" title="laplace_p(b::PositionBasis)"><code class="xref jl jl-func docutils literal"><span class="pre">laplace_p(b::PositionBasis)</span></code></a></li>
 </ul>
 <p>And functions for creating states:</p>
-<div class="highlight-julia"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="p">:</span><span class="n">jl</span><span class="p">:</span><span class="n">func</span><span class="p">:</span><span class="sb">`gaussianstate(b::PositionBasis, , , )`</span>
+<ul>
+<li><p class="first"><a class="reference internal" href="api.html#gaussianstate-bea5674163e95e08d602cdc6878f5a5a" title="gaussianstate(b::PositionBasis, , , )"><code class="xref jl jl-func docutils literal"><span class="pre">gaussianstate(b::PositionBasis,</span> <span class="pre">,</span> <span class="pre">,</span> <span class="pre">)</span></code></a>:</p>
+<div class="highlight-julia"><div class="highlight"><pre><span></span><span class="n">x0</span> <span class="o">=</span> <span class="mf">0.</span>
+<span class="n">p0</span> <span class="o">=</span> <span class="mf">1.</span>
+<span class="n">sigma</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">Psi_x</span> <span class="o">=</span> <span class="n">gaussianstate</span><span class="p">(</span><span class="n">b_position</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">p0</span><span class="p">,</span> <span class="n">sigma</span><span class="p">)</span>
+<span class="n">Psi_p</span> <span class="o">=</span> <span class="n">gaussianstate</span><span class="p">(</span><span class="n">b_momentum</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">p0</span><span class="p">,</span> <span class="n">sigma</span><span class="p">)</span>
 </pre></div>
 </div>
-<blockquote>
-<div>x0 = 0.
-p0 = 1.
-sigma = 2
-Psi_x = gaussianstate(b_position, x0, p0, sigma)
-Psi_p = gaussianstate(b_momentum, x0, p0, sigma)</div></blockquote>
+</li>
+</ul>
 <p>Transforming a state from one basis into another can be done efficiently using the <a class="reference internal" href="api.html#FFTOperator" title="FFTOperator"><code class="xref jl jl-type docutils literal"><span class="pre">FFTOperator</span></code></a> which can be used in the following way:</p>
 <div class="highlight-julia"><div class="highlight"><pre><span></span><span class="n">op_fft</span> <span class="o">=</span> <span class="n">FFTOperator</span><span class="p">(</span><span class="n">basis_momentum</span><span class="p">,</span> <span class="n">basis_position</span><span class="p">)</span>
 <span class="n">Psi_p</span> <span class="o">=</span> <span class="n">op_fft</span><span class="o">*</span><span class="n">Psi_x</span>

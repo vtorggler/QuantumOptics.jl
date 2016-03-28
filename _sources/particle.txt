@@ -61,9 +61,9 @@ The following operators are implemented:
 * :jl:func:`laplace_x(b::PositionBasis)`
 * :jl:func:`laplace_p(b::PositionBasis)`
 
-And functions for creating states::
+And functions for creating states:
 
-* :jl:func:`gaussianstate(b::PositionBasis, , , )`
+* :jl:func:`gaussianstate(b::PositionBasis, , , )`::
 
     x0 = 0.
     p0 = 1.
