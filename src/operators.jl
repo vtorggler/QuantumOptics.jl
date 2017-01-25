@@ -105,7 +105,7 @@ permutesystems(a::Operator, perm::Vector{Int}) = arithmetic_unary_error("Permuta
 """
 Vector of indices that are not in the given vector.
 """
-complement(N::Int, indices::Vector{Int}) = Int[i for i=1:N if i ∉ indices]
+complement(N::Int, indices) = Int[i for i=1:N if i ∉ indices]
 
 """
 Tensor product of operators where missing indices are filled up with identity operators.
@@ -152,9 +152,10 @@ function embed{T<:Operator}(basis_l::CompositeBasis, basis_r::CompositeBasis,
     @assert length(basis_l.bases) == length(basis_r.bases)
     N = length(basis_l.bases)
     indices, operator_list = zip(operators...)
+    operator_list = [operator_list...;]
     indices = [indices...;]
     complement_operators = [identityoperator(T, basis_l.bases[i], basis_r.bases[i]) for i in complement(N, indices)]
-    op = tensor(operator_list...) ⊗ tensor(complement_operators...)
+    op = tensor([operator_list; complement_operators]...)
     perm = sortperm([indices; complement(N, indices)])
     permutesystems(op, perm)
 end

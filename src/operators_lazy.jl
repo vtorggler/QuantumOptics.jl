@@ -1,8 +1,10 @@
 module operators_lazy
 
-import Base: *, /, +, -
-import ..operators
+import Base: ==, *, /, +, -
+import ..operators: dagger, identityoperator,
+                    trace, ptrace, normalize!, tensor, permutesystems
 
+using Combinatorics
 using Base.Cartesian
 using ..bases, ..states, ..operators, ..operators_dense, ..operators_sparse
 
@@ -32,30 +34,38 @@ the index of the subsystem. Additionally a complex factor is stored in the
 "factor" field which allows for fast multiplication with a number.
 """
 type LazyTensor <: LazyOperator
+    N::Int
     basis_l::CompositeBasis
     basis_r::CompositeBasis
     factor::Complex128
-    operators::Dict{Int,Operator}
+    operators::Dict{Vector{Int}, Operator}
 
-    function LazyTensor(basis_l::CompositeBasis, basis_r::CompositeBasis, operators::Dict{Int,Operator}, factor::Number=1.)
+    function LazyTensor(basis_l::CompositeBasis, basis_r::CompositeBasis,
+                        operators::Dict{Vector{Int},Operator}, factor::Number=1.)
         N = length(basis_l.bases)
         @assert N==length(basis_r.bases)
-        @assert length(operators)==0 || maximum(keys(operators))<=N
-        @assert length(operators)==0 || 1<=minimum(keys(operators))
-        for (i,op) = operators
-            @assert op.basis_l==basis_l.bases[i] && op.basis_r==basis_r.bases[i]
+        for (I1, I2) in combinations(collect(keys(operators)), 2)
+            if length(I1 ∩ I2) != 0
+                throw(ArgumentError("Operators can't belong to common subsystems."))
+            end
         end
-        new(basis_l, basis_r, complex(factor), operators)
+        for (I, op) in operators
+            @assert length(I) > 0
+            if length(I) == 1
+                @assert basis_l.bases[I[1]] == op.basis_l
+                @assert basis_r.bases[I[1]] == op.basis_r
+            else
+                @assert basis_l.bases[I] == op.basis_l.bases
+                @assert basis_r.bases[I] == op.basis_r.bases
+            end
+        end
+        new(N, basis_l, basis_r, complex(factor), operators)
     end
 end
+LazyTensor{T}(basis_l::CompositeBasis, basis_r::CompositeBasis, operators::Dict{Vector{Int}, T}, factor::Number=1.) = LazyTensor(basis_l, basis_r, Dict{Vector{Int}, Operator}(item for item in operators), factor)
+LazyTensor{T}(basis_l::CompositeBasis, basis_r::CompositeBasis, operators::Dict{Int, T}, factor::Number=1.) = LazyTensor(basis_l, basis_r, Dict{Vector{Int}, Operator}([i]=>op_i for (i, op_i) in operators), factor)
+LazyTensor(basis::CompositeBasis, operators::Dict, factor::Number=1.) = LazyTensor(basis, basis, operators, factor)
 
-function LazyTensor{T<:Operator}(basis_l::CompositeBasis, basis_r::CompositeBasis, indices::Vector{Int}, operators::Vector{T}, factor::Number=1.)
-    @assert length(indices) == length(Set(indices)) == length(operators)
-    LazyTensor(basis_l, basis_r, Dict{Int,Operator}(i=>op for (i,op)=zip(indices, operators)), factor)
-end
-
-LazyTensor(basis_l::CompositeBasis, basis_r::CompositeBasis, index::Int, operator::Operator, factor::Number=1.) = LazyTensor(basis_l, basis_r, [index], [operator], factor)
-LazyTensor(basis::CompositeBasis, indices, operators, factor::Number=1.) = LazyTensor(basis, basis, indices, operators, factor)
 
 """
 Lazy evaluation of sum of operators.
@@ -96,7 +106,6 @@ type LazyProduct <: LazyOperator
     operators::Vector{Operator}
 
     function LazyProduct(factor::Complex128, operators::Vector{Operator})
-        @assert length(operators)>1
         for i = 2:length(operators)
             @assert multiplicable(operators[i-1].basis_r, operators[i].basis_l)
         end
@@ -105,73 +114,33 @@ type LazyProduct <: LazyOperator
 end
 LazyProduct(operators::Operator...) = LazyProduct(Complex(1.), Operator[operators...])
 
-function operators.full(x::LazyTensor)
-    op_list = DenseOperator[]
-    for i=1:length(x.basis_l.bases)
-        if i in keys(x.operators)
-            push!(op_list, full(x.operators[i]))
-        else
-            push!(op_list, identityoperator(DenseOperator, x.basis_l.bases[i], x.basis_r.bases[i]))
-        end
+function Base.full(op::LazyTensor)
+    D = Dict{Vector{Int}, DenseOperator}(I=>full(op_I) for (I, op_I) in op.operators)
+    for i in operators.complement(op.N, [keys(D)...;])
+        D[[i]] = identityoperator(DenseOperator, op.basis_l.bases[i], op.basis_r.bases[i])
     end
-    return x.factor*tensor(op_list...)
+    op.factor*embed(op.basis_l, op.basis_r, D)
 end
+Base.full(op::LazySum) = sum(a*full(op_i) for (a, op_i) in zip(op.factors, op.operators))
+Base.full(op::LazyProduct) = op.factor*prod(full(op_i) for op_i in op.operators)
 
-function operators.full(x::LazySum)
-    result = x.factors[1]*full(x.operators[1])
-    for i=2:length(x.operators)
-        result += x.factors[i]*full(x.operators[i])
+function Base.sparse(op::LazyTensor)
+    D = Dict{Vector{Int}, SparseOperator}(I=>sparse(op_I) for (I, op_I) in op.operators)
+    for i in operators.complement(op.N, [keys(D)...;])
+        D[[i]] = identityoperator(SparseOperator, op.basis_l.bases[i], op.basis_r.bases[i])
     end
-    return result
+    op.factor*embed(op.basis_l, op.basis_r, D)
 end
+Base.sparse(op::LazySum) = sum(a*sparse(op_i) for (a, op_i) in zip(op.factors, op.operators))
+Base.sparse(op::LazyProduct) = op.factor*prod(sparse(op_i) for op_i in op.operators)
 
-function operators.full(x::LazyProduct)
-    result = x.factor*full(x.operators[1])
-    for i=2:length(x.operators)
-        result *= full(x.operators[i])
+
+# Arithmetic
+function matchfactors(D_l::Dict{Vector{Int}, Operator}, D_r::Dict{Vector{Int}, Operator})
+    D::Dict{Vector{Int}, (Vector{Operator}, Vector{Operator})}
+    for (I, op_I) in D
     end
-    return result
 end
-
-function operators_sparse.sparse(x::LazyTensor)
-    op_list = SparseOperator[]
-    for i=1:length(x.basis_l.bases)
-        if i in keys(x.operators)
-            push!(op_list, sparse(x.operators[i]))
-        else
-            push!(op_list, identityoperator(SparseOperator, x.basis_l.bases[i], x.basis_r.bases[i]))
-        end
-    end
-    return x.factor*tensor(op_list...)
-end
-
-function operators_sparse.sparse(x::LazySum)
-    result = x.factors[1]*sparse(x.operators[1])
-    for i=2:length(x.operators)
-        result += x.factors[i]*sparse(x.operators[i])
-    end
-    return result
-end
-
-function operators_sparse.sparse(x::LazyProduct)
-    result = x.factor*sparse(x.operators[1])
-    for i=2:length(x.operators)
-        result *= sparse(x.operators[i])
-    end
-    return result
-end
-
-function operators.dagger(op::LazyTensor)
-    D = Dict{Int, Operator}()
-    for (i, op_i) in op.operators
-        D[i] = dagger(op_i)
-    end
-    LazyTensor(op.basis_r, op.basis_l, D, conj(op.factor))
-end
-operators.dagger(op::LazySum) = LazySum(conj(op.factors), Operator[dagger(op_i) for op_i in op.operators])
-
-operators.trace(op::LazyTensor) = op.factor*prod([(haskey(op.operators,i) ? trace(op.operators[i]): prod(op.basis_l.shape)) for i=1:length(op.basis_l.bases)])
-operators.trace(op::LazySum) = sum([trace(x) for x=op.operators])
 
 function *(a::LazyTensor, b::LazyTensor)
     check_multiplicable(a.basis_r, b.basis_l)
@@ -222,6 +191,68 @@ end
 -(a::LazyOperator, b::LazySum) = LazySum([Complex(1.), -a.factors], [a, b.operators])
 -(a::LazySum, b::Operator) = LazySum([a.factors, -Complex(1.)], [a.operators, b])
 -(a::Operator, b::LazySum) = LazySum([Complex(1.), -a.factors], [a, b.operators])
+
+
+identityoperator(::Type{LazyTensor}, b1::Basis, b2::Basis) = LazyTensor(b1, b2, Dict{Vector{Int},Operator}())
+identityoperator(::Type{LazySum}, b1::Basis, b2::Basis) = LazySum(identityoperator(b1, b2))
+identityoperator(::Type{LazyProduct}, b1::Basis, b2::Basis) = LazyProduct(identityoperator(b1, b2))
+
+dagger(op::LazyTensor) = LazyTensor(op.basis_r, op.basis_l, Dict(I=>dagger(op_I) for (I, op_I) in op.operators), conj(op.factor))
+dagger(op::LazySum) = LazySum(conj(op.factors), Operator[dagger(op_i) for op_i in op.operators])
+dagger(op::LazyProduct) = LazyProduct(conj(op.factor), [dagger(op_i) for op_i in reverse(op.operators)])
+
+trace(op::LazyTensor) = op.factor*prod([(haskey(op.operators,i) ? trace(op.operators[i]): prod(op.basis_l.shape)) for i=1:length(op.basis_l.bases)])
+trace(op::LazySum) = sum([trace(x) for x=op.operators])
+trace(op::LazyProduct) = throw(ArgumentError("Trace of LazyProduct is not defined. Try to convert to another operator type first with e.g. full() or sparse()."))
+
+function ptrace(op::LazyTensor, indices::Vector{Int})
+    operators.check_ptrace_arguments(op, indices)
+    rank = length(op.basis_l.shape) - length(indices)
+    if rank==0
+        return trace(op)
+    end
+    D = Dict{Int,Operator}()
+    factor = op.factor
+    for (i, op_i) in op.operators
+        if i in indices
+            factor *= trace(op_i)
+        else
+            D[i] = op_i
+        end
+    end
+    if rank==1 && length(D)==1
+        return factor*first(values(D))
+    end
+    b_l = ptrace(op.basis_l, indices)
+    b_r = ptrace(op.basis_r, indices)
+    if rank==1
+        return identityoperator(b_l, b_r) * factor
+    end
+    LazyTensor(b_l, b_r, D, factor)
+end
+
+function ptrace(op::LazySum, indices::Vector{Int})
+    operators.check_ptrace_arguments(op, indices)
+    rank = length(op.basis_l.shape) - length(indices)
+    if rank==0
+        return trace(op)
+    end
+    D = Operator[ptrace(op_i, indices) for op_i in op.operators]
+    LazySum(op.factors, D)
+end
+
+ptrace(op::LazyProduct, indices::Vector{Int}) = throw(ArgumentError("Trace of LazyProduct is not defined. Try to convert to another operator type first with e.g. full() or sparse()."))
+
+
+function permutesystems(op::LazyTensor, perm::Vector{Int})
+    b_l = permutesystems(op.basis_l, perm)
+    b_r = permutesystems(op.basis_r, perm)
+    operators = Dict{Int,Operator}(findfirst(perm, i)=>op_i for (i, op_i) in op.operators)
+    LazyTensor(b_l, b_r, operators, op.factor)
+end
+operators.permutesystems(op::LazySum, perm::Vector{Int}) = LazySum(op.factors, Operator[permutesystems(op_i, perm) for op_i in op.operators])
+operators.permutesystems(op::LazyProduct, perm::Vector{Int}) = LazyProduct(op.factor, Operator[permutesystems(op_i, perm) for op_i in op.operators])
+
 
 @generated function _lazytensor_gemv!{RANK, INDEX}(rank::Array{Int, RANK}, index::Array{Int, INDEX},
                                         alpha, op::Operator, b::Ket, beta, result::Ket)
@@ -333,52 +364,5 @@ function operators.gemv!(alpha, a::Bra, b::LazyProduct, beta, result::Bra)
     operators.gemv!(alpha, tmp1, b.operators[end], beta, result)
 end
 
-
-function operators.ptrace(op::LazyTensor, indices::Vector{Int})
-    operators.check_ptrace_arguments(op, indices)
-    rank = length(op.basis_l.shape) - length(indices)
-    if rank==0
-        return trace(op)
-    end
-    D = Dict{Int,Operator}()
-    factor = op.factor
-    for (i, op_i) in op.operators
-        if i in indices
-            factor *= trace(op_i)
-        else
-            D[i] = op_i
-        end
-    end
-    if rank==1 && length(D)==1
-        return factor*first(values(D))
-    end
-    b_l = ptrace(op.basis_l, indices)
-    b_r = ptrace(op.basis_r, indices)
-    if rank==1
-        return identityoperator(b_l, b_r) * factor
-    end
-    LazyTensor(b_l, b_r, D, factor)
-end
-
-function operators.ptrace(op::LazySum, indices::Vector{Int})
-    operators.check_ptrace_arguments(op, indices)
-    rank = length(op.basis_l.shape) - length(indices)
-    if rank==0
-        return trace(op)
-    end
-    D = Operator[ptrace(op_i, indices) for op_i in op.operators]
-    LazySum(op.factors, D)
-end
-
-
-function operators.permutesystems(op::LazyTensor, perm::Vector{Int})
-    b_l = permutesystems(op.basis_l, perm)
-    b_r = permutesystems(op.basis_r, perm)
-    operators = Dict{Int,Operator}(findfirst(perm, i)=>op_i for (i, op_i) in op.operators)
-    LazyTensor(b_l, b_r, operators, op.factor)
-end
-
-operators.permutesystems(op::LazySum, perm::Vector{Int}) = LazySum(op.factors, Operator[permutesystems(op_i, perm) for op_i in op.operators])
-operators.permutesystems(op::LazyProduct, perm::Vector{Int}) = LazyProduct(op.factor, Operator[permutesystems(op_i, perm) for op_i in op.operators])
 
 end

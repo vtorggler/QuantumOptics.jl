@@ -12,15 +12,24 @@ end
 
 Idense = identityoperator(DenseOperator, b)
 Isparse = identityoperator(SparseOperator, b)
+Iltensor = identityoperator(LazyTensor, b)
+Ilsum = identityoperator(LazySum, b)
+Ilprod = identityoperator(LazyProduct, b)
 
 @test typeof(Idense) == DenseOperator
 @test typeof(Isparse) == SparseOperator
+@test typeof(Iltensor) == LazyTensor
+@test typeof(Ilsum) == LazySum
+@test typeof(Ilprod) == LazyProduct
 
 @test full(Isparse) == Idense
-@test Isparse == identityoperator(b)
+@test full(Iltensor) == Idense
+@test full(Ilsum) == Idense
+@test full(Ilprod) == Idense
 
 @test Isparse == identityoperator(b1) ⊗ identityoperator(b2) ⊗ identityoperator(b3)
 @test Idense == identityoperator(DenseOperator, b1) ⊗ identityoperator(DenseOperator, b2) ⊗ identityoperator(DenseOperator, b3)
+@test Iltensor == identityoperator(LazyTensor, b1) ⊗ identityoperator(LazyTensor, b2) ⊗ identityoperator(LazyTensor, b3)
 
 
 op = DenseOperator(b, rand(Complex128, length(b), length(b)))
