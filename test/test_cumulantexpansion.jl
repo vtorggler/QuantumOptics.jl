@@ -27,17 +27,17 @@ rho0 = cumulantexpansion.ProductDensityOperator([psi0 for i=1:N]...)
 γ = 1.
 δ = 0.2
 
-H = LazyTensor[LazyTensor(b, i, sigmaz, 0.5*δ) for i=1:N]
+H = cumulantexpansion.LazyTensor[cumulantexpansion.LazyTensor(b, i, sigmaz, 0.5*δ) for i=1:N]
 for i=1:N, j=1:N
     if i==j
         continue
     end
-    h = LazyTensor(b, [i, j], [sigmap, sigmam], Ω[i, j])
+    h = cumulantexpansion.LazyTensor(b, [i, j], [sigmap, sigmam], Ω[i, j])
     push!(H, h)
 end
 H = LazySum(H...)
-J = LazyTensor[LazyTensor(b, i, sigmam, γ) for i=1:N]
-# J = LazyTensor[]
+J = cumulantexpansion.LazyTensor[cumulantexpansion.LazyTensor(b, i, sigmam, γ) for i=1:N]
+# J = cumulantexpansion.LazyTensor[]
 
 tout, rho_t = cumulantexpansion.master(T, rho0, H, J)
 tout, rho_t_full = timeevolution.master(T, full(rho0), full(H), map(full, J))

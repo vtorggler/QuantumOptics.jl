@@ -57,13 +57,21 @@ test_op_equal(dagger(op1a ⊗ op2a), dagger(op1a) ⊗ dagger(op2a))
 # Case 1
 op = op1a ⊗ op2a
 op_sparse = sparse(op1a) ⊗ sparse(op2a)
+op_tensor = LazyTensor(CompositeBasis(b1a), CompositeBasis(b1b), Dict(1=>op1a)) ⊗ LazyTensor(CompositeBasis(b2a), CompositeBasis(b2b), Dict(1=>sparse(op2a)))
 
 @test typeof(op_sparse) == SparseOperator
+@test typeof(op_tensor) == LazyTensor
+
 test_op_equal(op_sparse, op)
+test_op_equal(op_tensor, op)
 
 # Case 2
 op = op1a ⊗ (op2a * dagger(op2b)) ⊗ (op3a + op3b)
 op_sparse = sparse(op1a) ⊗ (sparse(op2a) * dagger(sparse(op2b))) ⊗ (sparse(op3a) + sparse(op3b))
+op_tensor = op1a ⊗ LazyProduct(sparse(op2a), dagger(op2b)) ⊗ LazySum(op3a, sparse(op3b))
 
 @test typeof(op_sparse) == SparseOperator
+@test typeof(op_tensor) == LazyTensor
+
 test_op_equal(op_sparse, op)
+test_op_equal(op_tensor, op)

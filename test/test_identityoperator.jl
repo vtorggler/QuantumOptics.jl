@@ -31,11 +31,20 @@ Ilprod = identityoperator(LazyProduct, b)
 @test Idense == identityoperator(DenseOperator, b1) ⊗ identityoperator(DenseOperator, b2) ⊗ identityoperator(DenseOperator, b3)
 @test Iltensor == identityoperator(LazyTensor, b1) ⊗ identityoperator(LazyTensor, b2) ⊗ identityoperator(LazyTensor, b3)
 
-
 op = DenseOperator(b, rand(Complex128, length(b), length(b)))
 
 test_op_equal(op, identityoperator(op)*op)
 test_op_equal(op, op*identityoperator(op))
 
-test_op_equal(sparse(op), identityoperator(op)*op)
-test_op_equal(sparse(op), sparse(op)*identityoperator(sparse(op)))
+op = sparse(op)
+
+test_op_equal(op, identityoperator(op)*op)
+test_op_equal(op, op*identityoperator(op))
+
+op1 = DenseOperator(b1, rand(Complex128, length(b1), length(b1)))
+op2 = DenseOperator(b2, rand(Complex128, length(b2), length(b2)))
+op3 = DenseOperator(b3, rand(Complex128, length(b3), length(b3)))
+op = LazyTensor(b, Dict(1=>op1, 2=>op2, 3=>op3))
+
+test_op_equal(op, identityoperator(op)*op)
+test_op_equal(op, op*identityoperator(op))

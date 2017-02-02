@@ -10,6 +10,58 @@ using ..ode_dopri
 import Base: *, full
 import ..operators
 
+"""
+Lazy implementation of a tensor product of operators.
+
+The suboperators are stored as values in a dictionary where the key is
+the index of the subsystem. Additionally a complex factor is stored in the
+"factor" field which allows for fast multiplication with a number.
+"""
+type LazyTensor <: Operator
+    basis_l::CompositeBasis
+    basis_r::CompositeBasis
+    factor::Complex128
+    operators::Dict{Int,Operator}
+
+    function LazyTensor(basis_l::CompositeBasis, basis_r::CompositeBasis, operators::Dict{Int,Operator}, factor::Number=1.)
+        N = length(basis_l.bases)
+        @assert N==length(basis_r.bases)
+        @assert length(operators)==0 || maximum(keys(operators))<=N
+        @assert length(operators)==0 || 1<=minimum(keys(operators))
+        for (i,op) = operators
+            @assert op.basis_l==basis_l.bases[i] && op.basis_r==basis_r.bases[i]
+        end
+        new(basis_l, basis_r, complex(factor), operators)
+    end
+end
+
+function LazyTensor{T<:Operator}(basis_l::CompositeBasis, basis_r::CompositeBasis, indices::Vector{Int}, operators::Vector{T}, factor::Number=1.)
+    @assert length(indices) == length(Set(indices)) == length(operators)
+    LazyTensor(basis_l, basis_r, Dict{Int,Operator}(i=>op for (i,op)=zip(indices, operators)), factor)
+end
+
+LazyTensor(basis_l::CompositeBasis, basis_r::CompositeBasis, index::Int, operator::Operator, factor::Number=1.) = LazyTensor(basis_l, basis_r, [index], [operator], factor)
+LazyTensor(basis::CompositeBasis, indices, operators, factor::Number=1.) = LazyTensor(basis, basis, indices, operators, factor)
+
+function operators.dagger(op::LazyTensor)
+    D = Dict{Int, Operator}()
+    for (i, op_i) in op.operators
+        D[i] = dagger(op_i)
+    end
+    LazyTensor(op.basis_r, op.basis_l, D, conj(op.factor))
+end
+
+function operators.full(x::LazyTensor)
+    op_list = DenseOperator[]
+    for i=1:length(x.basis_l.bases)
+        if i in keys(x.operators)
+            push!(op_list, full(x.operators[i]))
+        else
+            push!(op_list, identityoperator(DenseOperator, x.basis_l.bases[i], x.basis_r.bases[i]))
+        end
+    end
+    return x.factor*tensor(op_list...)
+end
 
 type ProductDensityOperator <: Operator
     basis_l::CompositeBasis

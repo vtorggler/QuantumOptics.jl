@@ -24,6 +24,7 @@ I1 = full(identityoperator(b1))
 I2 = full(identityoperator(b2))
 I3 = full(identityoperator(b3))
 
+# LazyTensor
 op = LazyTensor(b, Dict(1=>op1a, 2=>op2a, 3=>op3a))
 test_op_equal(op1a⊗op2a⊗op3a, full(op))
 test_op_equal(op1a⊗op2a⊗op3a, sparse(op))
@@ -51,3 +52,39 @@ test_op_equal(I1⊗op2a⊗I3, sparse(op))
 op = LazyTensor(b, Dict(3=>op3a))
 test_op_equal(I1⊗I2⊗op3a, full(op))
 test_op_equal(I1⊗I2⊗op3a, sparse(op))
+
+x = LazyTensor(b, Dict(3=>op3a))
+y = LazyTensor(b, Dict([1,3]=>sparse(op1b⊗op3b)))
+test_op_equal(op1b⊗I2⊗(op3a*op3b), x*y)
+
+x = LazyTensor(b, Dict([2,1,3]=>sparse(op2b⊗op1b⊗op3b)))
+y = LazyTensor(b, Dict([2]=>op2a))
+test_op_equal(op1b⊗(op2b*op2a)⊗op3b, x*y)
+
+
+# LazySum
+op = LazySum(op1a, op1b)
+test_op_equal(op1a+op1b, full(op))
+test_op_equal(op1a+op1b, sparse(op))
+
+op = LazySum(sparse(op1a), sparse(op1b))
+test_op_equal(op1a+op1b, full(op))
+test_op_equal(op1a+op1b, sparse(op))
+
+op = LazySum(sparse(op1a), op1b)
+test_op_equal(op1a+op1b, full(op))
+test_op_equal(op1a+op1b, sparse(op))
+
+
+# LazyProduct
+op = LazyProduct(op1a, op1b)
+test_op_equal(op1a*op1b, full(op))
+test_op_equal(op1a*op1b, sparse(op))
+
+op = LazyProduct(sparse(op1a), sparse(op1b))
+test_op_equal(op1a*op1b, full(op))
+test_op_equal(op1a*op1b, sparse(op))
+
+op = LazyProduct(sparse(op1a), op1b)
+test_op_equal(op1a*op1b, full(op))
+test_op_equal(op1a*op1b, sparse(op))
