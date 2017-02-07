@@ -139,16 +139,16 @@ SparseOperators
 
 .. _section-api-lazyoperators:
 
-LazyOperators
-^^^^^^^^^^^^^
+Lazy Operators
+^^^^^^^^^^^^^^
 
-.. jl:autoabstract:: operators_lazy.jl LazyOperator
+.. jl:autoabstract:: operators_lazy.jl LazyWrapper
 
-.. jl:autotype:: operators_lazy.jl LazyTensor
+.. jl:autotype:: operators_lazytensor.jl LazyTensor
 
-.. jl:autotype:: operators_lazy.jl LazySum
+.. jl:autotype:: operators_lazysum.jl LazySum
 
-.. jl:autotype:: operators_lazy.jl LazyProduct
+.. jl:autotype:: operators_lazyproduct.jl LazyProduct
 
 
 

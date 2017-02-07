@@ -68,7 +68,7 @@ test_op_equal(op_tensor, op)
 # Case 2
 op = op1a ⊗ (op2a * dagger(op2b)) ⊗ (op3a + op3b)
 op_sparse = sparse(op1a) ⊗ (sparse(op2a) * dagger(sparse(op2b))) ⊗ (sparse(op3a) + sparse(op3b))
-op_tensor = op1a ⊗ LazyProduct(sparse(op2a), dagger(op2b)) ⊗ LazySum(op3a, sparse(op3b))
+op_tensor = lazy(op1a) ⊗ lazy(lazy(sparse(op2a)) * dagger(lazy(op2b))) ⊗ lazy(lazy(op3a) + lazy(sparse(op3b)))
 
 @test typeof(op_sparse) == SparseOperator
 @test typeof(op_tensor) == LazyTensor

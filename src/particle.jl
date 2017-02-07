@@ -305,7 +305,7 @@ Second p-derivative in real space.
 laplace_p(b::PositionBasis) = SparseOperator(b, spdiagm(complex(samplepoints(b)).^2, 0, length(b), length(b)))
 
 
-type FFTOperator <: LazyOperator
+type FFTOperator <: Operator
     basis_l::Basis
     basis_r::Basis
     fft_l!

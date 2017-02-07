@@ -21,28 +21,28 @@ I = identityoperator(basis_fock)
 
 rho0 = cumulantexpansion.ProductDensityOperator([coherentstate(basis_fock, i%Ncutoff) for i=1:N]...)
 
-J = cumulantexpansion.LazyTensor[]
-Jdagger = cumulantexpansion.LazyTensor[]
+J = LazyTensor[]
+Jdagger = LazyTensor[]
 
 # Interaction picture
-Hrot = cumulantexpansion.LazyTensor[]
+Hrot = LazyTensor[]
 for i=1:N, j=1:N
     if i==j
         continue
     end
-    h = cumulantexpansion.LazyTensor(basis, [i,j], [a, at], Ω[i,j])
+    h = LazyTensor(basis, [i,j], [a, at], Ω[i,j])
     push!(Hrot, h)
 end
 Hrot = LazySum(Hrot...)
 
 # Schroedinger picture
 function f(t, rho)
-    H = cumulantexpansion.LazyTensor[cumulantexpansion.LazyTensor(basis, i, at*a, ω[i]) for i=1:N]
+    H = LazyTensor[LazyTensor(basis, i, at*a, ω[i]) for i=1:N]
     for i=1:N, j=1:N
         if i==j
             continue
         end
-        h = cumulantexpansion.LazyTensor(basis, [i,j], [a, at], exp(1im*(ω[i]-ω[j])*t)*Ω[i,j])
+        h = LazyTensor(basis, [i,j], [a, at], exp(1im*(ω[i]-ω[j])*t)*Ω[i,j])
         push!(H, h)
     end
     LazySum(H...), J, Jdagger

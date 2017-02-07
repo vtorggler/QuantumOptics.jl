@@ -151,6 +151,9 @@ function embed{T<:Operator}(basis_l::CompositeBasis, basis_r::CompositeBasis,
                             operators::Dict{Vector{Int}, T})
     @assert length(basis_l.bases) == length(basis_r.bases)
     N = length(basis_l.bases)
+    if length(operators) == 0
+        return identityoperator(T, basis_l, basis_r)
+    end
     indices, operator_list = zip(operators...)
     operator_list = [operator_list...;]
     indices = [indices...;]

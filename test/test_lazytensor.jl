@@ -42,26 +42,22 @@ op = LazyTensor(b, Dict(1=>sparse(op1a), 3=>op3a))
 test_op_equal(op1a⊗I2⊗op3a, full(op))
 test_op_equal(op1a⊗I2⊗op3a, sparse(op))
 
-op = LazyTensor(b, [1,3], [sparse(op1a), op3a])
-test_op_equal(op1a⊗I2⊗op3a, full(op))
-test_op_equal(op1a⊗I2⊗op3a, sparse(op))
-
-op = LazyTensor(b, Dict(1=>op1a))
+op = LazyTensor(b, 1, op1a)
 test_op_equal(op1a⊗I2⊗I3, full(op))
 test_op_equal(op1a⊗I2⊗I3, sparse(op))
 
-op = LazyTensor(b, Dict(2=>op2a))
+op = LazyTensor(b, 2, op2a)
 test_op_equal(I1⊗op2a⊗I3, full(op))
 test_op_equal(I1⊗op2a⊗I3, sparse(op))
 
-op = LazyTensor(b, Dict(3=>op3a))
+op = LazyTensor(b, 3, op3a)
 test_op_equal(I1⊗I2⊗op3a, full(op))
 test_op_equal(I1⊗I2⊗op3a, sparse(op))
 
-x = LazyTensor(b, Dict(3=>op3a))
-y = LazyTensor(b, [1,3], [sparse(op1b), op3b])
+x = LazyTensor(b, 3, op3a)
+y = LazyTensor(b, [1,3], [sparse(op1b), sparse(op3b)])
 test_op_equal(op1b⊗I2⊗(op3a*op3b), x*y)
 
 x = LazyTensor(b, [2,1,3], [sparse(op2b), op1b, op3b])
-y = LazyTensor(b, Dict(2=>op2a))
+y = LazyTensor(b, 2, op2a)
 test_op_equal(op1b⊗(op2b*op2a)⊗op3b, x*y)

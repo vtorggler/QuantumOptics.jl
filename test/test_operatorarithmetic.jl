@@ -62,7 +62,7 @@ test_op_equal(op1/7, (1/7)*op1)
 # Case 1
 result = 0.1*op1 + 0.3*op2 - op3/4
 result_sparse = 0.1*sparse(op1) + 0.3*sparse(op2) - sparse(op3)/4
-result_lsum = 0.1*LazySum(op1) + 0.3*op2 - LazySum(op3)/4
+result_lsum = 0.1*lazy(op1) + 0.3*lazy(op2) - lazy(op3)/4
 
 @test typeof(result_sparse) == SparseOperator
 @test typeof(result_lsum) == LazySum
@@ -73,7 +73,7 @@ test_op_equal(result, result_lsum)
 # Case 2
 result = 0.3*op1*dagger(op2)/7
 result_sparse = 0.3*sparse(op1)*dagger(sparse(op2))/7
-result_lprod = 0.3*LazyProduct(op1)*dagger(LazyProduct(op2))/7
+result_lprod = 0.3*lazy(op1)*dagger(lazy(op2))/7
 
 @test typeof(result_sparse) == SparseOperator
 @test typeof(result_lprod) == LazyProduct

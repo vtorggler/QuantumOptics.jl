@@ -29,6 +29,7 @@ Ilprod = identityoperator(LazyProduct, b)
 
 @test Isparse == identityoperator(b1) ⊗ identityoperator(b2) ⊗ identityoperator(b3)
 @test Idense == identityoperator(DenseOperator, b1) ⊗ identityoperator(DenseOperator, b2) ⊗ identityoperator(DenseOperator, b3)
+identityoperator(LazyTensor, b1) ⊗ identityoperator(LazyTensor, b2) ⊗ identityoperator(LazyTensor, b3)
 @test Iltensor == identityoperator(LazyTensor, b1) ⊗ identityoperator(LazyTensor, b2) ⊗ identityoperator(LazyTensor, b3)
 
 op = DenseOperator(b, rand(Complex128, length(b), length(b)))
