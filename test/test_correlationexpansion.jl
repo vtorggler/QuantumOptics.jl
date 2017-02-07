@@ -39,3 +39,50 @@ for (c, sigma) in x.correlations
 end
 
 println(tracedistance(correlationexpansion.full(x), rho))
+
+
+# Test time evolution
+T = [0.:0.1:0.5;]
+
+spinbasis = SpinBasis(1//2)
+I = full(identityoperator(spinbasis))
+sigmax = spin.sigmax(spinbasis)
+sigmay = spin.sigmay(spinbasis)
+sigmaz = spin.sigmaz(spinbasis)
+sigmap = spin.sigmap(spinbasis)
+sigmam = spin.sigmam(spinbasis)
+
+N = 2
+b = tensor([spinbasis for i=1:N]...)
+
+S2 = correlationexpansion.correlationmasks(N, 2)
+# S3 = correlationexpansion.correlationmasks(N, 3)
+
+psi0 = normalize(spinup(spinbasis) + 0.5*spindown(spinbasis))
+rho0 = correlationexpansion.ApproximateOperator([psi0⊗dagger(psi0) for i=1:N], S2)
+
+Ω = [1. 2. 3.;
+     2. 1. 4.;
+     3. 4. 1.]
+γ = 1.
+δ = 0.2
+
+Γ = eye(Complex128, N, N)
+
+H = sum([lazy(LazyTensor(b, i, sigmaz, 0.5*δ)) for i=1:N])
+
+for i=1:N, j=1:N
+    if i==j
+        continue
+    end
+    H += lazy(LazyTensor(b, [i, j], [sigmap, sigmam], Ω[i, j]))
+end
+
+J = LazyTensor[LazyTensor(b, i, sigmam, γ) for i=1:N]
+Jdagger = LazyTensor[dagger(LazyTensor(b, i, sigmam, γ)) for i=1:N]
+
+correlationexpansion.dmaster(rho0, H, Γ, J, Jdagger)
+
+
+# tout, rho_t = cumulantexpansion.master(T, rho0, H, J)
+# tout, rho_t_full = timeevolution.master(T, full(rho0), full(H), map(full, J))

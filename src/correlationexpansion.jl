@@ -1,11 +1,16 @@
 module correlationexpansion
 
+import Base: trace, ==, +, -, *, /
+import ..operators: dagger, identityoperator,
+                    trace, ptrace, normalize!, tensor, permutesystems,
+                    gemv!, gemm!
+
 using Combinatorics, Iterators
 using ..bases
 # using ..states
 using ..operators
 using ..operators_dense
-# using ..operators_lazy
+using ..operators_lazy
 # using ..ode_dopri
 
 # import Base: *, full
@@ -73,7 +78,22 @@ function ApproximateOperator{N}(basis_l::CompositeBasis, basis_r::CompositeBasis
 end
 
 ApproximateOperator{N}(basis::CompositeBasis, S::Set{Mask{N}}) = ApproximateOperator(basis, basis, S)
-
+function ApproximateOperator{N}(operators::Vector, S::Set{Mask{N}})
+    @assert length(operators) == N
+    correlations = Dict{Mask{N}, DenseOperator}()
+    for op in operators
+        @assert typeof(op) <: Operator
+    end
+    for mask in S
+        @assert sum(mask) > 1
+        b_l = CompositeBasis([op.basis_l for op in operators[[mask...]]]...)
+        b_r = CompositeBasis([op.basis_r for op in operators[[mask...]]]...)
+        correlations[mask] = DenseOperator(b_l, b_r)
+    end
+    b_l = CompositeBasis([op.basis_l for op in operators]...)
+    b_r = CompositeBasis([op.basis_r for op in operators]...)
+    ApproximateOperator{N}(b_l, b_r, (operators...), correlations)
+end
 
 """
 Tensor product of a correlation and the density operators of the other subsystems.
@@ -216,7 +236,7 @@ function *{N}(rho::ApproximateOperator{N}, op::LazyTensor)
 end
 
 function *{N}(op::LazyTensor, rho::ApproximateOperator{N})
-    operators = ([i ∈ op.operators ? rho.operators[i]*op.operators[i] : copy(rho.operators[i]) for i=1:N]...)
+    operator_list = ([i ∈ keys(op.operators) ? rho.operators[i]*op.operators[i] : copy(rho.operators[i]) for i=1:N]...)
     correlations = Dict{Mask{N}, DenseOperator}()
     for mask in keys(rho.correlations)
         I = mask2indices(mask)
@@ -224,12 +244,12 @@ function *{N}(op::LazyTensor, rho::ApproximateOperator{N})
         if isempty(D)
             correlations[mask] = rho.correlations[mask]
         else
-            I_ = operators.complement(I)
+            I_ = operators.complement(N, I)
             op_I = embed(ptrace(op.basis_l, I_), ptrace(op.basis_r, I_), operators_lazy.removeindices(D, I_))
             correlations[mask] = op_I*rho.correlations[mask]
         end
     end
-    ApproximateOperator{N}(basis_l, basis_r, operators, correlations)
+    ApproximateOperator{N}(basis_l, basis_r, operator_list, correlations)
 end
 
 function dmaster{N}(rho::ApproximateOperator{N}, H::LazySum,
@@ -266,7 +286,4 @@ function dmaster{N}(rho::ApproximateOperator{N}, H::LazySum,
     return ApproximateOperator(rho.basis_l, rho.basis_r, doperators, dcorrelations, rho.factor)
 end
 
-end
-
-
-end
+end # module
