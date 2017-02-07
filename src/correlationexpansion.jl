@@ -4,6 +4,7 @@ using Combinatorics, Iterators
 using ..bases
 # using ..states
 using ..operators
+using ..operators_dense
 # using ..operators_lazy
 # using ..ode_dopri
 
@@ -39,12 +40,14 @@ correlations
 type ApproximateOperator{N} <: Operator
     basis_l::CompositeBasis
     basis_r::CompositeBasis
+    factor::Complex128
     operators::NTuple{N, Operator}
     correlations::Dict{Mask{N}, Operator}
 
     function ApproximateOperator{N}(basis_l::CompositeBasis, basis_r::CompositeBasis,
                 operators::NTuple{N, DenseOperator},
-                correlations::Dict{Mask{N}, DenseOperator})
+                correlations::Dict{Mask{N}, DenseOperator},
+                factor::Number=1.)
         @assert N == length(basis_l.bases) == length(basis_r.bases)
         for i=1:N
             @assert operators[i].basis_l == basis_l.bases[i]
@@ -55,7 +58,7 @@ type ApproximateOperator{N} <: Operator
             @assert op.basis_l == tensor(basis_l.bases[[mask...]]...)
             @assert op.basis_r == tensor(basis_r.bases[[mask...]]...)
         end
-        new(basis_l, basis_r, operators, correlations)
+        new(basis_l, basis_r, factor, operators, correlations)
     end
 end
 
@@ -96,9 +99,10 @@ function embedcorrelation{N}(operators::NTuple{N, DenseOperator}, mask::Mask{N},
     perm = sortperm([mask2indices(mask); mask2indices(complement(mask))])
     permutesystems(op, perm)
 end
+embedcorrelation{N}(operators::NTuple{N, DenseOperator}, indices::Vector{Int}, correlation::DenseOperator) = embedcorrelation(operators, indices2mask(indices), correlation)
 
 """
-Calculate the correlation of the subsystems specified by the given index mask.
+Calculate the normalized correlation of the subsystems specified by the given index mask.
 
 Arguments
 ---------
@@ -116,7 +120,7 @@ subcorrelations
     A (mask->operator) dictionary storing already calculated correlations.
 """
 function correlation{N}(rho::DenseOperator, mask::Mask{N};
-            operators::NTuple{N, DenseOperator}=([ptrace(rho, complement(N, [i]))
+            operators::NTuple{N, DenseOperator}=([ptrace(normalize(rho), complement(N, [i]))
                                                   for i in 1:N]...),
             subcorrelations::Dict{Mask{N}, DenseOperator}=Dict())
     # Check if this correlation was already calculated.
@@ -124,6 +128,7 @@ function correlation{N}(rho::DenseOperator, mask::Mask{N};
         return subcorrelations[mask]
     end
     order = sum(mask)
+    rho = normalize(rho)
     σ = ptrace(rho, mask2indices(complement(mask)))
     σ -= tensor(operators[[mask...]]...)
     for submask in subcorrelationmasks(mask)
@@ -152,6 +157,8 @@ masks
     if the n-th subsystem is included in the correlation.
 """
 function approximate{N}(rho::DenseOperator, masks::Set{Mask{N}})
+    alpha = trace(rho)
+    rho = normalize(rho)
     operators = ([ptrace(rho, complement(N, [i])) for i in 1:N]...)
     subcorrelations = Dict{Mask{N}, DenseOperator}() # Dictionary to store intermediate results
     correlations = Dict{Mask{N}, DenseOperator}()
@@ -160,16 +167,106 @@ function approximate{N}(rho::DenseOperator, masks::Set{Mask{N}})
                                          operators=operators,
                                          subcorrelations=subcorrelations)
     end
-    ApproximateOperator{N}(rho.basis_l, rho.basis_r, operators, correlations)
+    ApproximateOperator{N}(rho.basis_l, rho.basis_r, operators, correlations, alpha)
 end
 
+ptrace{N}(mask::Mask{N}, indices::Vector{Int}) = (mask[complement(indices)]...)
+
+function ptrace{N}(rho::ApproximateOperator{N}, indices::Vector{Int})
+    operators = (rho.operators[complement(indices)]...)
+    factors = [trace(op) for op in rho.operators]
+    result = tensor(operators...)
+    for mask in keys(rho.correlations)
+        I = mask2indices(mask)
+        J = I ∩ indices
+        if isempty(J)
+            correlation = rho.correlations[mask]
+        else
+            correlation = ptrace(rho.correlations[mask], J)
+        end
+        factor = prod(factors[setdiff(indices, I)])
+        result += factor*embedcorrelation(operators, ptrace(mask, indices), correlation)
+    end
+    rho.factor*result
+end
 
 function full{N}(rho::ApproximateOperator{N})
     result = tensor(rho.operators...)
     for (mask, correlation) in rho.correlations
         result += embedcorrelation(rho.operators, mask, correlation)
     end
-    result
+    rho.factor*result
 end
+
+function *{N}(rho::ApproximateOperator{N}, op::LazyTensor)
+    operators = ([i ∈ op.operators ? rho.operators[i]*op.operators[i] : copy(rho.operators[i]) for i=1:N]...)
+    correlations = Dict{Mask{N}, DenseOperator}()
+    for mask in keys(rho.correlations)
+        I = mask2indices(mask)
+        D = Dict(i=>op.operators[i] for i in I ∩ keys(op.operators))
+        if isempty(D)
+            correlations[mask] = rho.correlations[mask]
+        else
+            I_ = operators.complement(I)
+            op_I = embed(ptrace(op.basis_l, I_), ptrace(op.basis_r, I_), D)
+            correlations[mask] = rho.correlations[mask]*op_I
+        end
+    end
+    ApproximateOperator{N}(basis_l, basis_r, operators, correlations)
+end
+
+function *{N}(op::LazyTensor, rho::ApproximateOperator{N})
+    operators = ([i ∈ op.operators ? rho.operators[i]*op.operators[i] : copy(rho.operators[i]) for i=1:N]...)
+    correlations = Dict{Mask{N}, DenseOperator}()
+    for mask in keys(rho.correlations)
+        I = mask2indices(mask)
+        D = Dict(i=>op.operators[i] for i in I ∩ keys(op.operators))
+        if isempty(D)
+            correlations[mask] = rho.correlations[mask]
+        else
+            I_ = operators.complement(I)
+            op_I = embed(ptrace(op.basis_l, I_), ptrace(op.basis_r, I_), operators_lazy.removeindices(D, I_))
+            correlations[mask] = op_I*rho.correlations[mask]
+        end
+    end
+    ApproximateOperator{N}(basis_l, basis_r, operators, correlations)
+end
+
+function dmaster{N}(rho::ApproximateOperator{N}, H::LazySum,
+                    Gamma::Matrix{Complex128}, J::Vector{LazyTensor}, Jdagger::Vector{LazyTensor})
+    A = LazySum([a*(h*rho) for (a, h) in zip(H.factors, H.operators)])
+    A -= LazySum([a*(rho*h) for (a, h) in zip(H.factors, H.operators)])
+    for j=1:length(J), i=1:length(J)
+        A += Gamma[i,j]*(J[i]*rho*Jdagger[j])
+        A -= Gamma[i,j]*0.5*(Jdagger[j]*(J[i]*rho))
+        A -= Gamma[i,j]*0.5*((rho*Jdagger[j])*J[i])
+    end
+    doperators = ([ptrace(A, complement(N, [i])) for i=1:N]...)
+    dcorrelations = Dict{Mask{N}, DenseOperator}()
+    for order=2:N
+        for mask in correlationmasks(Set(keys(A.correlations)), order)
+            I = mask2indices(mask)
+            suboperators = rho.operators[I]
+            # Tr{̇̇d/dt ρ}
+            σ_I = ptrace(A, complement(I))
+            # d/dt ρ^{s_k}
+            for i = 1:order
+                σ_I -= embedcorrelation(suboperators, [i], doperators[I[i]])
+            end
+            # d/dt σ^{s}
+            for submask in keys(dcorrelations) ∩ subcorrelationmasks(mask)
+                σ_I -= embedcorrelation(suboperators, ptrace(submask, I), dcorrelations[submask])
+                for i in setdiff(complement(N, I), mask2indices(complement(mask)))
+                    ops = ([i==j ? doperators[j] : rho.operators[j] for j in I]...)
+                    σ_I -= embedcorrelation(ops, ptrace(submask, I), operators.correlations[submask])
+                end
+            end
+        end
+    end
+    return ApproximateOperator(rho.basis_l, rho.basis_r, doperators, dcorrelations, rho.factor)
+end
+
+end
+
 
 end
