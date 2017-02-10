@@ -25,8 +25,19 @@ complement(N::Int, indices::Vector{Int}) = Int[i for i=1:N if i ∉ indices]
 complement{N}(mask::Mask{N}) = tuple([! x for x in mask]...)
 
 correlationindices(N::Int, order::Int) = Set(combinations(1:N, order))
-correlationmasks(N::Int, order::Int) = Set(indices2mask(N, indices) for indices in
-        correlationindices(N, order))
+function correlationmasks(N::Int)
+    S = Set{Mask{N}}()
+    for n=2:N
+        S = S ∪ correlationmasks(N, n)
+    end
+    S
+end
+function correlationmasks(N::Int, order::Int)
+    @assert N > 1
+    @assert order > 1
+    @assert N >= order
+    Set(indices2mask(N, indices) for indices in correlationindices(N, order))
+end
 correlationmasks{N}(S::Set{Mask{N}}, order::Int) = Set(s for s in S if sum(s)==order)
 subcorrelationmasks{N}(mask::Mask{N}) = Set(indices2mask(N, indices) for indices in
         chain([combinations(mask2indices(mask), k) for k=2:sum(mask)-1]...))
@@ -87,10 +98,14 @@ function ApproximateOperator{N}(operators::Vector, S::Set{Mask{N}})
     end
     ApproximateOperator{N}((operators...), correlations)
 end
+function ApproximateOperator(operators::Vector)
+    N = length(operators)
+    ApproximateOperator{N}((operators...), Dict{Mask{N}, DenseOperator}())
+end
 
 function datalength{N}(x::ApproximateOperator{N})
-    L = sum([length(op.basis_l)*length(op.basis_r) for op in x.operators])
-    L += sum([length(op.basis_l)*length(op.basis_r) for op in values(x.correlations)])
+    L = sum(Int[length(op.basis_l)*length(op.basis_r) for op in x.operators])
+    L += sum(Int[length(op.basis_l)*length(op.basis_r) for op in values(x.correlations)])
     L
 end
 
@@ -193,6 +208,11 @@ function approximate{N}(rho::DenseOperator, masks::Set{Mask{N}})
     end
     ApproximateOperator{N}(operators, correlations, alpha)
 end
+function approximate(rho::DenseOperator)
+    @assert typeof(rho.basis_l) == CompositeBasis
+    N = length(rho.basis_l.bases)
+    approximate(rho, Set{Mask{N}}())
+end
 
 ptrace{N}(mask::Mask{N}, indices::Vector{Int}) = (mask[complement(N, indices)]...)
 
@@ -283,7 +303,6 @@ function dmaster{N}(rho::ApproximateOperator{N}, H::LazySum,
     dcorrelations = Dict{Mask{N}, DenseOperator}()
     for order=2:N
         for mask in correlationmasks(Set(keys(rho.correlations)), order)
-            # println("s_k: ", mask)
             I = mask2indices(mask)
             suboperators = rho.operators[I]
             # Tr{̇̇d/dt ρ}
@@ -294,20 +313,15 @@ function dmaster{N}(rho::ApproximateOperator{N}, H::LazySum,
             end
             # d/dt σ^{s}
             for submask in keys(dcorrelations) ∩ subcorrelationmasks(mask)
-                # println("s: ", submask)
                 σ_I -= embedcorrelation(suboperators, (submask[I]...), dcorrelations[submask])
-                # σ_I -= embedcorrelation(suboperators, submask, dcorrelations[submask])
                 for i in setdiff(mask2indices(complement(submask)), mask2indices(complement(mask)))
-                    # println("i: ", i)
                     ops = ([i==j ? doperators[j] : rho.operators[j] for j in I]...)
                     σ_I -= embedcorrelation(ops, (submask[I]...), rho.correlations[submask])
-                    # σ_I -= embedcorrelation(doperators, submask, rho.correlations[submask])
                 end
             end
             dcorrelations[mask] = σ_I
         end
     end
-    # error()
     return ApproximateOperator{N}(doperators, dcorrelations, rho.factor)
 end
 
@@ -367,7 +381,7 @@ function integrate_master{N}(dmaster::Function, tspan, rho0::ApproximateOperator
 end
 
 function master{N}(tspan, rho0::ApproximateOperator{N}, H::LazySum, J::Vector{LazyTensor};
-                    Gamma::Union{Vector{Float64}, Matrix{Float64}}=ones(Float64, length(J), length(J)),
+                    Gamma::Union{Vector{Float64}, Matrix{Float64}}=eye(Float64, length(J), length(J)),
                 fout::Union{Function,Void}=nothing,
                 kwargs...)
     Jdagger = LazyTensor[dagger(j) for j=J]
