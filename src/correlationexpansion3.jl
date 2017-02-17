@@ -1,4 +1,4 @@
-module correlationexpansion
+module correlationexpansion3
 
 import Base: trace, ==, +, -, *, /
 import ..operators: dagger, identityoperator,
@@ -299,98 +299,10 @@ function issupermask{N}(mask::Mask{N}, supermask::Mask{N})
     true
 end
 
-function embedcorrelation{T<:Operator}(operators::Dict{Vector{Int}, T})
-    indices, operator_list = zip(operators...)
-    indices = collect(indices)
-    perm = sortperm(indices, by=x->x[1])
-    indices = [indices[perm]...;]
-    operator_list = collect(operator_list)[perm]
-    # println(typeof(operator_list))
-    # println(indices)
-    # @assert Set(indices) == Set([1:length(indices);])
-    op = tensor(operator_list...)
-    if indices == [1:length(indices);]
-        # println("No permute")
-        return op
-    else
-        # println("permute")
-        perm = sortperm(indices)
-        return permutesystems(op, perm)
-    end
-end
-
-function _ptrace{N}(rho::ApproximateOperator{N}, H::LazySum,
-                    H_rho::Vector{ApproximateOperator{N}}, rho_H::Vector{ApproximateOperator{N}},
-                    Gamma::Matrix{Float64}, J::Vector{LazyTensor}, Jdagger::Vector{LazyTensor},
-                    indices::Vector{Int})
-    I_trace_compl = complement(N, indices)
-    basis_l = ptrace(rho.basis_l, indices)
-    basis_r = ptrace(rho.basis_r, indices)
-    result = DenseOperator(basis_l, basis_r)
-    h_index = 0
-    for (a, h) in zip(H.factors, H.operators)
-        h_index += 1
-        I_op = collect(keys(h.operators))
-        # println(I_op)
-        J = setdiff(I_op, indices)
-        if length(J)==0
-            continue
-        end
-        # println(typeof(i=>h.operators[i]*rho.operators[i] for i in J))
-        # println(J)
-        h_rho = Dict{Int,DenseOperator}(i=>H_rho[h_index].operators[i] for i in J)
-        rho_h = Dict{Int,DenseOperator}(i=>rho_H[h_index].operators[i] for i in J)
-        factor = -1im*h.factor*a
-        factors = Dict{Int,Complex128}(i=>trace(H_rho[h_index].operators[i]) for i in I_op ∩ indices)
-        f = factor*prod(values(factors))
-        result += f*tensor([i ∈ J ? h_rho[i] : rho.operators[i] for i=1:N if i ∉ indices]...)
-        result -= f*tensor([i ∈ J ? rho_h[i] : rho.operators[i] for i=1:N if i ∉ indices]...)
-        for (mask, correlation) in rho.correlations
-            I_cor = mask2indices(mask)
-            if length(setdiff(indices ∩ I_cor, I_op)) != 0
-                continue
-            end
-            # h_ = tensor([i ∈ I_op ? h.operators[i] : identityoperator(DenseOperator, h.basis_l.bases[i], h.basis_r.bases[i]) for i in I_cor]...)
-            I_cor_ = [i for i=1:length(I_trace_compl) if I_trace_compl[i] ∈ I_cor]
-            # h_σ = Dict(I_cor_=>ptrace(h_*correlation, [i for i=1:length(I_cor) if I_cor[i] in indices]))
-            # σ_h = Dict(I_cor_=>ptrace(correlation*h_, [i for i=1:length(I_cor) if I_cor[i] in indices]))
-            h_σ = Dict(I_cor_=>ptrace(H_rho[h_index].correlations[mask], [i for i=1:length(I_cor) if I_cor[i] in indices]))
-            σ_h = Dict(I_cor_=>ptrace(rho_H[h_index].correlations[mask], [i for i=1:length(I_cor) if I_cor[i] in indices]))
-            for i in I_trace_compl
-                if i ∈ I_cor
-                    continue
-                elseif i ∈ I_op
-                    j = [i-sum(indices.<i)]
-                    h_σ[j] = h_rho[i]
-                    σ_h[j] = rho_h[i]
-                else
-                    j = [i-sum(indices.<i)]
-                    h_σ[j] = rho.operators[i]
-                    σ_h[j] = rho.operators[i]
-                end
-            end
-            f = factor*prod(Complex128[factors[i] for i in setdiff(I_op ∩ indices, I_cor)])
-            result += f*embedcorrelation(h_σ)
-            result -= f*embedcorrelation(σ_h)
-        end
-    end
-    # A = LazySum([-1im*a*(h*rho) for (a, h) in zip(H.factors, H.operators)]...)
-    # A -= LazySum([-1im*a*(rho*h) for (a, h) in zip(H.factors, H.operators)]...)
-    # for j=1:length(J), i=1:length(J)
-    #     A += Gamma[i,j]*lazy(J[i]*rho*Jdagger[j])
-    #     A -= Gamma[i,j]*0.5*lazy(Jdagger[j]*(J[i]*rho))
-    #     A -= Gamma[i,j]*0.5*lazy((rho*Jdagger[j])*J[i])
-    # end
-    result
-end
-
-function ptrace_recursive{N}(rho::ApproximateOperator{N}, H::LazySum,
-                    h_rho::Vector{ApproximateOperator{N}}, rho_h::Vector{ApproximateOperator{N}},
-                    Gamma::Matrix{Float64}, J::Vector{LazyTensor}, Jdagger::Vector{LazyTensor},
-                    mask::Mask{N}, P::Dict{Mask{N}, DenseOperator})
+function ptrace_recursive{N}(mask::Mask{N}, P::Dict{Mask{N}, DenseOperator}, A)
     supermasks = [s for s in keys(P) if issupermask(mask, s)]
     if length(supermasks)==0
-        result = _ptrace(rho, H, h_rho, rho_h, Gamma, J, Jdagger, mask2indices(complement(mask)))
+        result = full(ptrace(A, mask2indices(complement(mask))))
     else
         i = indmin([length(P[s].basis_l)*length(P[s].basis_r) for s in supermasks])
         supermask = supermasks[i]
@@ -400,30 +312,27 @@ function ptrace_recursive{N}(rho::ApproximateOperator{N}, H::LazySum,
     result
 end
 
-function ptraces{N}(rho::ApproximateOperator{N}, H::LazySum,
-                    Gamma::Matrix{Float64}, J::Vector{LazyTensor}, Jdagger::Vector{LazyTensor})
+function ptraces{N}(rho::ApproximateOperator{N}, A)
     correlations = Dict{Mask{N}, DenseOperator}()
-    h_rho = ApproximateOperator{N}[h*rho for h in H.operators]
-    rho_h = ApproximateOperator{N}[rho*h for h in H.operators]
     for n=N:-1:2
         for mask in [s for s in keys(rho.correlations) if sum(s)==n]
-            correlations[mask] = ptrace_recursive(rho, H, h_rho, rho_h, Gamma, J, Jdagger, mask, correlations)
+            correlations[mask] = ptrace_recursive(mask, correlations, A)
         end
     end
-    operators = ([ptrace_recursive(rho, H, h_rho, rho_h, Gamma, J, Jdagger, indices2mask(N, [i]), correlations) for i=1:N]...)
+    operators = ([ptrace_recursive(indices2mask(N, [i]), correlations, A) for i=1:N]...)
     operators, correlations
 end
 
 function dmaster{N}(rho::ApproximateOperator{N}, H::LazySum,
                     Gamma::Matrix{Float64}, J::Vector{LazyTensor}, Jdagger::Vector{LazyTensor})
-    # A = LazySum([-1im*a*(h*rho) for (a, h) in zip(H.factors, H.operators)]...)
-    # A -= LazySum([-1im*a*(rho*h) for (a, h) in zip(H.factors, H.operators)]...)
-    # for j=1:length(J), i=1:length(J)
-    #     A += Gamma[i,j]*lazy(J[i]*rho*Jdagger[j])
-    #     A -= Gamma[i,j]*0.5*lazy(Jdagger[j]*(J[i]*rho))
-    #     A -= Gamma[i,j]*0.5*lazy((rho*Jdagger[j])*J[i])
-    # end
-    doperators, dcorrelations = ptraces(rho, H, Gamma, J, Jdagger)
+    A = LazySum([-1im*a*(h*rho) for (a, h) in zip(H.factors, H.operators)]...)
+    A -= LazySum([-1im*a*(rho*h) for (a, h) in zip(H.factors, H.operators)]...)
+    for j=1:length(J), i=1:length(J)
+        A += Gamma[i,j]*lazy(J[i]*rho*Jdagger[j])
+        A -= Gamma[i,j]*0.5*lazy(Jdagger[j]*(J[i]*rho))
+        A -= Gamma[i,j]*0.5*lazy((rho*Jdagger[j])*J[i])
+    end
+    doperators, dcorrelations = ptraces(rho, A)
     for order=2:N
         for mask in correlationmasks(Set(keys(rho.correlations)), order)
             I = mask2indices(mask)

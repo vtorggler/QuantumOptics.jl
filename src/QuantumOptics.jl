@@ -28,6 +28,8 @@ export bases, Basis, GenericBasis, CompositeBasis,
         timeevolution,
         cumulantexpansion,
         correlationexpansion,
+        correlationexpansion2,
+        correlationexpansion3,
         steadystate,
         correlations
 
@@ -59,6 +61,8 @@ module timeevolution
 end
 include("cumulantexpansion.jl")
 include("correlationexpansion.jl")
+include("correlationexpansion2.jl")
+include("correlationexpansion3.jl")
 include("steadystate.jl")
 include("correlations.jl")
 include("spectralanalysis.jl")
