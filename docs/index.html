@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>QuantumOptics.jl &mdash; Julia Quantum Optics</title>
+  <title>QuantumOptics.jl &mdash; QuantumOptics.jl</title>
   
 
   
@@ -30,7 +30,10 @@
   
 
   
-    <link rel="top" title="Julia Quantum Optics" href="#"/>
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="QuantumOptics.jl" href="#"/>
         <link rel="next" title="Introduction" href="introduction.html"/> 
 
   
@@ -59,7 +62,7 @@
             
             
               <div class="version">
-                0.1
+                0.2
               </div>
             
           
@@ -83,16 +86,16 @@
                 <ul>
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="bases.html">Bases</a></li>
-<li class="toctree-l1"><a class="reference internal" href="states.html">States</a></li>
-<li class="toctree-l1"><a class="reference internal" href="operators.html">Operators</a></li>
-<li class="toctree-l1"><a class="reference internal" href="superoperators.html">Super-operators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="states.html">States and Operators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quantumsystems.html">Quantum systems</a></li>
 <li class="toctree-l1"><a class="reference internal" href="timeevolution.html">Time-evolution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="steadystate.html">Steady state</a></li>
 <li class="toctree-l1"><a class="reference internal" href="correlations.html">Two-time correlation functions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="spectralanalysis.html">Spectral Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="superoperators.html">Super-operators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bases.html">Bases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operators.html">Operators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 </ul>
 
@@ -128,7 +131,7 @@
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="_sources/index.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -144,24 +147,15 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="bases.html">Bases</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="bases.html#composite-bases">Composite bases</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bases.html#subspace-basis">Subspace basis</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bases.html#generic-bases">Generic bases</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bases.html#implementing-new-bases">Implementing new bases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="states.html">States and Operators</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="states.html#states">States</a></li>
+<li class="toctree-l2"><a class="reference internal" href="states.html#operators">Operators</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="states.html">States</a></li>
-<li class="toctree-l1"><a class="reference internal" href="operators.html">Operators</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="operators.html#dense-operators">Dense operators</a></li>
-<li class="toctree-l2"><a class="reference internal" href="operators.html#sparse-operators">Sparse operators</a></li>
-<li class="toctree-l2"><a class="reference internal" href="operators.html#lazy-operators">Lazy operators</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="superoperators.html">Super-operators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quantumsystems.html">Quantum systems</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="spin.html">Spin basis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fock.html">Fock Basis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nlevel.html">N-level basis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="particle.html">Particle basis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nparticles.html">N-Particles Basis</a></li>
 </ul>
@@ -170,17 +164,34 @@
 <li class="toctree-l2"><a class="reference internal" href="timeevolution.html#schroedinger-time-evolution">Schroedinger time evolution</a></li>
 <li class="toctree-l2"><a class="reference internal" href="timeevolution.html#master-time-evolution">Master time evolution</a></li>
 <li class="toctree-l2"><a class="reference internal" href="timeevolution.html#mcwf-time-evolution">MCWF time evolution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="timeevolution.html#advanced-examples">Advanced examples</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="steadystate.html">Steady state</a></li>
 <li class="toctree-l1"><a class="reference internal" href="correlations.html">Two-time correlation functions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="spectralanalysis.html">Spectral Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="superoperators.html">Super-operators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="examples/jaynes-cummings-model.html">Jaynes-Cummings model</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="examples/jaynes-cummings-model.html#lossy-jaynes-cummings-model">Lossy Jaynes-Cummings model</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="examples/particle-in-harmonic-trap.html">Particle in harmonic trap potential</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/raman.html">Raman Transition of a <span class="math">\(\Lambda\)</span>-scheme Atom</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/two-qubit-entanglement.html">Entanglement of Two Qubits</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="bases.html">Bases</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="bases.html#composite-bases">Composite bases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bases.html#subspace-basis">Subspace basis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bases.html#generic-bases">Generic bases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bases.html#implementing-new-bases">Implementing new bases</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="operators.html">Operators</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="operators.html#dense-operators">Dense operators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="operators.html#sparse-operators">Sparse operators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="operators.html#lazy-operators">Lazy operators</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a><ul>
@@ -193,13 +204,14 @@
 <li class="toctree-l2"><a class="reference internal" href="api.html#operators">Operators</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="api.html#denseoperators">DenseOperators</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#sparseoperators">SparseOperators</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api.html#lazyoperators">LazyOperators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#lazy-operators">Lazy Operators</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api.html#superoperators">Superoperators</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api.html#metrics">Metrics</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api.html#systems">Systems</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="api.html#fock">Fock</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#n-level">N-level</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#spin">Spin</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#particle">Particle</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#n-particles">N-Particles</a></li>
@@ -259,10 +271,11 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.1',
+            VERSION:'0.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="_static/jquery.js"></script>

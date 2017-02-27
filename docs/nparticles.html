@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>N-Particles Basis &mdash; Julia Quantum Optics</title>
+  <title>N-Particles Basis &mdash; QuantumOptics.jl</title>
   
 
   
@@ -30,7 +30,10 @@
   
 
   
-    <link rel="top" title="Julia Quantum Optics" href="index.html"/>
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="QuantumOptics.jl" href="index.html"/>
         <link rel="up" title="Quantum systems" href="quantumsystems.html"/>
         <link rel="next" title="Time-evolution" href="timeevolution.html"/>
         <link rel="prev" title="Particle basis" href="particle.html"/> 
@@ -61,7 +64,7 @@
             
             
               <div class="version">
-                0.1
+                0.2
               </div>
             
           
@@ -85,22 +88,23 @@
                 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="bases.html">Bases</a></li>
-<li class="toctree-l1"><a class="reference internal" href="states.html">States</a></li>
-<li class="toctree-l1"><a class="reference internal" href="operators.html">Operators</a></li>
-<li class="toctree-l1"><a class="reference internal" href="superoperators.html">Super-operators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="states.html">States and Operators</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="quantumsystems.html">Quantum systems</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="spin.html">Spin basis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fock.html">Fock Basis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nlevel.html">N-level basis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="particle.html">Particle basis</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="">N-Particles Basis</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">N-Particles Basis</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="timeevolution.html">Time-evolution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="steadystate.html">Steady state</a></li>
 <li class="toctree-l1"><a class="reference internal" href="correlations.html">Two-time correlation functions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="spectralanalysis.html">Spectral Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="superoperators.html">Super-operators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bases.html">Bases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operators.html">Operators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 </ul>
 
@@ -138,7 +142,7 @@
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="_sources/nparticles.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/nparticles.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -164,7 +168,7 @@
         \left\langle u_i \right| \left\langle u_j \right|
         x
         \left| u_k \right\rangle \left| u_l \right\rangle\]</div>
-<p>The creation of the N-particle operators is implemented in <a class="reference internal" href="api.html#nparticleoperator_1-f849a6b83966531578f6a95054e56584" title="nparticleoperator_1"><code class="xref jl jl-func docutils literal"><span class="pre">nparticleoperator_1</span></code></a> and <a class="reference internal" href="api.html#nparticleoperator_2-f849a6b83966531578f6a95054e56584" title="nparticleoperator_2"><code class="xref jl jl-func docutils literal"><span class="pre">nparticleoperator_2</span></code></a>.</p>
+<p>The creation of the N-particle operators is implemented in <a class="reference internal" href="api.html#nparticleoperator_1-f849a6b83966531578f6a95054e56584" title="nparticleoperator_1(,::DenseOperator)"><code class="xref jl jl-func docutils literal"><span class="pre">nparticleoperator_1(,::DenseOperator)</span></code></a> and <a class="reference internal" href="api.html#nparticleoperator_2-f849a6b83966531578f6a95054e56584" title="nparticleoperator_2(,::DenseOperator)"><code class="xref jl jl-func docutils literal"><span class="pre">nparticleoperator_2(,::DenseOperator)</span></code></a>.</p>
 </div>
 
 
@@ -208,10 +212,11 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.1',
+            VERSION:'0.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="_static/jquery.js"></script>

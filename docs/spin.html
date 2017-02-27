@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Spin basis &mdash; Julia Quantum Optics</title>
+  <title>Spin basis &mdash; QuantumOptics.jl</title>
   
 
   
@@ -30,7 +30,10 @@
   
 
   
-    <link rel="top" title="Julia Quantum Optics" href="index.html"/>
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="QuantumOptics.jl" href="index.html"/>
         <link rel="up" title="Quantum systems" href="quantumsystems.html"/>
         <link rel="next" title="Fock Basis" href="fock.html"/>
         <link rel="prev" title="Quantum systems" href="quantumsystems.html"/> 
@@ -61,7 +64,7 @@
             
             
               <div class="version">
-                0.1
+                0.2
               </div>
             
           
@@ -85,13 +88,11 @@
                 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="bases.html">Bases</a></li>
-<li class="toctree-l1"><a class="reference internal" href="states.html">States</a></li>
-<li class="toctree-l1"><a class="reference internal" href="operators.html">Operators</a></li>
-<li class="toctree-l1"><a class="reference internal" href="superoperators.html">Super-operators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="states.html">States and Operators</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="quantumsystems.html">Quantum systems</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="">Spin basis</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Spin basis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fock.html">Fock Basis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nlevel.html">N-level basis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="particle.html">Particle basis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nparticles.html">N-Particles Basis</a></li>
 </ul>
@@ -100,7 +101,10 @@
 <li class="toctree-l1"><a class="reference internal" href="steadystate.html">Steady state</a></li>
 <li class="toctree-l1"><a class="reference internal" href="correlations.html">Two-time correlation functions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="spectralanalysis.html">Spectral Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="superoperators.html">Super-operators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bases.html">Bases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operators.html">Operators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 </ul>
 
@@ -138,7 +142,7 @@
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="_sources/spin.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/spin.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -161,13 +165,13 @@
 </pre></div>
 </div>
 <p>The definition of the SpinBasis is very simple and is more or less given by:</p>
-<div class="highlight-julia"><div class="highlight"><pre><span></span><span class="k">type</span><span class="nc"> SpinBasis</span> <span class="o">&lt;:</span> <span class="n">Basis</span>
-    <span class="n">shape</span><span class="p">::</span><span class="n">Vector</span><span class="p">{</span><span class="kt">Int</span><span class="p">}</span>
-    <span class="n">spinnumber</span><span class="p">::</span><span class="n">Rational</span><span class="p">{</span><span class="kt">Int</span><span class="p">}</span>
+<div class="highlight-julia"><div class="highlight"><pre><span></span><span class="k">type</span> <span class="n">SpinBasis</span> <span class="o">&lt;:</span> <span class="n">Basis</span>
+    <span class="n">shape</span><span class="o">::</span><span class="kt">Vector</span><span class="p">{</span><span class="kt">Int</span><span class="p">}</span>
+    <span class="n">spinnumber</span><span class="o">::</span><span class="kt">Rational</span><span class="p">{</span><span class="kt">Int</span><span class="p">}</span>
 <span class="k">end</span>
 </pre></div>
 </div>
-<p>All expected operators are implemented:</p>
+<p>All expected operators are implemented, all of which require a single argument of the type SpinBasis <a class="reference internal" href="api.html#SpinBasis" title="SpinBasis"><code class="xref jl jl-type docutils literal"><span class="pre">SpinBasis</span></code></a>.</p>
 <ul class="simple">
 <li><a class="reference internal" href="api.html#sigmax-38cef786a966c86d0a7858362aa2b3bf" title="sigmax"><code class="xref jl jl-func docutils literal"><span class="pre">sigmax</span></code></a></li>
 <li><a class="reference internal" href="api.html#sigmay-38cef786a966c86d0a7858362aa2b3bf" title="sigmay"><code class="xref jl jl-func docutils literal"><span class="pre">sigmay</span></code></a></li>
@@ -177,8 +181,8 @@
 </ul>
 <p>Also the lowest and uppermost states are defined:</p>
 <ul class="simple">
-<li><a class="reference internal" href="api.html#spinup-38cef786a966c86d0a7858362aa2b3bf" title="spinup"><code class="xref jl jl-func docutils literal"><span class="pre">spinup</span></code></a></li>
-<li><a class="reference internal" href="api.html#spindown-38cef786a966c86d0a7858362aa2b3bf" title="spindown"><code class="xref jl jl-func docutils literal"><span class="pre">spindown</span></code></a></li>
+<li><a class="reference internal" href="api.html#spinup-38cef786a966c86d0a7858362aa2b3bf" title="spinup(b::SpinBasis)"><code class="xref jl jl-func docutils literal"><span class="pre">spinup(b::SpinBasis)</span></code></a></li>
+<li><a class="reference internal" href="api.html#spindown-38cef786a966c86d0a7858362aa2b3bf" title="spindown(b::SpinBasis)"><code class="xref jl jl-func docutils literal"><span class="pre">spindown(b::SpinBasis)</span></code></a></li>
 </ul>
 </div>
 
@@ -223,10 +227,11 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.1',
+            VERSION:'0.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="_static/jquery.js"></script>

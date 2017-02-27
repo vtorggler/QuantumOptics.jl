@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Bases &mdash; Julia Quantum Optics</title>
+  <title>Bases &mdash; QuantumOptics.jl</title>
   
 
   
@@ -30,9 +30,12 @@
   
 
   
-    <link rel="top" title="Julia Quantum Optics" href="index.html"/>
-        <link rel="next" title="States" href="states.html"/>
-        <link rel="prev" title="Installation" href="installation.html"/> 
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="QuantumOptics.jl" href="index.html"/>
+        <link rel="next" title="Operators" href="operators.html"/>
+        <link rel="prev" title="Entanglement of Two Qubits" href="examples/two-qubit-entanglement.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -60,7 +63,7 @@
             
             
               <div class="version">
-                0.1
+                0.2
               </div>
             
           
@@ -84,22 +87,22 @@
                 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">Bases</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="states.html">States and Operators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quantumsystems.html">Quantum systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timeevolution.html">Time-evolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="steadystate.html">Steady state</a></li>
+<li class="toctree-l1"><a class="reference internal" href="correlations.html">Two-time correlation functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spectralanalysis.html">Spectral Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="superoperators.html">Super-operators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Bases</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#composite-bases">Composite bases</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#subspace-basis">Subspace basis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#generic-bases">Generic bases</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#implementing-new-bases">Implementing new bases</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="states.html">States</a></li>
 <li class="toctree-l1"><a class="reference internal" href="operators.html">Operators</a></li>
-<li class="toctree-l1"><a class="reference internal" href="superoperators.html">Super-operators</a></li>
-<li class="toctree-l1"><a class="reference internal" href="quantumsystems.html">Quantum systems</a></li>
-<li class="toctree-l1"><a class="reference internal" href="timeevolution.html">Time-evolution</a></li>
-<li class="toctree-l1"><a class="reference internal" href="steadystate.html">Steady state</a></li>
-<li class="toctree-l1"><a class="reference internal" href="correlations.html">Two-time correlation functions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="spectralanalysis.html">Spectral Analysis</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 </ul>
 
@@ -135,7 +138,7 @@
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="_sources/bases.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/bases.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -149,12 +152,13 @@
 <span id="section-bases"></span><h1>Bases<a class="headerlink" href="#bases" title="Permalink to this headline">¶</a></h1>
 <p>The primary purpose of bases in <strong>QuantumOptics.jl</strong> is to specify the dimension of the Hilbert space of the system and to make sure that quantum objects associated to distinct bases can&#8217;t be combined accidentally in an incorrect way. Many of the common types of bases used in quantum mechanics like</p>
 <ul class="simple">
-<li><a class="reference internal" href="spin.html#section-spin"><span>Spin basis</span></a></li>
-<li><a class="reference internal" href="fock.html#section-fock"><span>Fock basis</span></a></li>
-<li><a class="reference internal" href="particle.html#section-particle"><span>Position basis and Momentum basis</span></a></li>
-<li><a class="reference internal" href="nparticles.html#section-nparticles"><span>N-particle basis</span></a></li>
+<li><a class="reference internal" href="spin.html#section-spin"><span class="std std-ref">Spin basis</span></a></li>
+<li><a class="reference internal" href="fock.html#section-fock"><span class="std std-ref">Fock basis</span></a></li>
+<li><a class="reference internal" href="nlevel.html#section-nlevel"><span class="std std-ref">N-level basis</span></a></li>
+<li><a class="reference internal" href="particle.html#section-particle"><span class="std std-ref">Position basis and Momentum basis</span></a></li>
+<li><a class="reference internal" href="nparticles.html#section-nparticles"><span class="std std-ref">N-particle basis</span></a></li>
 </ul>
-<p>are already implemented. They are treated in more detail in the section <a class="reference internal" href="quantumsystems.html#section-quantumsystems"><span>Quantum systems</span></a>.</p>
+<p>are already implemented. They are treated in more detail in the section <a class="reference internal" href="quantumsystems.html#section-quantumsystems"><span class="std std-ref">Quantum systems</span></a>.</p>
 <div class="section" id="composite-bases">
 <h2>Composite bases<a class="headerlink" href="#composite-bases" title="Permalink to this headline">¶</a></h2>
 <p>Hilbert spaces of composite systems can be handled with the <a class="reference internal" href="api.html#CompositeBasis" title="CompositeBasis"><code class="xref jl jl-type docutils literal"><span class="pre">CompositeBasis</span></code></a> which can be created using the <cite>tensor</cite> function or the equivalent ⊗ operator:</p>
@@ -198,9 +202,9 @@
 <div class="section" id="implementing-new-bases">
 <h2>Implementing new bases<a class="headerlink" href="#implementing-new-bases" title="Permalink to this headline">¶</a></h2>
 <p>The cleaner way is to implement own special purpose bases by deriving from the abstract <a class="reference internal" href="api.html#Basis" title="Basis"><code class="xref jl jl-abstract docutils literal"><span class="pre">Basis</span></code></a> type. The only mandatory property of all basis types is that they have a field <cite>shape</cite> which specifies the dimensionality of their Hilbert space. E.g. a spin 1/2 basis could be implemented as:</p>
-<div class="highlight-julia"><div class="highlight"><pre><span></span><span class="k">type</span><span class="nc"> SpinBasis</span> <span class="o">&lt;:</span> <span class="n">Basis</span>
-    <span class="n">shape</span><span class="p">::</span><span class="n">Vector</span><span class="p">{</span><span class="kt">Int</span><span class="p">}</span>
-    <span class="n">SpinBasis</span><span class="p">()</span> <span class="o">=</span> <span class="nb">new</span><span class="p">(</span><span class="kt">Int</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="c"># Constructor</span>
+<div class="highlight-julia"><div class="highlight"><pre><span></span><span class="k">type</span> <span class="n">SpinBasis</span> <span class="o">&lt;:</span> <span class="n">Basis</span>
+    <span class="n">shape</span><span class="o">::</span><span class="kt">Vector</span><span class="p">{</span><span class="kt">Int</span><span class="p">}</span>
+    <span class="n">SpinBasis</span><span class="p">()</span> <span class="o">=</span> <span class="n">new</span><span class="p">(</span><span class="kt">Int</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="c"># Constructor</span>
 <span class="k">end</span>
 </pre></div>
 </div>
@@ -215,10 +219,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="states.html" class="btn btn-neutral float-right" title="States" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="operators.html" class="btn btn-neutral float-right" title="Operators" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="installation.html" class="btn btn-neutral" title="Installation" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="examples/two-qubit-entanglement.html" class="btn btn-neutral" title="Entanglement of Two Qubits" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -249,10 +253,11 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.1',
+            VERSION:'0.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="_static/jquery.js"></script>

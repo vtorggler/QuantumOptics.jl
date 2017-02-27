@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Steady state &mdash; Julia Quantum Optics</title>
+  <title>Steady state &mdash; QuantumOptics.jl</title>
   
 
   
@@ -30,7 +30,10 @@
   
 
   
-    <link rel="top" title="Julia Quantum Optics" href="index.html"/>
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="QuantumOptics.jl" href="index.html"/>
         <link rel="next" title="Two-time correlation functions" href="correlations.html"/>
         <link rel="prev" title="Time-evolution" href="timeevolution.html"/> 
 
@@ -60,7 +63,7 @@
             
             
               <div class="version">
-                0.1
+                0.2
               </div>
             
           
@@ -84,16 +87,16 @@
                 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="bases.html">Bases</a></li>
-<li class="toctree-l1"><a class="reference internal" href="states.html">States</a></li>
-<li class="toctree-l1"><a class="reference internal" href="operators.html">Operators</a></li>
-<li class="toctree-l1"><a class="reference internal" href="superoperators.html">Super-operators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="states.html">States and Operators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quantumsystems.html">Quantum systems</a></li>
 <li class="toctree-l1"><a class="reference internal" href="timeevolution.html">Time-evolution</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">Steady state</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Steady state</a></li>
 <li class="toctree-l1"><a class="reference internal" href="correlations.html">Two-time correlation functions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="spectralanalysis.html">Spectral Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="superoperators.html">Super-operators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bases.html">Bases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operators.html">Operators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 </ul>
 
@@ -129,7 +132,7 @@
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="_sources/steadystate.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/steadystate.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -154,32 +157,43 @@
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
-<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><ul class="first last simple">
-<li><strong>rho0</strong> &#8211;
-Initial density operator. If not given the <span class="math">\(|0 \rangle\langle0|\)</span>
-state in respect to the choosen basis is used.</li>
-<li><strong>eps</strong> &#8211;
-Tracedistance used as termination criterion.</li>
-<li><strong>hmin</strong> &#8211;
-Minimal time step used in the time evolution.</li>
-<li><strong>Gamma</strong> &#8211;
-Vector or matrix specifying the coefficients for the jump operators.</li>
-<li><strong>Jdagger (optional)</strong> &#8211;
-Vector containing the hermitian conjugates of the jump operators. If they
-are not given they are calculated automatically.</li>
-<li><strong>fout (optional)</strong> &#8211;
-If given this function fout(t, rho) is called every time an output should
+<tr class="field-even field"><th class="field-name">Keyword rho0:</th><td class="field-body"><p class="first">Initial density operator. If not given the <span class="math">\(|0 \rangle\langle0|\)</span>
+state in respect to the choosen basis is used.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Keyword eps:</th><td class="field-body"><p class="first">Tracedistance used as termination criterion.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Keyword hmin:</th><td class="field-body"><p class="first">Minimal time step used in the time evolution.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Keyword Gamma:</th><td class="field-body"><p class="first">Vector or matrix specifying the coefficients for the jump operators.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Keyword Jdagger (optional):</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><p class="first">Vector containing the hermitian conjugates of the jump operators. If they
+are not given they are calculated automatically.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">Keyword fout (optional):</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><p class="first">If given this function fout(t, rho) is called every time an output should
 be displayed. To limit copying to a minimum the given density operator rho
-is further used and therefore must not be changed.</li>
-<li><strong>kwargs</strong> &#8211;
-Further arguments are passed on to the ode solver.</li>
-</ul>
+is further used and therefore must not be changed.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Keyword kwargs:</th><td class="field-body"><p class="first last">Further arguments are passed on to the ode solver.</p>
 </td>
 </tr>
 </tbody>
 </table>
 </dd></dl></div></blockquote>
+<p>Most of the arguments are identical to the ones used for a standard <a class="reference internal" href="timeevolution.html#section-master"><span class="std std-ref">master time evolution</span></a>. There are a few differences,
+however. First of all it is no longer required to give an initial state, but rather optional. If no initial state is given it defaults to
+a density matrix with a single 1 in the first entry. Note, that while for a cavity this corresponds to a Fock state with zero photons, it might
+be undesirable to use the default value when working with atoms (spin particles), since this state corresponds to the (highest) excited state.</p>
+<p>Additionally, one can explicitly specify the trace distance criterion <code class="xref jl jl-func docutils literal"><span class="pre">eps</span></code>, which is checked in every time step. The time evolution
+stops, i.e. steady-state is reached, when the trace distance between two consecutive density matrices $rho(t)$ and $rho(t+dt)$ is smaller
+than this value. The default is <code class="xref jl jl-func docutils literal"><span class="pre">eps=1e-3</span></code>.</p>
 <p>For smaller system sizes finding eigenvectors of super-operators is the prefered method:</p>
 <blockquote class="epigraph">
 <div><dl class="function"><dt id="eigenvector-7b12486adf8883913470799806c5a644"><em class="property">function </em><code class="descname">eigenvector</code><span class="sig-paren">(</span><em>L</em><span class="sig-paren">)</span><a class="headerlink" href="#eigenvector-7b12486adf8883913470799806c5a644" title="Permalink to this function">¶</a></dt><dd><p>Find steady state by calculating the eigenstate of the Liouvillian matrix.</p>
@@ -205,6 +219,21 @@ Further arguments are passed on to the ode solver.</li>
 </tbody>
 </table>
 </dd></dl></div></blockquote>
+<p>A simple example, that can also be solved analytically, is to compute the steady-state photon number of a cavity driven with an amplitude
+<span class="math">\(\eta\)</span> and damping rate <span class="math">\(2\kappa\)</span>. The analytical solution is <span class="math">\(n=\eta^2/\kappa^2\)</span>, while in the toolbox we may calculate this with:</p>
+<div class="highlight-julia"><div class="highlight"><pre><span></span><span class="n">b</span> <span class="o">=</span> <span class="n">FockBasis</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">κ</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">η</span> <span class="o">=</span> <span class="mf">0.5</span><span class="n">κ</span>
+<span class="n">H</span> <span class="o">=</span> <span class="n">η</span><span class="o">*</span><span class="p">(</span><span class="n">destroy</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="o">+</span> <span class="n">create</span><span class="p">(</span><span class="n">b</span><span class="p">))</span>
+<span class="n">J</span> <span class="o">=</span> <span class="p">[</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="n">κ</span><span class="p">)</span><span class="o">*</span><span class="n">destroy</span><span class="p">(</span><span class="n">b</span><span class="p">)]</span>
+<span class="n">ρ_master</span> <span class="o">=</span> <span class="n">steadystate</span><span class="o">.</span><span class="n">master</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">J</span><span class="p">)</span>
+<span class="n">ρ_eig</span> <span class="o">=</span> <span class="n">steadystate</span><span class="o">.</span><span class="n">eigenvector</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">J</span><span class="p">)</span>
+<span class="n">n_master</span> <span class="o">=</span> <span class="n">real</span><span class="p">(</span><span class="n">expect</span><span class="p">(</span><span class="n">number</span><span class="p">(</span><span class="n">b</span><span class="p">),</span> <span class="n">ρ_master</span><span class="p">))</span>
+<span class="n">n_eig</span> <span class="o">=</span> <span class="n">real</span><span class="p">(</span><span class="n">expect</span><span class="p">(</span><span class="n">number</span><span class="p">(</span><span class="n">b</span><span class="p">)),</span> <span class="n">ρ_eig</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This results in <code class="xref jl jl-func docutils literal"><span class="pre">n_eig=0.25</span></code>, which is correct, while <code class="xref jl jl-func docutils literal"><span class="pre">n_master</span></code> is approximately <code class="xref jl jl-func docutils literal"><span class="pre">0.249</span></code> due to rounding errors
+caused by the trace distance criterion. Decreasing the value of <code class="xref jl jl-func docutils literal"><span class="pre">eps</span></code> below its default <code class="xref jl jl-func docutils literal"><span class="pre">1e-3</span></code> improves the accuracy.</p>
 </div>
 
 
@@ -248,10 +277,11 @@ Further arguments are passed on to the ode solver.</li>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.1',
+            VERSION:'0.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="_static/jquery.js"></script>

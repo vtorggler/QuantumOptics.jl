@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Super-operators &mdash; Julia Quantum Optics</title>
+  <title>Super-operators &mdash; QuantumOptics.jl</title>
   
 
   
@@ -30,9 +30,12 @@
   
 
   
-    <link rel="top" title="Julia Quantum Optics" href="index.html"/>
-        <link rel="next" title="Quantum systems" href="quantumsystems.html"/>
-        <link rel="prev" title="Operators" href="operators.html"/> 
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="QuantumOptics.jl" href="index.html"/>
+        <link rel="next" title="Examples" href="examples.html"/>
+        <link rel="prev" title="Spectral Analysis" href="spectralanalysis.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -60,7 +63,7 @@
             
             
               <div class="version">
-                0.1
+                0.2
               </div>
             
           
@@ -84,16 +87,16 @@
                 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="bases.html">Bases</a></li>
-<li class="toctree-l1"><a class="reference internal" href="states.html">States</a></li>
-<li class="toctree-l1"><a class="reference internal" href="operators.html">Operators</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">Super-operators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="states.html">States and Operators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quantumsystems.html">Quantum systems</a></li>
 <li class="toctree-l1"><a class="reference internal" href="timeevolution.html">Time-evolution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="steadystate.html">Steady state</a></li>
 <li class="toctree-l1"><a class="reference internal" href="correlations.html">Two-time correlation functions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="spectralanalysis.html">Spectral Analysis</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Super-operators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bases.html">Bases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operators.html">Operators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 </ul>
 
@@ -129,7 +132,7 @@
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="_sources/superoperators.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/superoperators.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -167,7 +170,7 @@ S &amp;= \sum_{uvmn} S_{uvmn} |v \rangle \langle u| \otimes
                           |n \rangle \langle m|\end{split}\]</div>
 <p>The coefficients are then connected by</p>
 <div class="math">
-\[\begin{split}A_{uv} &amp;= \sum_{mn} S_{uvmn} B_{mn}\end{split}\]</div>
+\[A_{uv} &amp;= \sum_{mn} S_{uvmn} B_{mn}\]</div>
 <p>The implementation of super-operators in <strong>QuantumOptics.jl</strong> is based on the basis specific concept, which means it has to consider 4 possibly different bases. The two basis choices for the output are stored in the <code class="docutils literal"><span class="pre">basis_l</span></code> field and the two basis choices for the input are stored in the <code class="docutils literal"><span class="pre">basis_r</span></code> field. At the moment there are two concrete super-operator types implemented, a dense version <a class="reference internal" href="api.html#DenseSuperOperator" title="DenseSuperOperator"><code class="xref jl jl-type docutils literal"><span class="pre">DenseSuperOperator</span></code></a> and a sparse version <a class="reference internal" href="api.html#SparseSuperOperator" title="SparseSuperOperator"><code class="xref jl jl-type docutils literal"><span class="pre">SparseSuperOperator</span></code></a>, both inheriting from the abstract <a class="reference internal" href="api.html#SuperOperator" title="SuperOperator"><code class="xref jl jl-abstract docutils literal"><span class="pre">SuperOperator</span></code></a> type.</p>
 <p>Besides the expected algebraic operations there are a few additional functions that help creating and working with super-operators:</p>
 <ul class="simple">
@@ -185,10 +188,10 @@ S &amp;= \sum_{uvmn} S_{uvmn} |v \rangle \langle u| \otimes
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="quantumsystems.html" class="btn btn-neutral float-right" title="Quantum systems" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="examples.html" class="btn btn-neutral float-right" title="Examples" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="operators.html" class="btn btn-neutral" title="Operators" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="spectralanalysis.html" class="btn btn-neutral" title="Spectral Analysis" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -219,10 +222,11 @@ S &amp;= \sum_{uvmn} S_{uvmn} |v \rangle \langle u| \otimes
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.1',
+            VERSION:'0.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="_static/jquery.js"></script>

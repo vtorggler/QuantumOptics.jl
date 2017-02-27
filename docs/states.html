@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>States &mdash; Julia Quantum Optics</title>
+  <title>States and Operators &mdash; QuantumOptics.jl</title>
   
 
   
@@ -30,9 +30,12 @@
   
 
   
-    <link rel="top" title="Julia Quantum Optics" href="index.html"/>
-        <link rel="next" title="Operators" href="operators.html"/>
-        <link rel="prev" title="Bases" href="bases.html"/> 
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="QuantumOptics.jl" href="index.html"/>
+        <link rel="next" title="Quantum systems" href="quantumsystems.html"/>
+        <link rel="prev" title="Installation" href="installation.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -60,7 +63,7 @@
             
             
               <div class="version">
-                0.1
+                0.2
               </div>
             
           
@@ -84,16 +87,20 @@
                 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="bases.html">Bases</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">States</a></li>
-<li class="toctree-l1"><a class="reference internal" href="operators.html">Operators</a></li>
-<li class="toctree-l1"><a class="reference internal" href="superoperators.html">Super-operators</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">States and Operators</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#states">States</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#operators">Operators</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="quantumsystems.html">Quantum systems</a></li>
 <li class="toctree-l1"><a class="reference internal" href="timeevolution.html">Time-evolution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="steadystate.html">Steady state</a></li>
 <li class="toctree-l1"><a class="reference internal" href="correlations.html">Two-time correlation functions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="spectralanalysis.html">Spectral Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="superoperators.html">Super-operators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bases.html">Bases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operators.html">Operators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 </ul>
 
@@ -125,11 +132,11 @@
   <ul class="wy-breadcrumbs">
     <li><a href="index.html">Docs</a> &raquo;</li>
       
-    <li>States</li>
+    <li>States and Operators</li>
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="_sources/states.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/states.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -139,9 +146,12 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="states">
-<span id="section-states"></span><h1>States<a class="headerlink" href="#states" title="Permalink to this headline">¶</a></h1>
-<p>State vectors in <strong>QuantumOptics.jl</strong> are interpreted as coefficients in respect to a certain <a class="reference internal" href="bases.html#section-bases"><span>basis</span></a>. For example the particle state <span class="math">\(|\Psi\rangle\)</span> can be represented in a (discrete) real space basis <span class="math">\(\{|x_i\rangle\}_i\)</span> as <span class="math">\(\Psi(x_i)\)</span>. These quantities are connected by</p>
+  <div class="section" id="states-and-operators">
+<span id="section-statesandoperators"></span><h1>States and Operators<a class="headerlink" href="#states-and-operators" title="Permalink to this headline">¶</a></h1>
+<p>Here we will give a brief overview over the operations that are available for states and operators. All states and operators are defined on a basis, such as for example the <a class="reference internal" href="api.html#FockBasis" title="FockBasis"><code class="xref jl jl-type docutils literal"><span class="pre">FockBasis</span></code></a>. For a full list of implemented bases and their predefined states and operators please refer to <a class="reference internal" href="quantumsystems.html#section-quantumsystems"><span class="std std-ref">Quantumsystems</span></a>. More details on the different types of operators can be found in <a class="reference internal" href="operators.html#section-operators-detail"><span class="std std-ref">Operators</span></a>.</p>
+<div class="section" id="states">
+<span id="section-states"></span><h2>States<a class="headerlink" href="#states" title="Permalink to this headline">¶</a></h2>
+<p>State vectors in <strong>QuantumOptics.jl</strong> are interpreted as coefficients in respect to a certain <a class="reference internal" href="bases.html#section-bases"><span class="std std-ref">basis</span></a>. For example the particle state <span class="math">\(|\Psi\rangle\)</span> can be represented in a (discrete) real space basis <span class="math">\(\{|x_i\rangle\}_i\)</span> as <span class="math">\(\Psi(x_i)\)</span>. These quantities are connected by</p>
 <div class="math">
 \[|\Psi\rangle = \sum_i \Psi(x) |x_i\rangle\]</div>
 <p>and the conjugate equation</p>
@@ -153,7 +163,7 @@
 <span class="n">y</span> <span class="o">=</span> <span class="n">Bra</span><span class="p">(</span><span class="n">basis</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
 </pre></div>
 </div>
-<p>Many commonly used states are already implemented for various systems, like e.g. <a class="reference internal" href="api.html#fockstate-7ee867be3744044ff7efc0ee9ef93b66" title="fockstate"><code class="xref jl jl-func docutils literal"><span class="pre">fockstate</span></code></a> or <a class="reference internal" href="api.html#gaussianstate-f12887d4d0d5b315bf0ca5995bee7118" title="gaussianstate(::MomentumBasis, x0, p0, sigma)"><code class="xref jl jl-func docutils literal"><span class="pre">gaussianstate(::MomentumBasis,</span> <span class="pre">x0,</span> <span class="pre">p0,</span> <span class="pre">sigma)</span></code></a>.</p>
+<p>Many commonly used states are already implemented for various systems, like e.g. <code class="xref jl jl-func docutils literal"><span class="pre">fockstate(n::Int)</span></code> or <a class="reference internal" href="api.html#gaussianstate-f12887d4d0d5b315bf0ca5995bee7118" title="gaussianstate(::MomentumBasis, x0, p0, sigma)"><code class="xref jl jl-func docutils literal"><span class="pre">gaussianstate(::MomentumBasis,</span> <span class="pre">x0,</span> <span class="pre">p0,</span> <span class="pre">sigma)</span></code></a>.</p>
 <p>All expected arithmetic functions like *, /, +, - are implemented:</p>
 <div class="highlight-julia"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">+</span> <span class="n">x</span>
 <span class="n">x</span> <span class="o">-</span> <span class="n">x</span>
@@ -161,22 +171,111 @@
 <span class="n">y</span><span class="o">*</span><span class="n">x</span> <span class="c"># Inner product</span>
 </pre></div>
 </div>
-<p>The hermitian conjugate is performed by the <a class="reference internal" href="api.html#dagger-4560a2c40cf6309a1d6c78ce87ce746c" title="dagger(::Ket)"><code class="xref jl jl-func docutils literal"><span class="pre">dagger(::Ket)</span></code></a> function which transforms a bra in a ket and vice versa:</p>
+<p>The hermitian conjugate is performed by the <a class="reference internal" href="api.html#dagger-4560a2c40cf6309a1d6c78ce87ce746c" title="dagger(x::Ket)"><code class="xref jl jl-func docutils literal"><span class="pre">dagger(x::Ket)</span></code></a> function which transforms a bra in a ket and vice versa:</p>
 <div class="highlight-julia"><div class="highlight"><pre><span></span><span class="n">dagger</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="c"># Bra(basis, [1,1,1])</span>
 </pre></div>
 </div>
-<p>Composite states can be created with the <code class="xref jl jl-func docutils literal"><span class="pre">tensor(::Ket,</span> <span class="pre">::Ket)</span></code> function or with the equivalent <span class="math">\(\otimes\)</span> operator:</p>
+<p>Composite states can be created with the <code class="xref jl jl-func docutils literal"><span class="pre">tensor(x::Ket,</span> <span class="pre">y::Ket)</span></code> function or with the equivalent <span class="math">\(\otimes\)</span> operator:</p>
 <div class="highlight-julia"><div class="highlight"><pre><span></span><span class="n">tensor</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
 <span class="n">x</span> <span class="n">⊗</span> <span class="n">x</span>
 <span class="n">tensor</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Normalization functions:</p>
+<p>The following functions are also available for states:</p>
 <ul class="simple">
-<li><a class="reference internal" href="api.html#norm-bf815e25013cea8c1ee6dc502cca3988" title="norm(::StateVector, p=2)"><code class="xref jl jl-func docutils literal"><span class="pre">norm(::StateVector,</span> <span class="pre">p=2)</span></code></a></li>
-<li><a class="reference internal" href="api.html#normalize-bf815e25013cea8c1ee6dc502cca3988" title="normalize(::StateVector, p=2)"><code class="xref jl jl-func docutils literal"><span class="pre">normalize(::StateVector,</span> <span class="pre">p=2)</span></code></a></li>
-<li><a class="reference internal" href="api.html#normalize!-bf815e25013cea8c1ee6dc502cca3988" title="normalize!(::StateVector, p=2)"><code class="xref jl jl-func docutils literal"><span class="pre">normalize!(::StateVector,</span> <span class="pre">p=2)</span></code></a></li>
+<li><dl class="first docutils">
+<dt>Normalization functions:</dt>
+<dd><code class="xref jl jl-func docutils literal"><span class="pre">norm(x::Ket,</span> <span class="pre">p=2)</span></code>
+<code class="xref jl jl-func docutils literal"><span class="pre">normalize(x::Ket,</span> <span class="pre">p=2)</span></code>
+<code class="xref jl jl-func docutils literal"><span class="pre">normalize!(x::Ket,</span> <span class="pre">p=2)</span></code></dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Partial trace</dt>
+<dd><code class="xref jl jl-func docutils literal"><span class="pre">ptrace(x::Ket,</span> <span class="pre">indices::Vector{Int})</span></code>
+<code class="xref jl jl-func docutils literal"><span class="pre">ptrace(x::Bra,</span> <span class="pre">indices::Vector{Int})</span></code></dd>
+</dl>
+</li>
 </ul>
+</div>
+<div class="section" id="operators">
+<span id="section-operators"></span><h2>Operators<a class="headerlink" href="#operators" title="Permalink to this headline">¶</a></h2>
+<p>Operators can be defined as linear mappings from one Hilbert space to another. However, equivalently to states, operators in <strong>QuantumOptics.jl</strong> are interpreted as coefficients of an abstract operator in respect to one or more generally two, possibly distinct <a class="reference internal" href="bases.html#section-bases"><span class="std std-ref">bases</span></a>. For a certain choice of bases <span class="math">\(\{|u_i\rangle\}_i\)</span> and <span class="math">\(\{|v_j\rangle\}_j\)</span> an abstract operator <span class="math">\(A\)</span> has the coefficients <span class="math">\(A_{ij}\)</span> which are connected by the relation</p>
+<div class="math">
+\[A =  \sum_{ij} A_{ij} | u_i \rangle \langle v_j |\]</div>
+<p>All standard arithmetic functions for operators are defined, *, /, +, -:</p>
+<div class="highlight-julia"><div class="highlight"><pre><span></span><span class="n">b</span> <span class="o">=</span> <span class="n">SpinBasis</span><span class="p">(</span><span class="mi">1</span><span class="o">//</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">sx</span> <span class="o">=</span> <span class="n">sigmax</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+<span class="n">sy</span> <span class="o">=</span> <span class="n">sigmay</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+<span class="n">sx</span> <span class="o">+</span> <span class="n">sy</span>
+<span class="n">sx</span> <span class="o">*</span> <span class="n">sy</span> <span class="c"># Matrix product</span>
+<span class="n">sx</span> <span class="n">⊗</span> <span class="n">sy</span>
+</pre></div>
+</div>
+<p>Additionally the following functions are implemented (for <code class="xref jl jl-func docutils literal"><span class="pre">A::Operator</span></code>, <code class="xref jl jl-func docutils literal"><span class="pre">B::Operator</span></code>):</p>
+<ul>
+<li><dl class="first docutils">
+<dt>Hermitian conjugate:</dt>
+<dd><p class="first last"><code class="xref jl jl-func docutils literal"><span class="pre">dagger(A)</span></code></p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Normalization:</dt>
+<dd><p class="first last"><code class="xref jl jl-func docutils literal"><span class="pre">trace(A)</span></code>
+<code class="xref jl jl-func docutils literal"><span class="pre">norm(A)</span></code>
+<code class="xref jl jl-func docutils literal"><span class="pre">normalize(A)</span></code>
+<code class="xref jl jl-func docutils literal"><span class="pre">normalize!(A)</span></code></p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Expectation values:</dt>
+<dd><p class="first last"><code class="xref jl jl-func docutils literal"><span class="pre">expect(A,</span> <span class="pre">B)</span></code></p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Tensor product:</dt>
+<dd><p class="first last"><code class="xref jl jl-func docutils literal"><span class="pre">tensor(A,</span> <span class="pre">B)</span></code></p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Partial trace:</dt>
+<dd><p class="first last"><code class="xref jl jl-func docutils literal"><span class="pre">ptrace(A,</span> <span class="pre">index::Int)</span></code>
+<code class="xref jl jl-func docutils literal"><span class="pre">ptrace(A,</span> <span class="pre">indices::Vector{Int})</span></code></p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Creating operators from states:</dt>
+<dd><p class="first last"><code class="xref jl jl-func docutils literal"><span class="pre">tensor(x::Ket,</span> <span class="pre">y::Bra)</span></code>
+<code class="xref jl jl-func docutils literal"><span class="pre">projector(x::Ket,</span> <span class="pre">y::Bra)</span></code></p>
+</dd>
+</dl>
+</li>
+<li><p class="first">For creating operators of the type <span class="math">\(A = I \otimes I \otimes ... a_i ... \otimes I\)</span> the very useful embed function can be used:</p>
+<blockquote>
+<div><p><code class="xref jl jl-func docutils literal"><span class="pre">embed(b::Basis,</span> <span class="pre">index::Int,</span> <span class="pre">op::Operator)</span></code>
+<code class="xref jl jl-func docutils literal"><span class="pre">embed(b::Basis,</span> <span class="pre">indices::Vector{Int},</span> <span class="pre">ops::Vector{T</span> <span class="pre">&lt;:</span> <span class="pre">Operator})</span></code></p>
+</div></blockquote>
+</li>
+</ul>
+<p>E.g. for a system consisting of 3 spins one can define the basis with:</p>
+<div class="highlight-julia"><div class="highlight"><pre><span></span><span class="n">b_spin</span> <span class="o">=</span> <span class="n">SpinBasis</span><span class="p">(</span><span class="mi">1</span><span class="o">//</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">b_spin</span> <span class="n">⊗</span> <span class="n">b_spin</span> <span class="n">⊗</span> <span class="n">b_spin</span>
+</pre></div>
+</div>
+<p>An operator in this basis b that only acts on the second spin could be created as:</p>
+<div class="highlight-julia"><div class="highlight"><pre><span></span><span class="n">identityoperator</span><span class="p">(</span><span class="n">b_spin</span><span class="p">)</span> <span class="n">⊗</span> <span class="n">sigmap</span><span class="p">(</span><span class="n">b_spin</span><span class="p">)</span> <span class="n">⊗</span> <span class="n">identityoperator</span><span class="p">(</span><span class="n">b_spin</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Equivalently, the embed function simplifies this to:</p>
+<div class="highlight-julia"><div class="highlight"><pre><span></span><span class="n">embed</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">sigmap</span><span class="p">(</span><span class="n">b_spin</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
 </div>
 
 
@@ -186,10 +285,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="operators.html" class="btn btn-neutral float-right" title="Operators" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="quantumsystems.html" class="btn btn-neutral float-right" title="Quantum systems" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="bases.html" class="btn btn-neutral" title="Bases" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="installation.html" class="btn btn-neutral" title="Installation" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -220,10 +319,11 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.1',
+            VERSION:'0.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="_static/jquery.js"></script>

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Two-time correlation functions &mdash; Julia Quantum Optics</title>
+  <title>Two-time correlation functions &mdash; QuantumOptics.jl</title>
   
 
   
@@ -30,7 +30,10 @@
   
 
   
-    <link rel="top" title="Julia Quantum Optics" href="index.html"/>
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="QuantumOptics.jl" href="index.html"/>
         <link rel="next" title="Spectral Analysis" href="spectralanalysis.html"/>
         <link rel="prev" title="Steady state" href="steadystate.html"/> 
 
@@ -60,7 +63,7 @@
             
             
               <div class="version">
-                0.1
+                0.2
               </div>
             
           
@@ -84,16 +87,16 @@
                 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="bases.html">Bases</a></li>
-<li class="toctree-l1"><a class="reference internal" href="states.html">States</a></li>
-<li class="toctree-l1"><a class="reference internal" href="operators.html">Operators</a></li>
-<li class="toctree-l1"><a class="reference internal" href="superoperators.html">Super-operators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="states.html">States and Operators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quantumsystems.html">Quantum systems</a></li>
 <li class="toctree-l1"><a class="reference internal" href="timeevolution.html">Time-evolution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="steadystate.html">Steady state</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">Two-time correlation functions</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Two-time correlation functions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="spectralanalysis.html">Spectral Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="superoperators.html">Super-operators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bases.html">Bases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operators.html">Operators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 </ul>
 
@@ -129,7 +132,7 @@
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="_sources/correlations.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/correlations.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -159,16 +162,15 @@ and then calculating the expectation value <span class="math">\(\mathrm{Tr} \{ A
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
-<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><ul class="first last simple">
-<li><strong>Gamma</strong> &#8211;
-Vector or matrix specifying the coefficients for the jump operators.</li>
-<li><strong>Jdagger (optional)</strong> &#8211;
-Vector containing the hermitian conjugates of the jump operators. If they
-are not given they are calculated automatically.</li>
-<li><strong>kwargs</strong> &#8211;
-Further arguments are passed on to the ode solver.</li>
-</ul>
+<tr class="field-even field"><th class="field-name">Keyword Gamma:</th><td class="field-body"><p class="first">Vector or matrix specifying the coefficients for the jump operators.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">Keyword Jdagger (optional):</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><p class="first">Vector containing the hermitian conjugates of the jump operators. If they
+are not given they are calculated automatically.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Keyword kwargs:</th><td class="field-body"><p class="first last">Further arguments are passed on to the ode solver.</p>
 </td>
 </tr>
 </tbody>
@@ -193,25 +195,44 @@ time is determined by the steady state termination criterion specified in
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
-<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><ul class="first last simple">
-<li><strong>eps</strong> &#8211;
-Tracedistance used as termination criterion.</li>
-<li><strong>h0</strong> &#8211;
-Initial time step used in the time evolution.</li>
-<li><strong>Gamma</strong> &#8211;
-Vector or matrix specifying the coefficients for the jump operators.</li>
-<li><strong>Jdagger (optional)</strong> &#8211;
-Vector containing the hermitian conjugates of the jump operators. If they
-are not given they are calculated automatically.</li>
-<li><strong>kwargs</strong> &#8211;
-Further arguments are passed on to the ode solver.</li>
-</ul>
+<tr class="field-even field"><th class="field-name">Keyword eps:</th><td class="field-body"><p class="first">Tracedistance used as termination criterion.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Keyword h0:</th><td class="field-body"><p class="first">Initial time step used in the time evolution.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Keyword Gamma:</th><td class="field-body"><p class="first">Vector or matrix specifying the coefficients for the jump operators.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">Keyword Jdagger (optional):</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><p class="first">Vector containing the hermitian conjugates of the jump operators. If they
+are not given they are calculated automatically.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Keyword kwargs:</th><td class="field-body"><p class="first last">Further arguments are passed on to the ode solver.</p>
 </td>
 </tr>
 </tbody>
 </table>
-</dd></dl></div>
+</dd></dl><p>As a brief example, say we want to calculate the two-time correlation function of a cavity field, i.e. <span class="math">\(g(t) = \langle a(t) a^\dagger(0)\)</span>.
+We can do this with:</p>
+<div class="highlight-julia"><div class="highlight"><pre><span></span><span class="n">basis</span> <span class="o">=</span> <span class="n">FockBasis</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">a</span> <span class="o">=</span> <span class="n">destroy</span><span class="p">(</span><span class="n">basis</span><span class="p">)</span>
+<span class="n">κ</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">η</span> <span class="o">=</span> <span class="mf">0.3</span>
+<span class="n">H</span> <span class="o">=</span> <span class="n">η</span><span class="o">*</span><span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="n">dagger</span><span class="p">(</span><span class="n">a</span><span class="p">))</span>
+<span class="n">J</span> <span class="o">=</span> <span class="p">[</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="n">κ</span><span class="p">)</span><span class="o">*</span><span class="n">a</span><span class="p">]</span>
+
+<span class="n">tspan</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="o">:</span><span class="mf">0.1</span><span class="o">:</span><span class="mi">10</span><span class="p">;]</span>
+<span class="n">ρ0</span> <span class="o">=</span> <span class="n">fockstate</span><span class="p">(</span><span class="n">basis</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="n">⊗</span> <span class="n">dagger</span><span class="p">(</span><span class="n">fockstate</span><span class="p">(</span><span class="n">basis</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">correlations</span><span class="o">.</span><span class="n">correlation</span><span class="p">(</span><span class="n">tspan</span><span class="p">,</span> <span class="n">ρ0</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">J</span><span class="p">,</span> <span class="n">dagger</span><span class="p">(</span><span class="n">a</span><span class="p">),</span> <span class="n">a</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If we omit the list of times <code class="xref jl jl-func docutils literal"><span class="pre">tspan</span></code>, the function automatically calculates the correlation until steady-state is reached:</p>
+<div class="highlight-julia"><div class="highlight"><pre><span></span><span class="n">t_s</span><span class="p">,</span> <span class="n">g_s</span> <span class="o">=</span> <span class="n">correlations</span><span class="o">.</span><span class="n">correlation</span><span class="p">(</span><span class="n">ρ0</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">J</span><span class="p">,</span> <span class="n">dagger</span><span class="p">(</span><span class="n">a</span><span class="p">),</span> <span class="n">a</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
 
 
            </div>
@@ -254,10 +275,11 @@ Further arguments are passed on to the ode solver.</li>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.1',
+            VERSION:'0.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="_static/jquery.js"></script>

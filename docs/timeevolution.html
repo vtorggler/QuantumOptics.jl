@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Time-evolution &mdash; Julia Quantum Optics</title>
+  <title>Time-evolution &mdash; QuantumOptics.jl</title>
   
 
   
@@ -30,7 +30,10 @@
   
 
   
-    <link rel="top" title="Julia Quantum Optics" href="index.html"/>
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="QuantumOptics.jl" href="index.html"/>
         <link rel="next" title="Steady state" href="steadystate.html"/>
         <link rel="prev" title="N-Particles Basis" href="nparticles.html"/> 
 
@@ -60,7 +63,7 @@
             
             
               <div class="version">
-                0.1
+                0.2
               </div>
             
           
@@ -84,21 +87,22 @@
                 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="bases.html">Bases</a></li>
-<li class="toctree-l1"><a class="reference internal" href="states.html">States</a></li>
-<li class="toctree-l1"><a class="reference internal" href="operators.html">Operators</a></li>
-<li class="toctree-l1"><a class="reference internal" href="superoperators.html">Super-operators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="states.html">States and Operators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quantumsystems.html">Quantum systems</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">Time-evolution</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Time-evolution</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#schroedinger-time-evolution">Schroedinger time evolution</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#master-time-evolution">Master time evolution</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#mcwf-time-evolution">MCWF time evolution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#advanced-examples">Advanced examples</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="steadystate.html">Steady state</a></li>
 <li class="toctree-l1"><a class="reference internal" href="correlations.html">Two-time correlation functions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="spectralanalysis.html">Spectral Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="superoperators.html">Super-operators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bases.html">Bases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operators.html">Operators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 </ul>
 
@@ -134,7 +138,7 @@
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="_sources/timeevolution.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/timeevolution.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -148,20 +152,53 @@
 <span id="section-timeevolution"></span><h1>Time-evolution<a class="headerlink" href="#time-evolution" title="Permalink to this headline">¶</a></h1>
 <p><strong>QuantumOptics.jl</strong> implements solver for dynamics of closed and open quantum systems:</p>
 <ul class="simple">
-<li><a class="reference internal" href="#section-schroedinger"><span>Schroedinger equation</span></a></li>
-<li><a class="reference internal" href="#section-master"><span>Master equation</span></a></li>
-<li><a class="reference internal" href="#section-mcwf"><span>Monte Carlo wave function method (MCWF)</span></a></li>
+<li><a class="reference internal" href="#section-schroedinger"><span class="std std-ref">Schroedinger equation</span></a></li>
+<li><a class="reference internal" href="#section-master"><span class="std std-ref">Master equation</span></a></li>
+<li><a class="reference internal" href="#section-mcwf"><span class="std std-ref">Monte Carlo wave function method (MCWF)</span></a></li>
 </ul>
 <p>The interfaces are designed to be as consistent as possible to make it easy to switch between different methods.</p>
 <div class="section" id="schroedinger-time-evolution">
 <span id="section-schroedinger"></span><h2>Schroedinger time evolution<a class="headerlink" href="#schroedinger-time-evolution" title="Permalink to this headline">¶</a></h2>
 <p>The Schroedinger equation as one of the basic postulates of quantum mechanics describes the dynamics of a quantum state in a closed quantum system. In Dirac notation the Schroedinger equation and its adjoint equation read</p>
 <div class="math">
-\[i\hbar\frac{\mathrm{d}}{\mathrm{d} t} |\Psi(t)\rangle = H |\Psi(t)\rangle\]\[- i\hbar\frac{\mathrm{d}}{\mathrm{d} t} \langle \Psi(t)| = \langle\Psi(t)| H\]</div>
+\[ \begin{align}\begin{aligned}i\hbar\frac{\mathrm{d}}{\mathrm{d} t} |\Psi(t)\rangle = H |\Psi(t)\rangle\\- i\hbar\frac{\mathrm{d}}{\mathrm{d} t} \langle \Psi(t)| = \langle\Psi(t)| H\end{aligned}\end{align} \]</div>
 <p>Both versions are implemented and are chosen automatically depending on the type of the provided initial state (Bra or Ket):</p>
 <ul class="simple">
-<li><code class="xref jl jl-func docutils literal"><span class="pre">timeevolution.schroedinger</span></code></li>
+<li><code class="xref jl jl-func docutils literal"><span class="pre">schroedinger(tspan::Vector{Float64},</span> <span class="pre">psi0::{Ket,Bra},</span> <span class="pre">H::Operator)</span></code></li>
 </ul>
+<p>The Schrödinger equation solver requires the arguments <code class="xref jl jl-func docutils literal"><span class="pre">tspan</span></code>, which is a vector containing the times, the initial state <code class="xref jl jl-func docutils literal"><span class="pre">psi0</span></code>
+as <code class="xref jl jl-func docutils literal"><span class="pre">Ket</span></code> or <code class="xref jl jl-func docutils literal"><span class="pre">Bra</span></code> and the Hamiltonian <code class="xref jl jl-func docutils literal"><span class="pre">H</span></code>.</p>
+<p>Additionally, one can pass an output function <code class="xref jl jl-func docutils literal"><span class="pre">fout</span></code> as keyword argument. This can be convenient if one directly wants to compute a value that depends on the states, e.g. an expectation value, instead
+of the states themselves. Consider, for example, a time evolution according to a Schrödinger equation where for all times we want to compute the expectation value of the operator <code class="xref jl jl-func docutils literal"><span class="pre">A</span></code>. We can do this by:</p>
+<div class="highlight-julia"><div class="highlight"><pre><span></span><span class="n">tout</span><span class="p">,</span> <span class="n">psi_t</span> <span class="o">=</span> <span class="n">timeevolution</span><span class="o">.</span><span class="n">schroedinger</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">psi0</span><span class="p">,</span> <span class="n">H</span><span class="p">)</span>
+<span class="n">exp_val</span> <span class="o">=</span> <span class="n">expect</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">psi_t</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>or equivalently:</p>
+<div class="highlight-julia"><div class="highlight"><pre><span></span><span class="n">tout</span> <span class="o">=</span> <span class="kt">Float64</span><span class="p">[]</span>
+<span class="n">exp_val</span> <span class="o">=</span> <span class="kt">Complex128</span><span class="p">[]</span>
+<span class="k">function</span> <span class="n">exp</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">psi</span><span class="p">)</span>
+  <span class="n">push!</span><span class="p">(</span><span class="n">tout</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+  <span class="n">push!</span><span class="p">(</span><span class="n">exp_val</span><span class="p">,</span> <span class="n">expect</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">psi</span><span class="p">)</span>
+<span class="k">end</span>
+<span class="n">timeevolution</span><span class="o">.</span><span class="n">schroedinger</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">psi0</span><span class="p">,</span> <span class="n">H</span><span class="p">;</span> <span class="n">fout</span><span class="o">=</span><span class="n">exp</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Although the method using <code class="xref jl jl-func docutils literal"><span class="pre">fout</span></code> might seem more complicated, it can be very useful for large systems to save memory since instead of all the states we only store one complex number per time step. Note, that
+<code class="xref jl jl-func docutils literal"><span class="pre">fout</span></code> must always be defined with the arguments <code class="xref jl jl-func docutils literal"><span class="pre">(t,</span> <span class="pre">psi)</span></code>. If <code class="xref jl jl-func docutils literal"><span class="pre">fout</span></code> is given, all variables are assigned within <code class="xref jl jl-func docutils literal"><span class="pre">fout</span></code> and the call to <a class="reference internal" href="api.html#schroedinger-3b7c668082c5d4d079c52549b66d6d1d" title="schroedinger"><code class="xref jl jl-func docutils literal"><span class="pre">schroedinger</span></code></a>
+returns <code class="xref jl jl-func docutils literal"><span class="pre">nothing</span></code>.</p>
+<p>We can also calculate the time evolution for a Hamiltonian that is time-dependent. In that case, we need to use the function <code class="xref jl jl-func docutils literal"><span class="pre">schroedinger_dynamic(tspan,</span> <span class="pre">psi0,</span> <span class="pre">f::Function)</span></code>. As you can see, this function
+requires the same arguments as <a class="reference internal" href="api.html#schroedinger-3b7c668082c5d4d079c52549b66d6d1d" title="schroedinger"><code class="xref jl jl-func docutils literal"><span class="pre">schroedinger</span></code></a>, but a function <code class="xref jl jl-func docutils literal"><span class="pre">f</span></code> instead of a Hamiltonian. As a brief example, consider a spin-1/2 particle that is coherently driven by a laser that has an amplitude that
+varies in time. We can implement this with:</p>
+<div class="highlight-julia"><div class="highlight"><pre><span></span><span class="n">basis</span> <span class="o">=</span> <span class="n">SpinBasis</span><span class="p">(</span><span class="mi">1</span><span class="o">//</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">ψ₀</span> <span class="o">=</span> <span class="n">spindown</span><span class="p">(</span><span class="n">basis</span><span class="p">)</span>
+<span class="k">function</span> <span class="n">pump</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">psi</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">sin</span><span class="p">(</span><span class="n">t</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">sigmap</span><span class="p">(</span><span class="n">basis</span><span class="p">)</span> <span class="o">+</span> <span class="n">sigmam</span><span class="p">(</span><span class="n">basis</span><span class="p">))</span>
+<span class="k">end</span>
+<span class="n">tspan</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="o">:</span><span class="mf">0.1</span><span class="o">:</span><span class="mi">10</span><span class="p">;]</span>
+<span class="n">tout</span><span class="p">,</span> <span class="n">ψₜ</span> <span class="o">=</span> <span class="n">timeevolution</span><span class="o">.</span><span class="n">schroedinger_dynamic</span><span class="p">(</span><span class="n">tspan</span><span class="p">,</span> <span class="n">ψ₀</span><span class="p">,</span> <span class="n">pump</span><span class="p">)</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="master-time-evolution">
 <span id="section-master"></span><h2>Master time evolution<a class="headerlink" href="#master-time-evolution" title="Permalink to this headline">¶</a></h2>
@@ -173,15 +210,32 @@
                     - \frac{1}{2} J_i^\dagger J_i \rho
                     - \frac{1}{2} \rho J_i^\dagger J_i
                 \big)\]</div>
+<p>It is implemented by the function</p>
+<ul class="simple">
+<li><a class="reference internal" href="api.html#master-ba24c2fffbe32ab8cb2efcd34a0bbe8b" title="master(tspan, rho0::DenseOperator, H::Operator, J::Vector)"><code class="xref jl jl-func docutils literal"><span class="pre">master(tspan,</span> <span class="pre">rho0::DenseOperator,</span> <span class="pre">H::Operator,</span> <span class="pre">J::Vector)</span></code></a></li>
+</ul>
+<p>The arguments required are quite similar to the ones of <a class="reference internal" href="api.html#schroedinger-3b7c668082c5d4d079c52549b66d6d1d" title="schroedinger"><code class="xref jl jl-func docutils literal"><span class="pre">schroedinger</span></code></a>. <code class="xref jl jl-func docutils literal"><span class="pre">tspan</span></code> is a vector of times, <code class="xref jl jl-func docutils literal"><span class="pre">rho0</span></code> the initial state and <code class="xref jl jl-func docutils literal"><span class="pre">H</span></code> the Hamiltonian. We now also need the vector <code class="xref jl jl-func docutils literal"><span class="pre">J</span></code>
+that specifies the jump operators of the system.</p>
+<p>The additional arguments available are</p>
+<ul class="simple">
+<li><code class="xref jl jl-func docutils literal"><span class="pre">Gamma::{Vector{Float64},</span> <span class="pre">Matrix{Float64}}</span></code></li>
+<li><code class="xref jl jl-func docutils literal"><span class="pre">Jdagger::Vector</span></code></li>
+<li><code class="xref jl jl-func docutils literal"><span class="pre">fout::Function</span></code></li>
+</ul>
+<p>The first specifies the decay rates of the system with default values one. If <code class="xref jl jl-func docutils literal"><span class="pre">Gamma</span></code> is a vector of length <code class="xref jl jl-func docutils literal"><span class="pre">length(J)</span></code>, then the <cite>i</cite> th entry of <code class="xref jl jl-func docutils literal"><span class="pre">Gamma</span></code> is paired with the <cite>i</cite> th entry of <code class="xref jl jl-func docutils literal"><span class="pre">J</span></code>, such
+that <span class="math">\(J_i\)</span> decays with <span class="math">\(\gamma_i\)</span>. If, on the other hand, <code class="xref jl jl-func docutils literal"><span class="pre">Gamma</span></code> is a matrix, then all entries of <code class="xref jl jl-func docutils literal"><span class="pre">J</span></code> are paired with one another and matched with the corresponding entrie of <code class="xref jl jl-func docutils literal"><span class="pre">Gamma</span></code>, resulting
+in a Lindblad term of the form <span class="math">\(\sum_{i,j}\gamma_{ij}J_i\rho J_j^\dagger - J_i^\dagger J_j\rho/2 - \rho J_i^\dagger J_j/2\)</span>.</p>
+<p>The second keyword argument can be used to pass a specific set of jump operators to be used in place of all <span class="math">\(J^\dagger\)</span> appearances in the Lindblad term.</p>
+<p>We can pass an output function just like the one for a Schrödinger equation. Note, though, that now the function must be defined with the arguments <code class="xref jl jl-func docutils literal"><span class="pre">fout(t,</span> <span class="pre">rho)</span></code>.</p>
+<p>Furthermore, a time-dependent Hamiltonian can also be implemented analogously to a Schrödinger equation using <code class="xref jl jl-func docutils literal"><span class="pre">master_dynamic(tspan,</span> <span class="pre">rho0,</span> <span class="pre">f)</span></code>.</p>
 <p>For performance reasons the solver internally first creates the non-hermitian Hamiltonian <span class="math">\(H_\mathrm{nh} = H - \frac{i\hbar}{2} \sum_i J_i^\dagger J_i\)</span> and solves the equation</p>
 <div class="math">
 \[\dot{\rho} = -\frac{i}{\hbar} \big[H_\mathrm{nh},\rho\big]
              + \sum_i J_i \rho J_i^\dagger\]</div>
 <p>If for any reason this behavior is unwanted, e.g. special operators are used that don&#8217;t support addition, the function master_h (h for hermitian) can be used.</p>
 <ul class="simple">
-<li><a class="reference internal" href="api.html#master-ba24c2fffbe32ab8cb2efcd34a0bbe8b" title="master(tspan, rho0::DenseOperator, H::Operator, J::Vector)"><code class="xref jl jl-func docutils literal"><span class="pre">master(tspan,</span> <span class="pre">rho0::DenseOperator,</span> <span class="pre">H::Operator,</span> <span class="pre">J::Vector)</span></code></a></li>
 <li><a class="reference internal" href="api.html#master_h-ba24c2fffbe32ab8cb2efcd34a0bbe8b" title="master_h(tspan, rho0::DenseOperator, H::Operator, J::Vector)"><code class="xref jl jl-func docutils literal"><span class="pre">master_h(tspan,</span> <span class="pre">rho0::DenseOperator,</span> <span class="pre">H::Operator,</span> <span class="pre">J::Vector)</span></code></a></li>
-<li><code class="xref jl jl-func docutils literal"><span class="pre">master_nh(tspan,</span> <span class="pre">rho0::DenseOperator,</span> <span class="pre">H::Operator,</span> <span class="pre">J::Vector)</span></code></li>
+<li><a class="reference internal" href="api.html#master_nh-436e712c6a9ad68f0e9d4fe90930eb2d" title="master_nh(tspan, rho0::DenseOperator, Hnh::Operator, J::Vector)"><code class="xref jl jl-func docutils literal"><span class="pre">master_nh(tspan,</span> <span class="pre">rho0::DenseOperator,</span> <span class="pre">Hnh::Operator,</span> <span class="pre">J::Vector)</span></code></a></li>
 </ul>
 </div>
 <div class="section" id="mcwf-time-evolution">
@@ -223,9 +277,17 @@
 <div class="math">
 \[\lim\limits_{N \rightarrow \infty}\frac{1}{N} \sum_{k=1}^N \langle\Psi^k(t)| A |\Psi^k(t)\rangle = \mathrm{Tr}\big\{A \rho(t)\big\}\]</div>
 <p>avoiding explicit calculations of density matrices.</p>
+<p>The function computing a time evolution with the MCWF method can be called analogously to <a class="reference internal" href="api.html#master-ba24c2fffbe32ab8cb2efcd34a0bbe8b" title="master"><code class="xref jl jl-func docutils literal"><span class="pre">master</span></code></a>, namely with</p>
 <ul class="simple">
-<li><a class="reference internal" href="api.html#master-56cfeacc86d4f8398740b9219403c145" title="master(tspan, psi0::Ket, H::Operator, J::Vector)"><code class="xref jl jl-func docutils literal"><span class="pre">master(tspan,</span> <span class="pre">psi0::Ket,</span> <span class="pre">H::Operator,</span> <span class="pre">J::Vector)</span></code></a></li>
+<li><a class="reference internal" href="api.html#mcwf-1c364c4da7fc42e70b7eec6b14379f42" title="mcwf(tspan, psi0::Ket, H::Operator, J::Vector)"><code class="xref jl jl-func docutils literal"><span class="pre">mcwf(tspan,</span> <span class="pre">psi0::Ket,</span> <span class="pre">H::Operator,</span> <span class="pre">J::Vector)</span></code></a></li>
 </ul>
+<p>Since this function only calculates state vectors (as explained above), it requires the initial state in the form of a ket.</p>
+</div>
+<div class="section" id="advanced-examples">
+<h2>Advanced examples<a class="headerlink" href="#advanced-examples" title="Permalink to this headline">¶</a></h2>
+<p>This section is meant to provide a basic introduction to the implemented time evolution solvers and illustrate some simple examples.
+Most applications of the toolbox involve the simulation of a time evolution in one way or another, so please refer to <a class="reference internal" href="examples.html#section-examples"><span class="std std-ref">Examples</span></a>
+for more sophisticated uses of the solvers.</p>
 </div>
 </div>
 
@@ -270,10 +332,11 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.1',
+            VERSION:'0.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="_static/jquery.js"></script>

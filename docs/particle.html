@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Particle basis &mdash; Julia Quantum Optics</title>
+  <title>Particle basis &mdash; QuantumOptics.jl</title>
   
 
   
@@ -30,10 +30,13 @@
   
 
   
-    <link rel="top" title="Julia Quantum Optics" href="index.html"/>
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="QuantumOptics.jl" href="index.html"/>
         <link rel="up" title="Quantum systems" href="quantumsystems.html"/>
         <link rel="next" title="N-Particles Basis" href="nparticles.html"/>
-        <link rel="prev" title="Fock Basis" href="fock.html"/> 
+        <link rel="prev" title="N-level basis" href="nlevel.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -61,7 +64,7 @@
             
             
               <div class="version">
-                0.1
+                0.2
               </div>
             
           
@@ -85,14 +88,12 @@
                 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="bases.html">Bases</a></li>
-<li class="toctree-l1"><a class="reference internal" href="states.html">States</a></li>
-<li class="toctree-l1"><a class="reference internal" href="operators.html">Operators</a></li>
-<li class="toctree-l1"><a class="reference internal" href="superoperators.html">Super-operators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="states.html">States and Operators</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="quantumsystems.html">Quantum systems</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="spin.html">Spin basis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fock.html">Fock Basis</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="">Particle basis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nlevel.html">N-level basis</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Particle basis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nparticles.html">N-Particles Basis</a></li>
 </ul>
 </li>
@@ -100,7 +101,10 @@
 <li class="toctree-l1"><a class="reference internal" href="steadystate.html">Steady state</a></li>
 <li class="toctree-l1"><a class="reference internal" href="correlations.html">Two-time correlation functions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="spectralanalysis.html">Spectral Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="superoperators.html">Super-operators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bases.html">Bases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operators.html">Operators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 </ul>
 
@@ -138,7 +142,7 @@
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="_sources/particle.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/particle.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -165,18 +169,18 @@
 </pre></div>
 </div>
 <p>The definition of these two bases types is very simple:</p>
-<div class="highlight-julia"><div class="highlight"><pre><span></span><span class="k">type</span><span class="nc"> PositionBasis</span> <span class="o">&lt;:</span> <span class="n">Basis</span>
-    <span class="n">shape</span><span class="p">::</span><span class="n">Vector</span><span class="p">{</span><span class="kt">Int</span><span class="p">}</span>
-    <span class="n">xmin</span><span class="p">::</span><span class="kt">Float64</span>
-    <span class="n">xmax</span><span class="p">::</span><span class="kt">Float64</span>
-    <span class="n">N</span><span class="p">::</span><span class="kt">Int</span>
+<div class="highlight-julia"><div class="highlight"><pre><span></span><span class="k">type</span> <span class="n">PositionBasis</span> <span class="o">&lt;:</span> <span class="n">Basis</span>
+    <span class="n">shape</span><span class="o">::</span><span class="kt">Vector</span><span class="p">{</span><span class="kt">Int</span><span class="p">}</span>
+    <span class="n">xmin</span><span class="o">::</span><span class="kt">Float64</span>
+    <span class="n">xmax</span><span class="o">::</span><span class="kt">Float64</span>
+    <span class="n">N</span><span class="o">::</span><span class="kt">Int</span>
 <span class="k">end</span>
 
-<span class="k">type</span><span class="nc"> MomentumBasis</span> <span class="o">&lt;:</span> <span class="n">Basis</span>
-    <span class="n">shape</span><span class="p">::</span><span class="n">Vector</span><span class="p">{</span><span class="kt">Int</span><span class="p">}</span>
-    <span class="n">pmin</span><span class="p">::</span><span class="kt">Float64</span>
-    <span class="n">pmax</span><span class="p">::</span><span class="kt">Float64</span>
-    <span class="n">N</span><span class="p">::</span><span class="kt">Int</span>
+<span class="k">type</span> <span class="n">MomentumBasis</span> <span class="o">&lt;:</span> <span class="n">Basis</span>
+    <span class="n">shape</span><span class="o">::</span><span class="kt">Vector</span><span class="p">{</span><span class="kt">Int</span><span class="p">}</span>
+    <span class="n">pmin</span><span class="o">::</span><span class="kt">Float64</span>
+    <span class="n">pmax</span><span class="o">::</span><span class="kt">Float64</span>
+    <span class="n">N</span><span class="o">::</span><span class="kt">Int</span>
 <span class="k">end</span>
 </pre></div>
 </div>
@@ -230,7 +234,7 @@
         <a href="nparticles.html" class="btn btn-neutral float-right" title="N-Particles Basis" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="fock.html" class="btn btn-neutral" title="Fock Basis" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="nlevel.html" class="btn btn-neutral" title="N-level basis" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -261,10 +265,11 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.1',
+            VERSION:'0.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="_static/jquery.js"></script>
