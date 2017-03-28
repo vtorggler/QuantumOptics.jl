@@ -4,18 +4,11 @@ QuantumOptics.jl
 
 .. toctree::
     :includehidden:
+    :maxdepth: 3
 
     introduction
-    installation    
-    states
-    quantumsystems
-    timeevolution
-    steadystate
-    correlations
-    spectralanalysis
-    superoperators
+    installation
+    tutorial/tutorial
+    documentation/documentation
     examples
-    bases
-    operators
     api
-

@@ -2,6 +2,8 @@
 *This notebook can be found on*
 `github <https://github.com/bastikr/QuantumOptics.jl/blob/master/examples/particle-in-harmonic-trap.ipynb>`__
 
+.. _example-particle-in-harmonic-trap:
+
 Particle in harmonic trap potential
 ===================================
 
@@ -27,6 +29,12 @@ or alternatively in momentum space.
     m = 1.
     ω = 0.5 # Strength of trapping potential;
 
+The position basis is simply defined by the range of positions it spans
+by defining a minimal position (:math:`x_\min`) and a maximal one
+(:math:`x_\max`), respectively. The amount of points in position we
+account for, which ultimately governs the dimension of the basis, is
+given by Npoints.
+
 .. code:: julia
 
     # Position Basis
@@ -36,14 +44,14 @@ or alternatively in momentum space.
     b_position = PositionBasis(xmin, xmax, Npoints)
     
     # Hamiltonian in real space basis
-    p = momentumoperator(b_position)
-    x = positionoperator(b_position)
+    p = momentumoperator(b_position) # Dense operator
+    x = positionoperator(b_position) # Sparse operator
     
-    H = p^2/2m + 1/2*m*ω^2*x^2;
+    H = p^2/2m + 1/2*m*ω^2*full(x^2);
 
 Of course we could also choose to work in momentum space:
 
-From a PositionBasis **QuantumOptics.jl** can automatically infere the
+From a PositionBasis **QuantumOptics.jl** can automatically infer the
 corresponding MomentumBasis by calculating
 :math:`p_\mathrm{min} = -\pi/dx` and :math:`p_\mathrm{max} = \pi/dx`
 where :math:`dx = (x_\mathrm{max} - x_\mathrm{min})/N`
@@ -53,10 +61,10 @@ where :math:`dx = (x_\mathrm{max} - x_\mathrm{min})/N`
     b_momentum = MomentumBasis(b_position);
     
     # Hamiltonian
-    p = momentumoperator(b_momentum)
-    x = positionoperator(b_momentum)
+    p = momentumoperator(b_momentum) # Sparse operator
+    x = positionoperator(b_momentum) # Dense operator
     
-    H = p^2/2m + 1/2*m*ω^2*x^2;
+    H = full(p^2)/2m + 1/2*m*ω^2*x^2;
 
 However, both choices are not optimal since in real space the position
 operator is diagonal while the momentum operator is a completely dense
@@ -75,7 +83,7 @@ Fourier transformation on the multiplied state.
 
     # Transforms a state multiplied from the right side from real space
     # to momentum space.
-    op_fft = particle.FFTOperator(b_momentum, b_position);
+    T_px = particle.FFTOperator(b_momentum, b_position);
 
 To use this operator in a Hamiltonian we additionally need the concept
 of lazy operators which allow us to delay certain operations to a later
@@ -86,12 +94,14 @@ two matrix-vector multiplications instead.
 
 .. code:: julia
 
-    op_inversefft = dagger(op_fft)
+    T_xp = dagger(T_px)
     
     x = positionoperator(b_position)
     p = momentumoperator(b_momentum)
     
-    H = LazySum(LazyProduct(op_inversefft, p^2/2m, op_fft), ω*x^2);
+    H_kin = LazyProduct(T_xp, p^2/2m, T_px)
+    V = ω*x^2
+    H = LazySum(H_kin, V);
 
 Finally we can simulate the time evolution according to a Schroedinger
 equation.
@@ -124,9 +134,11 @@ equation.
         Ψ = Ψt[i]
         n = abs(Ψ.data).^2
         plot(x_points, n, "C0", alpha=0.9*(float(i)/length(T))^8+0.1)
-    end;
+    end
+    show()
 
 
 
-.. image:: particle-in-harmonic-trap_files/particle-in-harmonic-trap_12_0.png
+.. image:: particle-in-harmonic-trap_files/particle-in-harmonic-trap_13_0.png
+
 

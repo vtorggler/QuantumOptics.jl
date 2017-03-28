@@ -13,6 +13,8 @@
 
   
   
+  
+  
 
   
 
@@ -35,8 +37,8 @@
         <link rel="search" title="Search" href="../search.html"/>
     <link rel="top" title="QuantumOptics.jl" href="../index.html"/>
         <link rel="up" title="Examples" href="../examples.html"/>
-        <link rel="next" title="Raman Transition of a \(\Lambda\)-scheme Atom" href="raman.html"/>
-        <link rel="prev" title="Jaynes-Cummings model" href="jaynes-cummings-model.html"/> 
+        <link rel="next" title="Gaussian wave packet running into a potential barrier" href="particle-into-barrier.html"/>
+        <link rel="prev" title="Jaynes-Cummings model" href="jaynes-cummings.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -45,6 +47,7 @@
 
 <body class="wy-body-for-nav" role="document">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -85,25 +88,26 @@
           
             
             
-                <ul class="current">
+              
+            
+            
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../states.html">States and Operators</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../quantumsystems.html">Quantum systems</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../timeevolution.html">Time-evolution</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../steadystate.html">Steady state</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../correlations.html">Two-time correlation functions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../spectralanalysis.html">Spectral Analysis</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../superoperators.html">Super-operators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../documentation/documentation.html">Documentation</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../examples.html">Examples</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="jaynes-cummings-model.html">Jaynes-Cummings model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pumped-cavity.html">Pumped cavity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jaynes-cummings.html">Jaynes-Cummings model</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Particle in harmonic trap potential</a></li>
+<li class="toctree-l2"><a class="reference internal" href="particle-into-barrier.html">Gaussian wave packet running into a potential barrier</a></li>
 <li class="toctree-l2"><a class="reference internal" href="raman.html">Raman Transition of a <span class="math">\(\Lambda\)</span>-scheme Atom</a></li>
 <li class="toctree-l2"><a class="reference internal" href="two-qubit-entanglement.html">Entanglement of Two Qubits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="correlation-spectrum.html">Two-time correlation function and spectrum of a Fock state</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manybody-fourlevel-system.html">Four level system in many-body formalism</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nparticles-in-double-well.html">N-Particles in a double-well potential</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../bases.html">Bases</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../operators.html">Operators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api.html">API</a></li>
 </ul>
 
@@ -117,8 +121,10 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="../index.html">QuantumOptics.jl</a>
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">QuantumOptics.jl</a>
+        
       </nav>
 
 
@@ -127,25 +133,42 @@
         <div class="rst-content">
           
 
- 
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="../index.html">Docs</a> &raquo;</li>
-      
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
           <li><a href="../examples.html">Examples</a> &raquo;</li>
-      
-    <li>Particle in harmonic trap potential</li>
+        
+      <li>Particle in harmonic trap potential</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
+            
             <a href="../_sources/examples/particle-in-harmonic-trap.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -154,7 +177,7 @@
   <p><em>This notebook can be found on</em>
 <a class="reference external" href="https://github.com/bastikr/QuantumOptics.jl/blob/master/examples/particle-in-harmonic-trap.ipynb">github</a></p>
 <div class="section" id="particle-in-harmonic-trap-potential">
-<h1>Particle in harmonic trap potential<a class="headerlink" href="#particle-in-harmonic-trap-potential" title="Permalink to this headline">¶</a></h1>
+<span id="example-particle-in-harmonic-trap"></span><h1>Particle in harmonic trap potential<a class="headerlink" href="#particle-in-harmonic-trap-potential" title="Permalink to this headline">¶</a></h1>
 <p>A particle in a harmonic trap is described by a Hamiltonian of the form</p>
 <div class="math">
 \[H = \frac{\hat{p}^2}{2m} + \frac{1}{2}m \omega^2 \hat{x}^2\]</div>
@@ -170,6 +193,11 @@ or alternatively in momentum space.</p>
 <span class="n">ω</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="c"># Strength of trapping potential;</span>
 </pre></div>
 </div>
+<p>The position basis is simply defined by the range of positions it spans
+by defining a minimal position (<span class="math">\(x_\min\)</span>) and a maximal one
+(<span class="math">\(x_\max\)</span>), respectively. The amount of points in position we
+account for, which ultimately governs the dimension of the basis, is
+given by Npoints.</p>
 <div class="code julia highlight-julia"><div class="highlight"><pre><span></span><span class="c"># Position Basis</span>
 <span class="n">xmin</span> <span class="o">=</span> <span class="o">-</span><span class="mi">5</span>
 <span class="n">xmax</span> <span class="o">=</span> <span class="mi">5</span>
@@ -177,24 +205,24 @@ or alternatively in momentum space.</p>
 <span class="n">b_position</span> <span class="o">=</span> <span class="n">PositionBasis</span><span class="p">(</span><span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">Npoints</span><span class="p">)</span>
 
 <span class="c"># Hamiltonian in real space basis</span>
-<span class="n">p</span> <span class="o">=</span> <span class="n">momentumoperator</span><span class="p">(</span><span class="n">b_position</span><span class="p">)</span>
-<span class="n">x</span> <span class="o">=</span> <span class="n">positionoperator</span><span class="p">(</span><span class="n">b_position</span><span class="p">)</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">momentumoperator</span><span class="p">(</span><span class="n">b_position</span><span class="p">)</span> <span class="c"># Dense operator</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">positionoperator</span><span class="p">(</span><span class="n">b_position</span><span class="p">)</span> <span class="c"># Sparse operator</span>
 
-<span class="n">H</span> <span class="o">=</span> <span class="n">p</span><span class="o">^</span><span class="mi">2</span><span class="o">/</span><span class="mi">2</span><span class="n">m</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="o">*</span><span class="n">m</span><span class="o">*</span><span class="n">ω</span><span class="o">^</span><span class="mi">2</span><span class="o">*</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span><span class="p">;</span>
+<span class="n">H</span> <span class="o">=</span> <span class="n">p</span><span class="o">^</span><span class="mi">2</span><span class="o">/</span><span class="mi">2</span><span class="n">m</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="o">*</span><span class="n">m</span><span class="o">*</span><span class="n">ω</span><span class="o">^</span><span class="mi">2</span><span class="o">*</span><span class="n">full</span><span class="p">(</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>Of course we could also choose to work in momentum space:</p>
-<p>From a PositionBasis <strong>QuantumOptics.jl</strong> can automatically infere the
+<p>From a PositionBasis <strong>QuantumOptics.jl</strong> can automatically infer the
 corresponding MomentumBasis by calculating
 <span class="math">\(p_\mathrm{min} = -\pi/dx\)</span> and <span class="math">\(p_\mathrm{max} = \pi/dx\)</span>
 where <span class="math">\(dx = (x_\mathrm{max} - x_\mathrm{min})/N\)</span></p>
 <div class="code julia highlight-julia"><div class="highlight"><pre><span></span><span class="n">b_momentum</span> <span class="o">=</span> <span class="n">MomentumBasis</span><span class="p">(</span><span class="n">b_position</span><span class="p">);</span>
 
 <span class="c"># Hamiltonian</span>
-<span class="n">p</span> <span class="o">=</span> <span class="n">momentumoperator</span><span class="p">(</span><span class="n">b_momentum</span><span class="p">)</span>
-<span class="n">x</span> <span class="o">=</span> <span class="n">positionoperator</span><span class="p">(</span><span class="n">b_momentum</span><span class="p">)</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">momentumoperator</span><span class="p">(</span><span class="n">b_momentum</span><span class="p">)</span> <span class="c"># Sparse operator</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">positionoperator</span><span class="p">(</span><span class="n">b_momentum</span><span class="p">)</span> <span class="c"># Dense operator</span>
 
-<span class="n">H</span> <span class="o">=</span> <span class="n">p</span><span class="o">^</span><span class="mi">2</span><span class="o">/</span><span class="mi">2</span><span class="n">m</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="o">*</span><span class="n">m</span><span class="o">*</span><span class="n">ω</span><span class="o">^</span><span class="mi">2</span><span class="o">*</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span><span class="p">;</span>
+<span class="n">H</span> <span class="o">=</span> <span class="n">full</span><span class="p">(</span><span class="n">p</span><span class="o">^</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="n">m</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="o">*</span><span class="n">m</span><span class="o">*</span><span class="n">ω</span><span class="o">^</span><span class="mi">2</span><span class="o">*</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span><span class="p">;</span>
 </pre></div>
 </div>
 <p>However, both choices are not optimal since in real space the position
@@ -210,7 +238,7 @@ operators which all in all speeds up the calculations to
 Fourier transformation on the multiplied state.</p>
 <div class="code julia highlight-julia"><div class="highlight"><pre><span></span><span class="c"># Transforms a state multiplied from the right side from real space</span>
 <span class="c"># to momentum space.</span>
-<span class="n">op_fft</span> <span class="o">=</span> <span class="n">particle</span><span class="o">.</span><span class="n">FFTOperator</span><span class="p">(</span><span class="n">b_momentum</span><span class="p">,</span> <span class="n">b_position</span><span class="p">);</span>
+<span class="n">T_px</span> <span class="o">=</span> <span class="n">particle</span><span class="o">.</span><span class="n">FFTOperator</span><span class="p">(</span><span class="n">b_momentum</span><span class="p">,</span> <span class="n">b_position</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>To use this operator in a Hamiltonian we additionally need the concept
@@ -219,12 +247,14 @@ point in the simulation. E.g. the LazyProduct allows us to do
 <span class="math">\(A*(B*x)\)</span> instead of <span class="math">\((A*B)*x\)</span> which means for our case that
 the matrix-matrix product never has to be calculated directly but only
 two matrix-vector multiplications instead.</p>
-<div class="code julia highlight-julia"><div class="highlight"><pre><span></span><span class="n">op_inversefft</span> <span class="o">=</span> <span class="n">dagger</span><span class="p">(</span><span class="n">op_fft</span><span class="p">)</span>
+<div class="code julia highlight-julia"><div class="highlight"><pre><span></span><span class="n">T_xp</span> <span class="o">=</span> <span class="n">dagger</span><span class="p">(</span><span class="n">T_px</span><span class="p">)</span>
 
 <span class="n">x</span> <span class="o">=</span> <span class="n">positionoperator</span><span class="p">(</span><span class="n">b_position</span><span class="p">)</span>
 <span class="n">p</span> <span class="o">=</span> <span class="n">momentumoperator</span><span class="p">(</span><span class="n">b_momentum</span><span class="p">)</span>
 
-<span class="n">H</span> <span class="o">=</span> <span class="n">LazySum</span><span class="p">(</span><span class="n">LazyProduct</span><span class="p">(</span><span class="n">op_inversefft</span><span class="p">,</span> <span class="n">p</span><span class="o">^</span><span class="mi">2</span><span class="o">/</span><span class="mi">2</span><span class="n">m</span><span class="p">,</span> <span class="n">op_fft</span><span class="p">),</span> <span class="n">ω</span><span class="o">*</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span><span class="p">);</span>
+<span class="n">H_kin</span> <span class="o">=</span> <span class="n">LazyProduct</span><span class="p">(</span><span class="n">T_xp</span><span class="p">,</span> <span class="n">p</span><span class="o">^</span><span class="mi">2</span><span class="o">/</span><span class="mi">2</span><span class="n">m</span><span class="p">,</span> <span class="n">T_px</span><span class="p">)</span>
+<span class="n">V</span> <span class="o">=</span> <span class="n">ω</span><span class="o">*</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span>
+<span class="n">H</span> <span class="o">=</span> <span class="n">LazySum</span><span class="p">(</span><span class="n">H_kin</span><span class="p">,</span> <span class="n">V</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>Finally we can simulate the time evolution according to a Schroedinger
@@ -255,23 +285,27 @@ equation.</p>
     <span class="n">Ψ</span> <span class="o">=</span> <span class="n">Ψt</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
     <span class="n">n</span> <span class="o">=</span> <span class="n">abs</span><span class="p">(</span><span class="n">Ψ</span><span class="o">.</span><span class="n">data</span><span class="p">)</span><span class="o">.^</span><span class="mi">2</span>
     <span class="n">plot</span><span class="p">(</span><span class="n">x_points</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="s">&quot;C0&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.9</span><span class="o">*</span><span class="p">(</span><span class="n">float</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">/</span><span class="n">length</span><span class="p">(</span><span class="n">T</span><span class="p">))</span><span class="o">^</span><span class="mi">8</span><span class="o">+</span><span class="mf">0.1</span><span class="p">)</span>
-<span class="k">end</span><span class="p">;</span>
+<span class="k">end</span>
+<span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-<img alt="../_images/particle-in-harmonic-trap_12_0.png" src="../_images/particle-in-harmonic-trap_12_0.png" />
+<img alt="../_images/particle-in-harmonic-trap_13_0.png" src="../_images/particle-in-harmonic-trap_13_0.png" />
 </div>
 
 
+           </div>
+           <div class="articleComments">
+            
            </div>
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="raman.html" class="btn btn-neutral float-right" title="Raman Transition of a \(\Lambda\)-scheme Atom" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="particle-into-barrier.html" class="btn btn-neutral float-right" title="Gaussian wave packet running into a potential barrier" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="jaynes-cummings-model.html" class="btn btn-neutral" title="Jaynes-Cummings model" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="jaynes-cummings.html" class="btn btn-neutral" title="Jaynes-Cummings model" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

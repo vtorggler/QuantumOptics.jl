@@ -2,6 +2,8 @@
 *This notebook can be found on*
 `github <https://github.com/bastikr/QuantumOptics.jl/blob/master/examples/raman.ipynb>`__
 
+.. _example-raman:
+
 Raman Transition of a :math:`\Lambda`-scheme Atom
 =================================================
 

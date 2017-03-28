@@ -2,6 +2,8 @@
 *This notebook can be found on*
 `github <https://github.com/bastikr/QuantumOptics.jl/blob/master/examples/two-qubit-entanglement.ipynb>`__
 
+.. _example-two-qubit-entanglement:
+
 Entanglement of Two Qubits
 ==========================
 
