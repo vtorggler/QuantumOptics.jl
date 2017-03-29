@@ -184,8 +184,8 @@
 <div class="math">
 \[|\psi\rangle = \sum_i |u_i\rangle\langle u_i |\psi \rangle
              = \sum_i \psi_i |u_i\rangle\]</div>
-<p>In <strong>QuantumOptics.jl</strong> all states therefore contain two types of information. The choice of basis and the coordinates of the state in respect to this basis.</p>
-<p>Operators are implemented in a very similar fashion. The only thing that makes it more complicated is that in principle it is possible to choose different bases for the left and right hand side, which sometimes is quite useful. Assuming that the states <span class="math">\(\{|u_i\rangle\}_{i=1}^{N_u}\)</span> form a basis of one Hilbert space <span class="math">\(\mathcal{H}_u\)</span> and the states <span class="math">\(\{|v_i\rangle\}_{i=1}^{N_v}\)</span> form a basis of another Hilbert space <span class="math">\(\mathcal{H}_v\)</span>, every operator defined as map from <span class="math">\(\mathcal{H}_v \rightarrow \mathcal{H}_u\)</span> can be expressed as coordinates <span class="math">\(A_{ij}\)</span> in respect to these two bases:</p>
+<p>In <strong>QuantumOptics.jl</strong> all states therefore contain two types of information. The choice of basis and the coefficients of the state with respect to this basis.</p>
+<p>Operators are implemented in a very similar fashion. The only thing that makes it more complicated is that in principle it is possible to choose different bases for the left and right hand side, which sometimes is quite useful. Assuming that the states <span class="math">\(\{|u_i\rangle\}_{i=1}^{N_u}\)</span> form a basis of one Hilbert space <span class="math">\(\mathcal{H}_u\)</span> and the states <span class="math">\(\{|v_i\rangle\}_{i=1}^{N_v}\)</span> form a basis of another Hilbert space <span class="math">\(\mathcal{H}_v\)</span>, every operator defined as map from <span class="math">\(\mathcal{H}_v \rightarrow \mathcal{H}_u\)</span> can be expressed as coefficients <span class="math">\(A_{ij}\)</span> in respect to these two bases:</p>
 <div class="math">
 \[\hat{A} = \sum_{ij} |u_i\rangle\langle u_i| \hat{A} |v_j\rangle\langle v_j|
         = \sum_{ij} A_{ij} |u_i\rangle \langle v_j|\]</div>

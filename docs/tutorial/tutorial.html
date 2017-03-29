@@ -198,7 +198,7 @@
 <span class="n">psi</span> <span class="o">=</span> <span class="n">coherentstate</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">alpha</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>These objects can be combined in all the expected ways.</p>
+<p>These objects can be combined using standard arithmetic operations.</p>
 <div class="highlight-julia"><div class="highlight"><pre><span></span><span class="n">dpsi</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="nb">im</span><span class="o">*</span><span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="n">at</span><span class="p">)</span><span class="o">*</span><span class="n">psi</span>
 </pre></div>
 </div>
@@ -273,7 +273,7 @@
 </ul>
 <p>All of them share a very similar interface so that changing from one to another is mostly done by exchanging the names:</p>
 <div class="highlight-julia"><div class="highlight"><pre><span></span><span class="n">schroedinger</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">psi0</span><span class="p">,</span> <span class="n">H</span><span class="p">)</span>
-<span class="n">master</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">psi0</span><span class="o">/</span><span class="n">rho0</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">J</span><span class="p">)</span>
+<span class="n">master</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho0</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">J</span><span class="p">)</span>
 <span class="n">mcwf</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">psi0</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">J</span><span class="p">)</span>
 </pre></div>
 </div>

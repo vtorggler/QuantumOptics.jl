@@ -194,7 +194,7 @@ S &amp;= \sum_{uvmn} S_{uvmn} |v \rangle \langle u| \otimes
                           |n \rangle \langle m|\end{split}\]</div>
 <p>The coefficients are then connected by</p>
 <div class="math">
-\[A_{uv} &amp;= \sum_{mn} S_{uvmn} B_{mn}\]</div>
+\[A_{uv} = \sum_{mn} S_{uvmn} B_{mn}\]</div>
 <p>The implementation of super-operators in <strong>QuantumOptics.jl</strong> therefore has to know about four, possibly different, bases. The two basis choices for the codomain (output) are stored in the <code class="docutils literal"><span class="pre">basis_l</span></code> field and the two basis choices for the domain (input) are stored in the <code class="docutils literal"><span class="pre">basis_r</span></code> field. At the moment there are two concrete super-operator types implemented, a dense version <a class="reference internal" href="../../api.html#DenseSuperOperator" title="DenseSuperOperator"><code class="xref jl jl-type docutils literal"><span class="pre">DenseSuperOperator</span></code></a> and a sparse version <a class="reference internal" href="../../api.html#SparseSuperOperator" title="SparseSuperOperator"><code class="xref jl jl-type docutils literal"><span class="pre">SparseSuperOperator</span></code></a>, both inheriting from the abstract <a class="reference internal" href="../../api.html#SuperOperator" title="SuperOperator"><code class="xref jl jl-abstract docutils literal"><span class="pre">SuperOperator</span></code></a> type.</p>
 <p>Besides the expected algebraic operations there are a few additional functions that help creating and working with super-operators:</p>
 <ul class="simple">

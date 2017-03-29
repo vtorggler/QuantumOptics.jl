@@ -198,7 +198,7 @@
 <span class="n">y</span> <span class="o">=</span> <span class="n">dagger</span><span class="p">(</span><span class="n">P</span><span class="p">)</span><span class="o">*</span><span class="n">x_prime</span> <span class="c"># Not equal to x</span>
 </pre></div>
 </div>
-<p>Often times it is possible to restrict a large Hilbert to a small subspace while still retaining the most important physical effects. This reduction can be done with the <a class="reference internal" href="../../api.html#SubspaceBasis" title="SubspaceBasis"><code class="xref jl jl-type docutils literal"><span class="pre">SubspaceBasis</span></code></a> which is implemented as:</p>
+<p>Oftentimes it is possible to restrict a large Hilbert to a small subspace while still retaining the most important physical effects. This reduction can be done with the <a class="reference internal" href="../../api.html#SubspaceBasis" title="SubspaceBasis"><code class="xref jl jl-type docutils literal"><span class="pre">SubspaceBasis</span></code></a> which is implemented as:</p>
 <div class="highlight-julia"><div class="highlight"><pre><span></span><span class="k">type</span> <span class="n">SubspaceBasis</span> <span class="o">&lt;:</span> <span class="n">Basis</span>
     <span class="n">shape</span><span class="o">::</span><span class="kt">Vector</span><span class="p">{</span><span class="kt">Int</span><span class="p">}</span>
     <span class="n">superbasis</span><span class="o">::</span><span class="n">Basis</span>
