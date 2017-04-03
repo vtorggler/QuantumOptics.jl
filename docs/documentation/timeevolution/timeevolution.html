@@ -180,8 +180,13 @@
             
   <div class="section" id="time-evolution">
 <span id="section-timeevolution"></span><h1>Time-evolution<a class="headerlink" href="#time-evolution" title="Permalink to this headline">¶</a></h1>
-<p><strong>QuantumOptics.jl</strong> implements solver for dynamics of closed and open quantum systems:</p>
-<p>The interfaces are designed to be as consistent as possible to make it easy to switch between different methods.</p>
+<p><strong>QuantumOptics.jl</strong> implements various solver to simulate the dynamics of closed as well as open quantum systems. The interfaces are designed to be as consistent as possible which makes it easy to switch between different methods.</p>
+<div class="highlight-julia"><div class="highlight"><pre><span></span><span class="n">tout</span><span class="p">,</span> <span class="n">psi_t</span> <span class="o">=</span> <span class="n">timeevolution</span><span class="o">.</span><span class="n">schroedinger</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">psi0</span><span class="p">,</span> <span class="n">H</span><span class="p">)</span>
+<span class="n">tout</span><span class="p">,</span> <span class="n">rho_t</span> <span class="o">=</span> <span class="n">timeevolution</span><span class="o">.</span><span class="n">master</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">psi0</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">J</span><span class="p">)</span>
+<span class="n">tout</span><span class="p">,</span> <span class="n">psi_t</span> <span class="o">=</span> <span class="n">timeevolution</span><span class="o">.</span><span class="n">mcwf</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">psi0</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">J</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>More details can be found in the following sections:</p>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="schroedinger.html">Schroedinger time evolution</a></li>

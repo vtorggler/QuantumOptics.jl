@@ -95,7 +95,7 @@ Most interesting quantum systems consist of several different parts, for example
 
     H_field = ω_field*n
 
-Combining operators from those two systems can be done with the :jl:func:`tensor()` function or with the equivalent :math:`\otimes` operator.
+Combining operators from those two systems can be done with the :jl:func:`tensor()` function. Since julia supports unicode operators one can equivalently use the :math:`\otimes` operator (``\otimes``). For this it is advantageous to use an editor that provides support for unicode input.
 
 .. code-block:: julia
 
