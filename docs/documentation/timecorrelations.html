@@ -47,7 +47,9 @@
 
 <body class="wy-body-for-nav" role="document">
 
-   
+  
+
+
   <div class="wy-grid-for-nav">
 
     
@@ -98,7 +100,7 @@
 <li class="toctree-l1 current"><a class="reference internal" href="documentation.html">Documentation</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="quantumobjects/quantumobjects.html">Quantum objects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="quantumsystems/quantumsystems.html">Quantum systems</a></li>
-<li class="toctree-l2"><a class="reference internal" href="timeevolution.html">Time-evolution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="timeevolution/timeevolution.html">Time-evolution</a></li>
 <li class="toctree-l2"><a class="reference internal" href="steadystate.html">Steady state</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Two-time correlation functions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="spectralanalysis.html">Spectral Analysis</a></li>
@@ -355,12 +357,11 @@ We can do this with:</p>
 <span class="n">g</span> <span class="o">=</span> <span class="n">timecorrelations</span><span class="o">.</span><span class="n">correlation</span><span class="p">(</span><span class="n">tspan</span><span class="p">,</span> <span class="n">ρ0</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">J</span><span class="p">,</span> <span class="n">dagger</span><span class="p">(</span><span class="n">a</span><span class="p">),</span> <span class="n">a</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>If we omit the list of times <code class="xref jl jl-func docutils literal"><span class="pre">tspan</span></code>, the function automatically calculates the correlation until steady-state is reached:</p>
+<p>If we omit the list of times <code class="docutils literal"><span class="pre">tspan</span></code>, the function automatically calculates the correlation until steady-state is reached:</p>
 <div class="highlight-julia"><div class="highlight"><pre><span></span><span class="n">t_s</span><span class="p">,</span> <span class="n">g_s</span> <span class="o">=</span> <span class="n">timecorrelations</span><span class="o">.</span><span class="n">correlation</span><span class="p">(</span><span class="n">ρ0</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">J</span><span class="p">,</span> <span class="n">dagger</span><span class="p">(</span><span class="n">a</span><span class="p">),</span> <span class="n">a</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>To calculate the spectrum, we can either use the <code class="xref jl jl-func docutils literal"><span class="pre">timecorrelations.correlation2spectrum</span></code> to calculate it from a given correlation function,
-or alternatively, one can use <code class="xref jl jl-func docutils literal"><span class="pre">timecorrelations.spectrum</span></code>, which calculates the correlation function internally and returns the
+<p>To calculate the spectrum, we can either use the <code class="xref jl jl-func docutils literal"><span class="pre">timecorrelations.correlation2spectrum</span></code> to calculate it from a given correlation function, or alternatively, one can use <code class="xref jl jl-func docutils literal"><span class="pre">timecorrelations.spectrum</span></code>, which calculates the correlation function internally and returns the
 Fourier transform.</p>
 </div>
 

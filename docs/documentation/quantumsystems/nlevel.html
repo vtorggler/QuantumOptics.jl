@@ -47,7 +47,9 @@
 
 <body class="wy-body-for-nav" role="document">
 
-   
+  
+
+
   <div class="wy-grid-for-nav">
 
     
@@ -111,7 +113,7 @@
 <li class="toctree-l3"><a class="reference internal" href="manybody.html">Many-body system</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../timeevolution.html">Time-evolution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../timeevolution/timeevolution.html">Time-evolution</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../steadystate.html">Steady state</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../timecorrelations.html">Two-time correlation functions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../spectralanalysis.html">Spectral Analysis</a></li>
@@ -194,7 +196,7 @@
 <span class="n">psi1</span> <span class="o">=</span> <span class="n">transition</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>N-Level systems are mostly used as idealized model when the relevant physics can be captured even in a very small subspace of the complete Hilbert space. For example an atom often can be represented by a few relevant levels.</p>
+<p>N-Level systems are mostly used as idealized model when the relevant physics can be captured in a small subspace of the complete Hilbert space. For example an atom often can be represented by a few relevant levels.</p>
 <p>For these kinds of systems the <a class="reference internal" href="../../api.html#NLevelBasis" title="NLevelBasis"><code class="xref jl jl-type docutils literal"><span class="pre">NLevelBasis</span></code></a> can be used. Essentially it is defined just as:</p>
 <div class="highlight-julia"><div class="highlight"><pre><span></span><span class="k">type</span> <span class="n">NLevelBasis</span> <span class="o">&lt;:</span> <span class="n">Basis</span>
     <span class="n">shape</span><span class="o">::</span><span class="kt">Vector</span><span class="p">{</span><span class="kt">Int</span><span class="p">}</span>

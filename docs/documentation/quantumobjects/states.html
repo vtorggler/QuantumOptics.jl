@@ -47,7 +47,9 @@
 
 <body class="wy-body-for-nav" role="document">
 
-   
+  
+
+
   <div class="wy-grid-for-nav">
 
     
@@ -104,7 +106,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../quantumsystems/quantumsystems.html">Quantum systems</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../timeevolution.html">Time-evolution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../timeevolution/timeevolution.html">Time-evolution</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../steadystate.html">Steady state</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../timecorrelations.html">Two-time correlation functions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../spectralanalysis.html">Spectral Analysis</a></li>
@@ -181,12 +183,12 @@
             
   <div class="section" id="states">
 <span id="section-states"></span><h1>States<a class="headerlink" href="#states" title="Permalink to this headline">¶</a></h1>
-<p>State vectors in <strong>QuantumOptics.jl</strong> are interpreted as coefficients in respect to a certain <a class="reference internal" href="bases.html#section-bases"><span class="std std-ref">basis</span></a>. For example the particle state <span class="math">\(|\Psi\rangle\)</span> can be represented in a (discrete) real space basis <span class="math">\(\{|x_i\rangle\}_i\)</span> as <span class="math">\(\Psi(x_i)\)</span>. These quantities are connected by</p>
+<p>State vectors in <strong>QuantumOptics.jl</strong> are interpreted as coefficients in respect to a certain <a class="reference internal" href="bases.html#section-bases"><span class="std std-ref">basis</span></a>. For example the state <span class="math">\(|\psi\rangle\)</span> can be represented in the basis <span class="math">\(\{|u_i\rangle\}_i\)</span> as <span class="math">\(\psi_i\)</span>. These quantities are connected by</p>
 <div class="math">
-\[|\Psi\rangle = \sum_i \Psi(x_i) |x_i\rangle\]</div>
+\[|\psi\rangle = \sum_i \psi_i |u_i\rangle\]</div>
 <p>and the conjugate equation</p>
 <div class="math">
-\[\langle\Psi| = \sum_i \Psi(x_i)^* \langle x_i|\]</div>
+\[\langle\Psi| = \sum_i \psi_i^* \langle u_i|\]</div>
 <p>The distinction between coefficients in respect to bra or ket states is strictly enforced which guarantees that algebraic mistakes raise an explicit error:</p>
 <div class="highlight-julia"><div class="highlight"><pre><span></span><span class="n">basis</span> <span class="o">=</span> <span class="n">FockBasis</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 <span class="n">x</span> <span class="o">=</span> <span class="n">Ket</span><span class="p">(</span><span class="n">basis</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span> <span class="c"># Not necessarily normalized</span>
@@ -194,7 +196,7 @@
 <span class="n">x</span> <span class="o">+</span> <span class="n">y</span> <span class="c"># Error!</span>
 </pre></div>
 </div>
-<p>Many of the often used states are already implemented in the various specific quantum systems, e.g. <a class="reference internal" href="../../api.html#spinup-38cef786a966c86d0a7858362aa2b3bf" title="spinup"><code class="xref jl jl-func docutils literal"><span class="pre">spinup</span></code></a> for spins. <a class="reference internal" href="../../api.html#basisstate-4ae9b3ab2a5d29c742b839a76ca39e9d" title="basisstate"><code class="xref jl jl-func docutils literal"><span class="pre">basisstate</span></code></a> is defined for every basis.</p>
+<p>Many of the commonly used states are already implemented in the specific quantum systems, e.g. <a class="reference internal" href="../../api.html#spinup-38cef786a966c86d0a7858362aa2b3bf" title="spinup"><code class="xref jl jl-func docutils literal"><span class="pre">spinup</span></code></a> for spins or <a class="reference internal" href="../../api.html#coherentstate-ae6a63ede92c9a32c1d1114ee29033f2" title="coherentstate"><code class="xref jl jl-func docutils literal"><span class="pre">coherentstate</span></code></a> for systems described by a fock basis. The <a class="reference internal" href="../../api.html#basisstate-4ae9b3ab2a5d29c742b839a76ca39e9d" title="basisstate"><code class="xref jl jl-func docutils literal"><span class="pre">basisstate</span></code></a> function is defined for every basis and is used to generate the i-th basis-state of this basis.</p>
 <p>All expected arithmetic functions like *, /, +, - are implemented:</p>
 <div class="highlight-julia"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">+</span> <span class="n">x</span>
 <span class="n">x</span> <span class="o">-</span> <span class="n">x</span>
@@ -212,26 +214,17 @@
 <span class="n">tensor</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>Alternatively, one can use the tensor function to create a density operator by combining a ket with a bra:</p>
+<div class="highlight-julia"><div class="highlight"><pre><span></span><span class="n">tensor</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dagger</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+</pre></div>
+</div>
 <p>The following functions are also available for states:</p>
-<ul class="simple">
-<li><dl class="first docutils">
-<dt>Normalization functions</dt>
-<dd><a class="reference internal" href="../../api.html#norm-05fff3c435020bab9d0feff2962768e9" title="norm"><code class="xref jl jl-func docutils literal"><span class="pre">norm</span></code></a>
+<blockquote>
+<div><a class="reference internal" href="../../api.html#norm-05fff3c435020bab9d0feff2962768e9" title="norm"><code class="xref jl jl-func docutils literal"><span class="pre">norm</span></code></a>
 <a class="reference internal" href="../../api.html#normalize-05fff3c435020bab9d0feff2962768e9" title="normalize"><code class="xref jl jl-func docutils literal"><span class="pre">normalize</span></code></a>
-<a class="reference internal" href="../../api.html#normalize!-05fff3c435020bab9d0feff2962768e9" title="normalize!"><code class="xref jl jl-func docutils literal"><span class="pre">normalize!</span></code></a></dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt>Partial trace</dt>
-<dd><a class="reference internal" href="../../api.html#ptrace-3a5b2d318c1c41984b97e53c478daebd" title="ptrace"><code class="xref jl jl-func docutils literal"><span class="pre">ptrace</span></code></a></dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt>Permutation of subsystems</dt>
-<dd><a class="reference internal" href="../../api.html#permutesystems-bcff0ad3b929133119980815a5801533" title="permutesystems"><code class="xref jl jl-func docutils literal"><span class="pre">permutesystems</span></code></a></dd>
-</dl>
-</li>
-</ul>
+<a class="reference internal" href="../../api.html#normalize!-05fff3c435020bab9d0feff2962768e9" title="normalize!"><code class="xref jl jl-func docutils literal"><span class="pre">normalize!</span></code></a>
+<a class="reference internal" href="../../api.html#ptrace-3a5b2d318c1c41984b97e53c478daebd" title="ptrace"><code class="xref jl jl-func docutils literal"><span class="pre">ptrace</span></code></a>
+<a class="reference internal" href="../../api.html#permutesystems-bcff0ad3b929133119980815a5801533" title="permutesystems"><code class="xref jl jl-func docutils literal"><span class="pre">permutesystems</span></code></a></div></blockquote>
 </div>
 
 

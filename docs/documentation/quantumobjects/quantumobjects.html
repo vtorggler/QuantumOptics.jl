@@ -47,7 +47,9 @@
 
 <body class="wy-body-for-nav" role="document">
 
-   
+  
+
+
   <div class="wy-grid-for-nav">
 
     
@@ -104,7 +106,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../quantumsystems/quantumsystems.html">Quantum systems</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../timeevolution.html">Time-evolution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../timeevolution/timeevolution.html">Time-evolution</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../steadystate.html">Steady state</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../timecorrelations.html">Two-time correlation functions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../spectralanalysis.html">Spectral Analysis</a></li>
@@ -189,7 +191,7 @@
 <div class="math">
 \[\hat{A} = \sum_{ij} |u_i\rangle\langle u_i| \hat{A} |v_j\rangle\langle v_j|
         = \sum_{ij} A_{ij} |u_i\rangle \langle v_j|\]</div>
-<p>Since for operators two different Hilbert spaces are involved every operator in <strong>QuantumOptics.jl</strong> has to store information about the left-hand basis, the right-hand basis as well as the coefficients of the operator in respect to these two bases.</p>
+<p>Since for operators two different Hilbert spaces are involved, every operator in <strong>QuantumOptics.jl</strong> has to store information about the left-hand basis, the right-hand basis as well as the coefficients of the operator in respect to these two bases.</p>
 <p>For super-operators the number of involved bases further doubles. In general, they map operators defined in <span class="math">\(\mathcal{H}_v \rightarrow \mathcal{H}_u\)</span> to operators defined in <span class="math">\(\mathcal{H}_m \rightarrow \mathcal{H}_n\)</span>.</p>
 <p>The fact that <strong>QuantumOptics.jl</strong> knows about the choice of basis for every quantum object means that it can check if all performed operations physically make sense, catching many possible mistakes early on. Additionally, explicitly specifying a basis makes the code much easier to read as well as more convenient to write. As can be found in the section <a class="reference internal" href="../quantumsystems/quantumsystems.html#section-quantumsystems"><span class="std std-ref">Quantum systems</span></a>, many functions are already implemented that take a basis as argument and generate states and operators that are commonly used in the corresponding quantum systems.</p>
 <p>More information on the concrete implementation of bases, states, operators and super-operators can be found in the following sections:</p>

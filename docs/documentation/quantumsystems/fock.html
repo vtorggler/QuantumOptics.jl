@@ -47,7 +47,9 @@
 
 <body class="wy-body-for-nav" role="document">
 
-   
+  
+
+
   <div class="wy-grid-for-nav">
 
     
@@ -112,7 +114,7 @@
 <li class="toctree-l3"><a class="reference internal" href="manybody.html">Many-body system</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../timeevolution.html">Time-evolution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../timeevolution/timeevolution.html">Time-evolution</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../steadystate.html">Steady state</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../timecorrelations.html">Two-time correlation functions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../spectralanalysis.html">Spectral Analysis</a></li>
@@ -200,8 +202,7 @@
 <p>To create a basis of a Fock space <strong>QuantumOptics.jl</strong> provides the <a class="reference internal" href="../../api.html#FockBasis" title="FockBasis"><code class="xref jl jl-type docutils literal"><span class="pre">FockBasis</span></code></a> class which has to be supplied with an integer specifying the maximum number of photons. It is defined as:</p>
 <div class="highlight-julia"><div class="highlight"><pre><span></span><span class="k">type</span> <span class="n">FockBasis</span> <span class="o">&lt;:</span> <span class="n">Basis</span>
     <span class="n">shape</span><span class="o">::</span><span class="kt">Vector</span><span class="p">{</span><span class="kt">Int</span><span class="p">}</span>
-    <span class="n">Nmin</span><span class="o">::</span><span class="kt">Int</span>
-    <span class="n">Nmax</span><span class="o">::</span><span class="kt">Int</span>
+    <span class="n">N</span><span class="o">::</span><span class="kt">Int</span>
 <span class="k">end</span>
 </pre></div>
 </div>

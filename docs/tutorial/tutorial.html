@@ -46,7 +46,9 @@
 
 <body class="wy-body-for-nav" role="document">
 
-   
+  
+
+
   <div class="wy-grid-for-nav">
 
     
@@ -168,7 +170,7 @@
             
   <div class="section" id="tutorial">
 <span id="id1"></span><h1>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h1>
-<p>In this tutorial we will step through the common tasks necessary to simulate a quantum system. At each step links to documentation and examples will be provided that explain the topic at hand in more detail.</p>
+<p>In this tutorial we will step through the common tasks necessary to simulate a quantum system. At each step links to the corresponding documentation and to similar examples, that explain the topic at hand in more detail, will be provided.</p>
 <p>In order to use the <strong>QuantumOptics.jl</strong> library it has to be loaded into the current workspace.</p>
 <div class="highlight-julia"><div class="highlight"><pre><span></span><span class="k">using</span> <span class="n">QuantumOptics</span>
 </pre></div>
@@ -265,11 +267,11 @@
 </div>
 <div class="section" id="time-evolution">
 <h2>Time evolution<a class="headerlink" href="#time-evolution" title="Permalink to this headline">¶</a></h2>
-<p>Several different types of <a class="reference internal" href="../documentation/timeevolution.html#section-timeevolution"><span class="std std-ref">time evolution</span></a> are implemented in <strong>QuantumOptics.jl</strong>:</p>
+<p>Several different types of <a class="reference internal" href="../documentation/timeevolution/timeevolution.html#section-timeevolution"><span class="std std-ref">time evolution</span></a> are implemented in <strong>QuantumOptics.jl</strong>:</p>
 <ul class="simple">
-<li><a class="reference internal" href="../documentation/timeevolution.html#section-schroedinger"><span class="std std-ref">Schroedinger time evolution</span></a></li>
-<li><a class="reference internal" href="../documentation/timeevolution.html#section-master"><span class="std std-ref">Master time evolution</span></a></li>
-<li><a class="reference internal" href="../documentation/timeevolution.html#section-mcwf"><span class="std std-ref">MCWF time evolution</span></a></li>
+<li><a class="reference internal" href="../documentation/timeevolution/schroedinger.html#section-schroedinger"><span class="std std-ref">Schroedinger time evolution</span></a></li>
+<li><a class="reference internal" href="../documentation/timeevolution/master.html#section-master"><span class="std std-ref">Master time evolution</span></a></li>
+<li><a class="reference internal" href="../documentation/timeevolution/mcwf.html#section-mcwf"><span class="std std-ref">Monte Carlo wave function time evolution</span></a></li>
 </ul>
 <p>All of them share a very similar interface so that changing from one to another is mostly done by exchanging the names:</p>
 <div class="highlight-julia"><div class="highlight"><pre><span></span><span class="n">schroedinger</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">psi0</span><span class="p">,</span> <span class="n">H</span><span class="p">)</span>
@@ -288,7 +290,7 @@
 <span class="n">tout</span><span class="p">,</span> <span class="n">ρt</span> <span class="o">=</span> <span class="n">timeevolution</span><span class="o">.</span><span class="n">master</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">ψ0</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">J</span><span class="p">;</span> <span class="n">Gamma</span><span class="o">=</span><span class="p">[</span><span class="n">κ</span><span class="p">])</span>
 </pre></div>
 </div>
-<p>Alternatively, one can use the MCWF method to analyze the time evolution of the system. Physically, it can be interpreted as an experimental setup where every photon leaving the cavity is meassured by a photon counter, thereby projecting the system onto the state <span class="math">\(| \psi\rangle \rightarrow a |\psi\rangle\)</span>. This leads to a coherent time evolution according to a Schrödinger equation interrupted by jumps at certain random points in time.</p>
+<p>Alternatively, one can use the MCWF method to analyze the time evolution of the system. Physically, it can be interpreted as an experimental setup where every photon leaving the cavity is measured by a photon counter, thereby projecting the system onto the state <span class="math">\(| \psi\rangle \rightarrow a |\psi\rangle\)</span>. This leads to a coherent time evolution according to a Schrödinger equation interrupted by jumps at certain random points in time.</p>
 <div class="highlight-julia"><div class="highlight"><pre><span></span><span class="n">tout</span><span class="p">,</span> <span class="n">ψt_mcwf</span> <span class="o">=</span> <span class="n">timeevolution</span><span class="o">.</span><span class="n">mcwf</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">ψ0</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">J</span><span class="p">;</span> <span class="n">seed</span><span class="o">=</span><span class="kt">UInt</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
                                    <span class="n">display_beforeevent</span><span class="o">=</span><span class="kc">true</span><span class="p">,</span>
                                    <span class="n">display_afterevent</span><span class="o">=</span><span class="kc">true</span><span class="p">)</span>

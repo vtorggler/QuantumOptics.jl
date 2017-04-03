@@ -98,6 +98,8 @@ Operators
 
 .. jl:autofunction:: operators.jl permutesystems
 
+.. jl:autofunction:: operators.jl expm
+
 .. jl:autofunction:: operators.jl gemv!
 
 .. jl:autofunction:: operators.jl gemm!
@@ -190,8 +192,6 @@ Fock
 
 .. jl:autotype:: fock.jl FockBasis
 
-.. jl:autofunction:: fock.jl FockBasis
-
 .. jl:autofunction:: fock.jl number
 
 .. jl:autofunction:: fock.jl destroy
@@ -252,9 +252,9 @@ Particle
 
 .. jl:autofunction:: particle.jl samplepoints
 
-.. jl:autofunction:: particle.jl positionoperator
+.. jl:autofunction:: particle.jl position
 
-.. jl:autofunction:: particle.jl momentumoperator
+.. jl:autofunction:: particle.jl momentum
 
 .. jl:autofunction:: particle.jl gaussianstate
 

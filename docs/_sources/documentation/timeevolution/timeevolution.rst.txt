@@ -1,0 +1,15 @@
+.. _section-timeevolution:
+
+Time-evolution
+==============
+
+**QuantumOptics.jl** implements solver for dynamics of closed and open quantum systems:
+
+The interfaces are designed to be as consistent as possible to make it easy to switch between different methods.
+
+.. toctree::
+    :maxdepth: 1
+
+    schroedinger
+    master
+    mcwf

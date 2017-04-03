@@ -47,7 +47,9 @@
 
 <body class="wy-body-for-nav" role="document">
 
-   
+  
+
+
   <div class="wy-grid-for-nav">
 
     
@@ -109,7 +111,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../quantumsystems/quantumsystems.html">Quantum systems</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../timeevolution.html">Time-evolution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../timeevolution/timeevolution.html">Time-evolution</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../steadystate.html">Steady state</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../timecorrelations.html">Two-time correlation functions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../spectralanalysis.html">Spectral Analysis</a></li>
@@ -186,10 +188,10 @@
             
   <div class="section" id="operators">
 <span id="section-operators"></span><h1>Operators<a class="headerlink" href="#operators" title="Permalink to this headline">¶</a></h1>
-<p>Operators can be defined as linear mappings from one Hilbert space to another. However, equivalently to states, operators in <strong>QuantumOptics.jl</strong> are interpreted as coefficients of an abstract operator in respect to one or more generally two, possibly distinct <a class="reference internal" href="bases.html#section-bases"><span class="std std-ref">bases</span></a>. For a certain choice of bases <span class="math">\(\{|u_i\rangle\}_i\)</span> and <span class="math">\(\{|v_j\rangle\}_j\)</span> an abstract operator <span class="math">\(A\)</span> has the coefficients <span class="math">\(A_{ij}\)</span> which are connected by the relation</p>
+<p>Operators can be defined as linear maps from one Hilbert space to another. However, equivalently to states, operators in <strong>QuantumOptics.jl</strong> are interpreted as coefficients of an abstract operator in respect to one or more generally two, possibly distinct <a class="reference internal" href="bases.html#section-bases"><span class="std std-ref">bases</span></a>. For a certain choice of bases <span class="math">\(\{|u_i\rangle\}_i\)</span> and <span class="math">\(\{|v_j\rangle\}_j\)</span> an abstract operator <span class="math">\(A\)</span> has the coefficients <span class="math">\(A_{ij}\)</span> which are connected by the relation</p>
 <div class="math">
 \[A =  \sum_{ij} A_{ij} | u_i \rangle \langle v_j |\]</div>
-<p>For this reason all operators  define a left hand as well as a right hand basis:</p>
+<p>For this reason all operators define a left hand as well as a right hand basis:</p>
 <div class="highlight-julia"><div class="highlight"><pre><span></span><span class="k">type</span> <span class="n">MyOperator</span> <span class="o">&lt;:</span> <span class="n">Operator</span>
     <span class="n">basis_l</span><span class="o">::</span><span class="n">Basis</span>
     <span class="n">basis_r</span><span class="o">::</span><span class="n">Basis</span>
@@ -224,11 +226,12 @@
 <li><a class="reference internal" href="../../api.html#permutesystems-bcff0ad3b929133119980815a5801533" title="permutesystems"><code class="xref jl jl-func docutils literal"><span class="pre">permutesystems</span></code></a></li>
 <li><a class="reference internal" href="../../api.html#embed-db14abf1b0f0c37969c73fa4fb88649d" title="embed"><code class="xref jl jl-func docutils literal"><span class="pre">embed</span></code></a></li>
 <li><a class="reference internal" href="../../api.html#ptrace-3a5b2d318c1c41984b97e53c478daebd" title="ptrace"><code class="xref jl jl-func docutils literal"><span class="pre">ptrace</span></code></a></li>
+<li><a class="reference internal" href="../../api.html#expm-34c36c682b3e953069b454faefcc0032" title="expm"><code class="xref jl jl-func docutils literal"><span class="pre">expm</span></code></a></li>
 </ul>
-<p>Conversion from one type of operator to another is also provided. I.e. to obtain a <code class="xref jl jl-type docutils literal"><span class="pre">DenseOperators</span></code> or <a class="reference internal" href="../../api.html#SparseOperator" title="SparseOperator"><code class="xref jl jl-type docutils literal"><span class="pre">SparseOperator</span></code></a> use <a class="reference internal" href="../../api.html#full-d98956ae121df2d483d39cbcc674556a" title="full"><code class="xref jl jl-func docutils literal"><span class="pre">full</span></code></a> and <a class="reference internal" href="../../api.html#sparse-da52dd11746b5faf953352237b07824c" title="sparse"><code class="xref jl jl-func docutils literal"><span class="pre">sparse</span></code></a>, respectively.</p>
+<p>Conversion from one type of operator to another is also provided. I.e. to obtain a <code class="xref jl jl-type docutils literal"><span class="pre">DenseOperators</span></code> or <a class="reference internal" href="../../api.html#SparseOperator" title="SparseOperator"><code class="xref jl jl-type docutils literal"><span class="pre">SparseOperator</span></code></a> use the <a class="reference internal" href="../../api.html#full-d98956ae121df2d483d39cbcc674556a" title="full"><code class="xref jl jl-func docutils literal"><span class="pre">full</span></code></a> and <a class="reference internal" href="../../api.html#sparse-da52dd11746b5faf953352237b07824c" title="sparse"><code class="xref jl jl-func docutils literal"><span class="pre">sparse</span></code></a> functions, respectively.</p>
 <div class="section" id="dense-operators">
 <span id="subsection-denseoperators"></span><h2>Dense operators<a class="headerlink" href="#dense-operators" title="Permalink to this headline">¶</a></h2>
-<p><a class="reference internal" href="../../api.html#DenseOperator" title="DenseOperator"><code class="xref jl jl-type docutils literal"><span class="pre">DenseOperator</span></code></a> is implemented as:</p>
+<p><a class="reference internal" href="../../api.html#DenseOperator" title="DenseOperator"><code class="xref jl jl-type docutils literal"><span class="pre">DenseOperator</span></code></a> is the default type used for density operators. I.e. creating an operator by using the tensor product of a ket and a bra state results in a <a class="reference internal" href="../../api.html#DenseOperator" title="DenseOperator"><code class="xref jl jl-type docutils literal"><span class="pre">DenseOperator</span></code></a>. It is implemented as:</p>
 <div class="highlight-julia"><div class="highlight"><pre><span></span><span class="k">type</span> <span class="n">DenseOperator</span> <span class="o">&lt;:</span> <span class="n">Operator</span>
     <span class="n">basis_l</span><span class="o">::</span><span class="n">Basis</span>
     <span class="n">basis_r</span><span class="o">::</span><span class="n">Basis</span>
@@ -241,7 +244,7 @@
 </div>
 <div class="section" id="sparse-operators">
 <span id="subsection-sparseoperators"></span><h2>Sparse operators<a class="headerlink" href="#sparse-operators" title="Permalink to this headline">¶</a></h2>
-<p><a class="reference internal" href="../../api.html#SparseOperator" title="SparseOperator"><code class="xref jl jl-type docutils literal"><span class="pre">SparseOperator</span></code></a> is the default type used in <strong>QuantumOptics.jl</strong>. The reason is that in many quantum systems the Hamiltonians in respect to the commonly used bases are sparse. They are implemented as:</p>
+<p><a class="reference internal" href="../../api.html#SparseOperator" title="SparseOperator"><code class="xref jl jl-type docutils literal"><span class="pre">SparseOperator</span></code></a> is the default type used in <strong>QuantumOptics.jl</strong>. The reason is that in many quantum systems the Hamiltonians and jump operators in respect to the commonly used bases are sparse. They are implemented as:</p>
 <div class="highlight-julia"><div class="highlight"><pre><span></span><span class="k">type</span> <span class="n">SparseOperator</span> <span class="o">&lt;:</span> <span class="n">Operator</span>
     <span class="n">basis_l</span><span class="o">::</span><span class="n">Basis</span>
     <span class="n">basis_r</span><span class="o">::</span><span class="n">Basis</span>
@@ -260,8 +263,8 @@
 <span class="n">b_position</span> <span class="o">=</span> <span class="n">PositionBasis</span><span class="p">(</span><span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">Npoints</span><span class="p">)</span>
 <span class="n">b_momentum</span> <span class="o">=</span> <span class="n">MomentumBasis</span><span class="p">(</span><span class="n">b_position</span><span class="p">)</span>
 
-<span class="n">p</span> <span class="o">=</span> <span class="n">momentumoperator</span><span class="p">(</span><span class="n">b_momentum</span><span class="p">)</span>
-<span class="n">x</span> <span class="o">=</span> <span class="n">positionoperator</span><span class="p">(</span><span class="n">b_position</span><span class="p">)</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">momentum</span><span class="p">(</span><span class="n">b_momentum</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">position</span><span class="p">(</span><span class="n">b_position</span><span class="p">)</span>
 
 <span class="n">Tpx</span> <span class="o">=</span> <span class="n">particle</span><span class="o">.</span><span class="n">FFTOperator</span><span class="p">(</span><span class="n">b_momentum</span><span class="p">,</span> <span class="n">b_position</span><span class="p">);</span>
 
