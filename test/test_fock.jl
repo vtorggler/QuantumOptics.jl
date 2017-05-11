@@ -5,7 +5,7 @@ using QuantumOptics
 
 srand(0)
 
-D(op1::Operator, op2::Operator) = abs(tracedistance_general(full(op1), full(op2)))
+D(op1::Operator, op2::Operator) = abs(tracedistance(full(op1), full(op2)))
 randstate(b) = normalize(Ket(b, rand(Complex128, length(b))))
 randop(bl, br) = DenseOperator(bl, br, rand(Complex128, length(bl), length(br)))
 randop(b) = randop(b, b)
@@ -42,9 +42,10 @@ basis = FockBasis(2)
 @test dagger(fockstate(basis, 2))*create(basis) == sqrt(2)*dagger(fockstate(basis, 1))
 
 # Test displacement operator
-b = FockBasis(30)
+b = FockBasis(100)
 alpha = complex(0.5, 0.3)
 d = displace(b, alpha)
+@test 1e-12 > D(d, expm(full(alpha*create(b) - conj(alpha)*destroy(b))))
 a = destroy(b)
 @test 1e-12 > D(d*dagger(d), identityoperator(b))
 @test 1e-12 > D(dagger(d)*d, identityoperator(b))

@@ -66,7 +66,24 @@ end
 
 Displacement operator ``D(α)`` for the specified Fock space.
 """
-displace(b::FockBasis, alpha::Number) = expm(full(alpha*create(b) - conj(alpha)*destroy(b)))
+function displace(b::FockBasis, alpha::Number)
+    alpha_ = convert(Complex128, alpha)
+    data = zeros(Complex128, b.N+1, b.N+1)
+    a_m00 = complex(1.)
+    for m=0:b.N
+        a_mn0 = a_m00
+        for n=0:b.N
+            a_mnu = a_mn0
+            for u=0:min(m, n)
+                data[m+1,n+1] += exp(-abs2(alpha)/2)*a_mnu
+                a_mnu = -a_mnu/abs2(alpha)*max(m-u, 1)*max(n-u, 1)/(u+1)
+            end
+            a_mn0 = a_mn0*conj(-alpha)/sqrt(n+1)
+        end
+        a_m00 = a_m00*alpha/sqrt(m+1)
+    end
+    DenseOperator(b, data)
+end
 
 """
     fockstate(b::FockBasis, n)
