@@ -59,13 +59,13 @@ x = 0.3
 # # println(L3(α, x))
 # println(a[1]*L0(α, x)+ a[2]*L1(α, x) + a[3]*L2(α, x) + a[4]*L3(α, x))
 
-a_wigner = [0, 0, 1]
-a_laguerre = [(-1)^n*sqrt(factorial(α)*factorial(n)/factorial(α+n))*a_wigner[n+1] for n=0:length(a_wigner)-1]
-r1 = clenshaw_wigner(α, x, a_wigner)
-r2 = clenshaw_laguerre(α, x, a_laguerre)
+# a_wigner = [0, 0, 1]
+# a_laguerre = [(-1)^n*sqrt(factorial(α)*factorial(n)/factorial(α+n))*a_wigner[n+1] for n=0:length(a_wigner)-1]
+# r1 = clenshaw_wigner(α, x, a_wigner)
+# r2 = clenshaw_laguerre(α, x, a_laguerre)
 
-println(r1)
-println(r2)
+# println(r1)
+# println(r2)
 
 
 function wigner(rho, x, y)
@@ -182,11 +182,11 @@ function clenshaw_wigner3(N::Int, α::Int, x::Float64, a::Matrix{Complex128})
         b1 = b0
         A = -(2*k + 1 + α - x)*f0_
         B = -f0*f1_
-        f1 = f0
-        f1_ = f0_
+        b0 = a[k+1, α+k+1] + A*b1 + B*b2
+        # println(b0)
+        f1, f1_ = f0, f0_
         f0 = sqrt((k+α)*k)
         f0_ = 1/f0
-        b0 = a[k+1, α+k+1] + A*b1 + B*b2
     end
     B1 = -sqrt((α+1)/(2*(α+2)))
     return a[1, α+1] + ϕ1*b0 + B1*b1
@@ -201,20 +201,24 @@ function wigner4(rho, x, y)
     w = complex(0.)
     coefficient = complex(0.)
     @inbounds for L=N:-1:1
-        coefficient = 2*clenshaw_wigner2(N, L, abs2α, rho.data)
+        # L = 2
+        coefficient = 2*clenshaw_wigner3(N, L, abs2α, rho.data)
         w = coefficient + w*(2*α)/sqrt(L+1)
+        # println("L: ", L, "  w: ", w)
     end
-    coefficient = clenshaw_wigner2(N, 0, abs2α, rho.data)
+    coefficient = clenshaw_wigner3(N, 0, abs2α, rho.data)
     w = coefficient + w*(2*α)
+    # println("w: ", w)
     exp(-2*abs2(α))/pi*real(w)
 end
 
 
-x = 2
-y = 0
-b = FockBasis(200)
-rho = DenseOperator(b)
-rho.data[1,3] = 1im
+x = 1
+y = 1
+b = FockBasis(100)
+# rho = DenseOperator(b)
+# rho.data[2,4] = 1im
+# rho.data[1,2] = 1
 rho = dm(coherentstate(b, 2))
 
 # @code_warntype wigner4(rho, x, y)
@@ -226,22 +230,22 @@ w = wigner3(rho, x, y)
 println("wigner=", w)
 w = wigner4(rho, x, y)
 println("wigner=", w)
-@time w = wigner2(rho, x, y)
-@time w = wigner2(rho, x, y)
+# @time w = wigner2(rho, x, y)
+# @time w = wigner2(rho, x, y)
 @time w = wigner3(rho, x, y)
 @time w = wigner3(rho, x, y)
 @time w = wigner4(rho, x, y)
 @time w = wigner4(rho, x, y)
 # println("wigner=", w)
 
-function f1(N, rho, x, y)
-    for i=1:N
-        wigner4(rho, x, y)
-    end
-end
+# function f1(N, rho, x, y)
+#     for i=1:N
+#         wigner4(rho, x, y)
+#     end
+# end
 
-@time f1(10000, rho, 1., 1.)
-@time f1(10000, rho, 1., 1.)
+# @time f1(10000, rho, 1., 1.)
+# @time f1(10000, rho, 1., 1.)
 
-Profile.clear()
-@profile f1(10000, rho, 1., 1.)
+# Profile.clear()
+# @profile f1(10000, rho, 1., 1.)
