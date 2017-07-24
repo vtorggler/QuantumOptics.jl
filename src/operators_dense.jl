@@ -97,9 +97,6 @@ operators.trace(op::DenseOperator) = (check_samebases(op); trace(op.data))
 
 function operators.ptrace(a::DenseOperator, indices::Vector{Int})
     operators.check_ptrace_arguments(a, indices)
-    if length(a.basis_l.shape) == length(indices)
-        return trace(a)
-    end
     rank = length(a.basis_l.shape)
     result = _ptrace(Val{rank}(), a.data, a.basis_l.shape, a.basis_r.shape, indices)
     return DenseOperator(ptrace(a.basis_l, indices), ptrace(a.basis_r, indices), result)
@@ -107,21 +104,19 @@ end
 
 function operators.ptrace(psi::Ket, indices::Vector{Int})
     operators.check_ptrace_arguments(psi, indices)
-    if length(basis(psi).shape) == length(indices)
-        return trace(psi)
-    end
-    rank = length(psi.basis.shape)
-    result = _ptrace_ket(Val{rank}(), psi.data, psi.basis.shape, indices)
-    return DenseOperator(ptrace(psi.basis, indices), ptrace(psi.basis, indices), result)
+    b = basis(psi)
+    b_ = ptrace(b, indices)
+    rank = length(b.shape)
+    result = _ptrace_ket(Val{rank}(), psi.data, b.shape, indices)
+    return DenseOperator(b_, b_, result)
 end
 function operators.ptrace(psi::Bra, indices::Vector{Int})
     operators.check_ptrace_arguments(psi, indices)
-    if length(basis(psi).shape) == length(indices)
-        return trace(psi)
-    end
-    rank = length(psi.basis.shape)
-    result = _ptrace_bra(Val{rank}(), psi.data, psi.basis.shape, indices)
-    return DenseOperator(ptrace(psi.basis, indices), ptrace(psi.basis, indices), result)
+    b = basis(psi)
+    b_ = ptrace(b, indices)
+    rank = length(b.shape)
+    result = _ptrace_bra(Val{rank}(), psi.data, b.shape, indices)
+    return DenseOperator(b_, b_, result)
 end
 
 operators.normalize!(op::DenseOperator) = scale!(op.data, 1./trace(op))

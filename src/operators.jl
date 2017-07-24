@@ -259,7 +259,13 @@ gemm!() = error("Not Implemented.")
 
 # Helper functions to check validity of arguments
 function check_ptrace_arguments(a::Operator, indices::Vector{Int})
-    @assert length(a.basis_l.shape) == length(a.basis_r.shape)
+    rank = length(a.basis_l.shape)
+    if rank != length(a.basis_r.shape)
+        throw(ArgumentError("Partial trace can only be applied onto operators wich have the same number of subsystems in the left basis and right basis."))
+    end
+    if rank == length(indices)
+        throw(ArgumentError("Partial trace can't be used to trace out all subsystems - use trace() instead."))
+    end
     sortedindices.check_indices(length(a.basis_l.shape), indices)
     for i=indices
         if a.basis_l.shape[i] != a.basis_r.shape[i]
@@ -268,6 +274,9 @@ function check_ptrace_arguments(a::Operator, indices::Vector{Int})
     end
 end
 function check_ptrace_arguments(a::StateVector, indices::Vector{Int})
+    if length(basis(a).shape) == length(indices)
+        throw(ArgumentError("Partial trace can't be used to trace out all subsystems - use trace() instead."))
+    end
     sortedindices.check_indices(length(basis(a).shape), indices)
 end
 
