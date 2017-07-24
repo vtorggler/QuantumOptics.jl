@@ -202,6 +202,14 @@ op123 = op1 ⊗ op2 ⊗ op3
 @test 1e-13 > D(op3*trace(op1)*trace(op2), ptrace(op123, [1,2]))
 
 @test_throws ArgumentError ptrace(op123, [1,2,3])
+x = randoperator(b1, b1⊗b2)
+@test_throws ArgumentError ptrace(x, [1])
+x = randoperator(b1⊗b1⊗b2, b1⊗b2)
+@test_throws ArgumentError ptrace(x, [1, 2])
+x = randoperator(b1⊗b2)
+@test_throws ArgumentError ptrace(x, [1, 2])
+x = randoperator(b1⊗b2, b2⊗b1)
+@test_throws ArgumentError ptrace(x, [1])
 
 op1 = randoperator(b1, b2)
 op2 = randoperator(b3)

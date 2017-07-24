@@ -39,11 +39,6 @@ op_test3 = test_operators(b1 ⊗ b2, b2 ⊗ b1, randoperator(b, b).data)
 @test_throws ArgumentError identityoperator(test_operators, b, b)
 @test_throws ArgumentError trace(op_test)
 
-@test_throws ArgumentError ptrace(test_operators(b1, b1⊗b2, randoperator(b1, b1⊗b2).data), [1])
-@test_throws ArgumentError ptrace(test_operators(b1⊗b1⊗b2, b1⊗b2, randoperator(b1⊗b1⊗b2, b1⊗b2).data), [1, 2])
-@test_throws ArgumentError ptrace(test_operators(b1⊗b2, b1⊗b2, randoperator(b1⊗b2).data), [1, 2])
-@test_throws ArgumentError ptrace(test_operators(b1⊗b2, b2⊗b1, randoperator(b1⊗b2, b2⊗b1).data), [1])
-
 @test_throws ArgumentError ishermitian(op_test)
 @test_throws ArgumentError full(op_test)
 @test_throws ArgumentError sparse(op_test)
