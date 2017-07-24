@@ -267,6 +267,9 @@ function check_ptrace_arguments(a::Operator, indices::Vector{Int})
         end
     end
 end
+function check_ptrace_arguments(a::StateVector, indices::Vector{Int})
+    sortedindices.check_indices(length(basis(a).shape), indices)
+end
 
 samebases(a::Operator) = samebases(a.basis_l, a.basis_r)::Bool
 samebases(a::Operator, b::Operator) = samebases(a.basis_l, b.basis_l)::Bool && samebases(a.basis_r, b.basis_r)::Bool
