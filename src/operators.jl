@@ -259,6 +259,9 @@ gemm!() = error("Not Implemented.")
 
 # Helper functions to check validity of arguments
 function check_ptrace_arguments(a::Operator, indices::Vector{Int})
+    if !isa(a.basis_l, CompositeBasis) || !isa(a.basis_r, CompositeBasis)
+        throw(ArgumentError("Partial trace can only be applied onto operators with composite bases."))
+    end
     rank = length(a.basis_l.shape)
     if rank != length(a.basis_r.shape)
         throw(ArgumentError("Partial trace can only be applied onto operators wich have the same number of subsystems in the left basis and right basis."))
