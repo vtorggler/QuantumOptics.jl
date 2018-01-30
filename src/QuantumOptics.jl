@@ -65,9 +65,11 @@ module timeevolution
     include("master.jl")
     include("schroedinger.jl")
     include("mcwf.jl")
+    include("stochastic.jl")
     using .timeevolution_master
     using .timeevolution_schroedinger
     using .timeevolution_mcwf
+    using .timeevolution_stochastic
 end
 include("steadystate.jl")
 include("timecorrelations.jl")
