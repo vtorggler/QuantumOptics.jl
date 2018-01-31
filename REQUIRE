@@ -3,3 +3,4 @@ Compat 0.17
 Roots
 OrdinaryDiffEq 3.0.1
 DiffEqCallbacks 1.0
+StochasticDiffEq 3.0.0
