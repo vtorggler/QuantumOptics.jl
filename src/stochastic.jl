@@ -1,10 +1,7 @@
-module timeevolution_stochastic
+module stochastic
 
-export schroedinger_stochastic
-
-
-using ...bases, ...states, ...operators
-using ...operators_dense, ...operators_sparse
+using ..bases, ..states, ..operators
+using ..operators_dense, ..operators_sparse
 using ..timeevolution
 import ..timeevolution: integrate_stoch, timeevolution_schroedinger.dschroedinger_dynamic
 #using ...operators_lazysum, ...operators_lazytensor, ...operators_lazyproduct
@@ -13,7 +10,7 @@ import StochasticDiffEq
 const DecayRates = Union{Vector{Float64}, Matrix{Float64}, Void}
 
 """
-    schroedinger_stochastic(tspan, state0, fdeterm, fstoch[; fout, ...])
+    stochastic.schroedinger_dynamic(tspan, state0, fdeterm, fstoch[; fout, ...])
 
 Integrate stochastic Schrödinger equation.
 
@@ -30,7 +27,7 @@ Integrate stochastic Schrödinger equation.
         normalized nor permanent!
 * `kwargs...`: Further arguments are passed on to the ode solver.
 """
-function schroedinger_stochastic(tspan, psi0::Ket, fdeterm::Function, fstoch::Function;
+function schroedinger_dynamic(tspan, psi0::Ket, fdeterm::Function, fstoch::Function;
                 fout::Union{Function,Void}=nothing,
                 kwargs...)
     tspan_ = convert(Vector{Float64}, tspan)

@@ -33,7 +33,8 @@ export bases, Basis, GenericBasis, CompositeBasis, basis,
         timeevolution, diagonaljumps,
         steadystate,
         timecorrelations,
-        semiclassical
+        semiclassical,
+        stochastic
 
 
 include("sortedindices.jl")
@@ -65,16 +66,15 @@ module timeevolution
     include("master.jl")
     include("schroedinger.jl")
     include("mcwf.jl")
-    include("stochastic.jl")
     using .timeevolution_master
     using .timeevolution_schroedinger
     using .timeevolution_mcwf
-    using .timeevolution_stochastic
 end
 include("steadystate.jl")
 include("timecorrelations.jl")
 include("spectralanalysis.jl")
 include("semiclassical.jl")
+include("stochastic.jl")
 include("printing.jl")
 
 using .bases

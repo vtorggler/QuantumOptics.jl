@@ -19,7 +19,7 @@ function fstoch_atom(t, psi)
 end
 
 T = [0:0.1:1;]
-tout, ψt = timeevolution.schroedinger_stochastic(T, ψ0, fdeterm_atom, fstoch_atom)
+tout, ψt = stochastic.schroedinger_dynamic(T, ψ0, fdeterm_atom, fstoch_atom)
 tout, ψt2 = timeevolution.schroedinger_dynamic(T, ψ0, fdeterm_atom)
 
 for i=1:length(tout)
