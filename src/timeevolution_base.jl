@@ -91,7 +91,60 @@ end
     integrate_stoch(tspan::Vector{Float64}, df::Function, dg::Vector{Function}, x0::Vector{Complex128},
             state::T, dstate::T, fout::Function; kwargs...)
 
-Integrate using StochasticDiffEq
+Integrate scalar noise problem using StochasticDiffEq
+"""
+function integrate_stoch(tspan::Vector{Float64}, df::Function, dg::Function, x0::Vector{Complex128},
+            state::T, dstate::Union{T, Array{T}}, fout::Function;
+            alg::StochasticDiffEq.StochasticDiffEqAlgorithm = StochasticDiffEq.RKMil(interpretation=:Stratonovich),
+            save_everystep = false,
+            callback = nothing, kwargs...) where T
+
+    function df_(dx::Vector{Complex128}, x::Vector{Complex128}, p, t)
+        recast!(x, state)
+        recast!(dx, dstate)
+        df(t, state, dstate)
+        recast!(dstate, dx)
+    end
+
+    function dg_(dx::Vector{Complex128}, x::Vector{Complex128}, p, t)
+        recast!(x, state)
+        recast!(dx, dstate)
+        dg(t, state, dstate)
+        recast!(dstate, dx)
+    end
+
+    function fout_(x::Vector{Complex128}, t::Float64, integrator)
+        recast!(x, state)
+        fout(t, state)
+    end
+
+    out_type = pure_inference(fout, Tuple{eltype(tspan),typeof(state)})
+
+    out = DiffEqCallbacks.SavedValues(Float64,out_type)
+
+    scb = DiffEqCallbacks.SavingCallback(fout_,out,saveat=tspan,
+                                         save_everystep=save_everystep,
+                                         save_start = false)
+
+    prob = StochasticDiffEq.SDEProblem{true}(df_, dg_, x0,(tspan[1],tspan[end]))
+
+    sol = StochasticDiffEq.solve(
+                prob,
+                alg;
+                reltol = 1.0e-6,
+                abstol = 1.0e-8,
+                save_everystep = false, save_start = false,
+                save_end = false,
+                callback=scb, kwargs...)
+
+    out.t,out.saveval
+end
+
+"""
+    integrate_stoch(tspan::Vector{Float64}, df::Function, dg::Vector{Function}, x0::Vector{Complex128},
+            state::T, dstate::T, fout::Function, n::Int; kwargs...)
+
+Integrate non-diagonal noise problem using StochasticDiffEq
 """
 function integrate_stoch(tspan::Vector{Float64}, df::Function, dg::Function, x0::Vector{Complex128},
             state::T, dstate::Union{T, Array{T}}, fout::Function, n::Int;
@@ -99,21 +152,7 @@ function integrate_stoch(tspan::Vector{Float64}, df::Function, dg::Function, x0:
             save_everystep = false,
             callback = nothing, kwargs...) where T
 
-    function df_1(dx::Vector{Complex128}, x::Vector{Complex128}, p, t)
-        recast!(x, state)
-        recast!(dx, dstate)
-        df(t, state, dstate)
-        recast!(dstate, dx)
-    end
-
-    function dg_1(dx::Vector{Complex128}, x::Vector{Complex128}, p, t)
-        recast!(x, state)
-        recast!(dx, dstate)
-        dg(t, state, dstate)
-        recast!(dstate, dx)
-    end
-
-    function df_2(dx::Vector{Complex128}, x::Vector{Complex128}, p, t)
+    function df_(dx::Vector{Complex128}, x::Vector{Complex128}, p, t)
         recast!(x, state)
         @inbounds for i=1:size(dstate)[2]
             recast!(dx, dstate[1, i])
@@ -122,7 +161,7 @@ function integrate_stoch(tspan::Vector{Float64}, df::Function, dg::Function, x0:
         recast!(dstate, dx)
     end
 
-    function dg_2(dx::Array{Complex128, 2}, x::Vector{Complex128}, p, t)
+    function dg_(dx::Array{Complex128, 2}, x::Vector{Complex128}, p, t)
         recast!(x, state)
         @inbounds for i=1:size(dx)[2]
             recast!(dx[:, i], dstate[1, i])
@@ -144,13 +183,8 @@ function integrate_stoch(tspan::Vector{Float64}, df::Function, dg::Function, x0:
                                          save_everystep=save_everystep,
                                          save_start = false)
 
-    prob = if n == 1
-        StochasticDiffEq.SDEProblem{true}(df_1, dg_1, x0,(tspan[1],tspan[end]))
-    else
-        StochasticDiffEq.SDEProblem{true}(df_2, dg_2, x0,(tspan[1],tspan[end]), noise_rate_prototype=Array{Complex128}(length(state), n))
-    end
+    prob = StochasticDiffEq.SDEProblem{true}(df_, dg_, x0,(tspan[1],tspan[end]), noise_rate_prototype=Array{Complex128}(length(state), n))
 
-    # TODO: Choose algorithm to be RkMil(interpretation=:Stratonovich) for n=1 (better alg, but can only be used for scalar noise here)
     sol = StochasticDiffEq.solve(
                 prob,
                 alg;
@@ -163,12 +197,23 @@ function integrate_stoch(tspan::Vector{Float64}, df::Function, dg::Function, x0:
     out.t,out.saveval
 end
 
+"""
+    integrate_stoch
+
+Define fout if it was omitted.
+"""
 function integrate_stoch(tspan::Vector{Float64}, df::Function, dg::Function, x0::Vector{Complex128},
-            state::T, dstate::Union{T, Array{T}}, ::Void, n::Int; kwargs...) where T
+    state::T, dstate::Union{T, Array{T}}, ::Void, n::Int; kwargs...) where T
     function fout(t::Float64, state::T)
         copy(state)
     end
-    integrate_stoch(tspan, df, dg, x0, state, dstate, fout, n; kwargs...)
+
+    if n == 1
+        integrate_stoch(tspan, df, dg, x0, state, dstate, fout; kwargs...)
+    else
+        integrate_stoch(tspan, df, dg, x0, state, dstate, fout, n; kwargs...)
+    end
 end
+
 
 Base.@pure pure_inference(fout,T) = Core.Inference.return_type(fout, T)

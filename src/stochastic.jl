@@ -31,7 +31,7 @@ function schroedinger_dynamic(tspan, psi0::Ket, fdeterm::Function, fstoch::Funct
                 fout::Union{Function,Void}=nothing,
                 kwargs...)
     tspan_ = convert(Vector{Float64}, tspan)
-    dschroedinger_determ(t::Float64, psi::Ket, dpsi::Ket) = dschroedinger_dynamic(t, psi, fdeterm, dpsi)
+
     stoch_type = pure_inference(fstoch, Tuple{eltype(tspan),typeof(psi0)})
     if stoch_type <: Tuple
         n = nfields(stoch_type)
@@ -45,14 +45,21 @@ function schroedinger_dynamic(tspan, psi0::Ket, fdeterm::Function, fstoch::Funct
         dstate = copy(psi0)
     end
 
+    dschroedinger_determ(t::Float64, psi::Ket, dpsi::Ket) = dschroedinger_dynamic(t, psi, fdeterm, dpsi)
+
     dschroedinger_stoch(t::Float64, psi::Ket, dpsi::Ket) = if n == 1
         dschroedinger_stochastic(t, psi, fstoch, dpsi)
     else
         dschroedinger_stochastic(t, psi, fstoch, dpsi, n)
     end
+
     x0 = psi0.data
     state = copy(psi0)
-    integrate_stoch(tspan_, dschroedinger_determ, dschroedinger_stoch, x0, state, dstate, fout, n; kwargs...)
+    if n == 1
+        integrate_stoch(tspan_, dschroedinger_determ, dschroedinger_stoch, x0, state, dstate, fout; kwargs...)
+    else
+        integrate_stoch(tspan_, dschroedinger_determ, dschroedinger_stoch, x0, state, dstate, fout, n; kwargs...)
+    end
 end
 
 function dschroedinger_stochastic(t::Float64, psi::Ket, f::Function, dpsi::Ket)

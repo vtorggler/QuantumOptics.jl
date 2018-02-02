@@ -26,10 +26,10 @@ T = [0:0.1:1;]
 dt = 1e-5
 tout, ψt2 = stochastic.schroedinger_dynamic(T, ψ0, fdeterm_atom, fstoch_2; dt=dt)
 tout, ψt1 = stochastic.schroedinger_dynamic(T, ψ0, fdeterm_atom, fstoch_atom; dt=dt)
-@test ψt1 == ψt2
 
 tout, ψt_determ = timeevolution.schroedinger_dynamic(T, ψ0, fdeterm_atom)
 for i=1:length(tout)
+    @test norm(ψt1[i] - ψt2[i]) < dt
     @test norm(ψt1[i] - ψt_determ[i]) < dt
 end
 
