@@ -203,17 +203,19 @@ end
 Define fout if it was omitted.
 """
 function integrate_stoch(tspan::Vector{Float64}, df::Function, dg::Function, x0::Vector{Complex128},
+    state::T, dstate::Union{T, Array{T}}, ::Void; kwargs...) where T
+    function fout(t::Float64, state::T)
+        copy(state)
+    end
+    integrate_stoch(tspan, df, dg, x0, state, dstate, fout; kwargs...)
+end
+
+function integrate_stoch(tspan::Vector{Float64}, df::Function, dg::Function, x0::Vector{Complex128},
     state::T, dstate::Union{T, Array{T}}, ::Void, n::Int; kwargs...) where T
     function fout(t::Float64, state::T)
         copy(state)
     end
-
-    if n == 1
-        integrate_stoch(tspan, df, dg, x0, state, dstate, fout; kwargs...)
-    else
-        integrate_stoch(tspan, df, dg, x0, state, dstate, fout, n; kwargs...)
-    end
+    integrate_stoch(tspan, df, dg, x0, state, dstate, fout, n; kwargs...)
 end
-
 
 Base.@pure pure_inference(fout,T) = Core.Inference.return_type(fout, T)
