@@ -3,7 +3,7 @@ module stochastic
 using ..bases, ..states, ..operators
 using ..operators_dense, ..operators_sparse
 using ..timeevolution
-import ..timeevolution.integrate_stoch
+import ..timeevolution: integrate_stoch, recast!
 import ..timeevolution.timeevolution_schroedinger: dschroedinger, dschroedinger_dynamic, check_schroedinger
 import StochasticDiffEq
 
@@ -32,28 +32,48 @@ function schroedinger_dynamic(tspan, psi0::Ket, fdeterm::Function, fstoch::Funct
                 kwargs...)
     tspan_ = convert(Vector{Float64}, tspan)
     dschroedinger_determ(t::Float64, psi::Ket, dpsi::Ket) = dschroedinger_dynamic(t, psi, fdeterm, dpsi)
-    dschroedinger_stoch(t::Float64, psi::Ket, dpsi::Ket) = dschroedinger_stochastic(t, psi, fstoch, dpsi)
+    stoch_type = pure_inference(fstoch, Tuple{eltype(tspan),typeof(psi0)})
+    if stoch_type <: Tuple
+        n = nfields(stoch_type)
+        dstate = Array{Ket}(1, n)
+        for i=1:n
+            dstate[1, i] = copy(psi0)
+        end
+    # TODO: Clean up
+    else
+        n = 1
+        dstate = copy(psi0)
+    end
+
+    dschroedinger_stoch(t::Float64, psi::Ket, dpsi::Ket) = if n == 1
+        dschroedinger_stochastic(t, psi, fstoch, dpsi)
+    else
+        dschroedinger_stochastic(t, psi, fstoch, dpsi, n)
+    end
     x0 = psi0.data
     state = copy(psi0)
-    dstate = copy(psi0)
-    integrate_stoch(tspan_, dschroedinger_determ, dschroedinger_stoch, x0, state, dstate, fout; kwargs...)
+    integrate_stoch(tspan_, dschroedinger_determ, dschroedinger_stoch, x0, state, dstate, fout, n; kwargs...)
 end
 
 function dschroedinger_stochastic(t::Float64, psi::Ket, f::Function, dpsi::Ket)
     ops = f(t, psi)
-    if isa(ops, Operator)
-        check_schroedinger(psi, ops)
-        dschroedinger(psi, ops, dpsi)
-    elseif isa(ops, Tuple)
-        out = Array{Ket}(1, length(ops))
-        @inbounds for i=1:length(ops)
-            check_schroedinger(psi, ops[i])
-            out[1, i] = dschroedinger(psi, ops[i], dpsi)
-        end
-        out
-    else
-        ArgumentError("fstoch returns invlaid type $(typeof(ops))!")
-    end
+    check_schroedinger(psi, ops)
+    dschroedinger(psi, ops, dpsi)
 end
+
+function dschroedinger_stochastic(t::Float64, psi::Ket, f::Function, dpsi::Ket, n::Int)
+    out = Array{Ket}(1, n)
+    ops = f(t, psi)
+    @inbounds for i=1:n
+        check_schroedinger(psi, ops[i])
+        out[1, i] = dschroedinger(psi, ops[i], dpsi)
+    end
+    out
+end
+
+recast!(dstate::Array{Ket, 2}, dx::Array{Complex128}) = nothing
+
+Base.@pure pure_inference(fout,T) = Core.Inference.return_type(fout, T)
+
 
 end # module
