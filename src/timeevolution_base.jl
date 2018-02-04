@@ -154,18 +154,16 @@ function integrate_stoch(tspan::Vector{Float64}, df::Function, dg::Function, x0:
 
     function df_(dx::Vector{Complex128}, x::Vector{Complex128}, p, t)
         recast!(x, state)
-        @inbounds for i=1:size(dstate)[2]
-            recast!(dx, dstate[1, i])
-            df(t, state, dstate[1, i])
-        end
+        recast!(dx, dstate)
+        df(t, state, dstate)
         recast!(dstate, dx)
     end
 
     function dg_(dx::Array{Complex128, 2}, x::Vector{Complex128}, p, t)
         recast!(x, state)
         @inbounds for i=1:size(dx)[2]
-            recast!(dx[:, i], dstate[1, i])
-            dg(t, state, dstate[1, i])
+            recast!(dx[:, i], dstate)
+            dx[:, i] = dg(t, state, dstate, i).data
         end
         recast!(dstate, dx)
     end

@@ -31,17 +31,13 @@ function schroedinger(tspan, psi0::Ket, H::Operator, Hs::Vector{T};
     tspan_ = convert(Vector{Float64}, tspan)
 
     n = length(Hs)
-    dstate = Array{Ket}(1, n)
-    for i=1:n
-        check_schroedinger(psi0, Hs[i])
-        dstate[1, i] = copy(psi0)
-    end
+    dstate = copy(psi0)
     x0 = psi0.data
     state = copy(psi0)
 
     check_schroedinger(psi0, H)
     dschroedinger_determ(t::Float64, psi::Ket, dpsi::Ket) = dschroedinger(psi, H, dpsi)
-    dschroedinger_stoch(t::Float64, psi::Ket, dpsi::Ket) = dschroedinger_stochastic(psi, Hs, dpsi, n)
+    dschroedinger_stoch(t::Float64, psi::Ket, dpsi::Ket, index::Int) = dschroedinger_stochastic(psi, Hs, dpsi, index)
 
     integrate_stoch(tspan_, dschroedinger_determ, dschroedinger_stoch, x0, state, dstate, fout, n; kwargs...)
 end
@@ -87,42 +83,27 @@ function schroedinger_dynamic(tspan, psi0::Ket, fdeterm::Function, fstoch::Funct
     tspan_ = convert(Vector{Float64}, tspan)
 
     stoch_type = pure_inference(fstoch, Tuple{eltype(tspan),typeof(psi0)})
-    if stoch_type <: Tuple
-        n = nfields(stoch_type)
-        dstate = Array{Ket}(1, n)
-        for i=1:n
-            dstate[1, i] = copy(psi0)
-        end
-    # TODO: Clean up
-    else
-        n = 1
-        dstate = copy(psi0)
-    end
+    n = stoch_type <: Tuple ? nfields(stoch_type) : 1
+    dstate = copy(psi0)
 
     dschroedinger_determ(t::Float64, psi::Ket, dpsi::Ket) = dschroedinger_dynamic(t, psi, fdeterm, dpsi)
 
-    dschroedinger_stoch(t::Float64, psi::Ket, dpsi::Ket) = if n == 1
-        dschroedinger_stochastic(t, psi, fstoch, dpsi)
-    else
-        dschroedinger_stochastic(t, psi, fstoch, dpsi, n)
-    end
+    # TODO: clean up
+    dschroedinger_stoch_1(t::Float64, psi::Ket, dpsi::Ket) = dschroedinger_stochastic(t, psi, fstoch, dpsi)
+    dschroedinger_stoch_2(t::Float64, psi::Ket, dpsi::Ket, index::Int) = dschroedinger_stochastic(t, psi, fstoch, dpsi, index)
 
     x0 = psi0.data
     state = copy(psi0)
     if n == 1
-        integrate_stoch(tspan_, dschroedinger_determ, dschroedinger_stoch, x0, state, dstate, fout; kwargs...)
+        integrate_stoch(tspan_, dschroedinger_determ, dschroedinger_stoch_1, x0, state, dstate, fout; kwargs...)
     else
-        integrate_stoch(tspan_, dschroedinger_determ, dschroedinger_stoch, x0, state, dstate, fout, n; kwargs...)
+        integrate_stoch(tspan_, dschroedinger_determ, dschroedinger_stoch_2, x0, state, dstate, fout, n; kwargs...)
     end
 end
 
-function dschroedinger_stochastic(psi::Ket, Hs::Vector{T}, dpsi::Ket, n::Int) where T <: Operator
-    out = Array{Ket}(1, n)
-    @inbounds for i=1:n
-        check_schroedinger(psi, Hs[i])
-        out[1, i] = dschroedinger(psi, Hs[i], dpsi)
-    end
-    out
+function dschroedinger_stochastic(psi::Ket, Hs::Vector{T}, dpsi::Ket, index::Int) where T <: Operator
+    check_schroedinger(psi, Hs[index])
+    dschroedinger(psi, Hs[index], dpsi)
 end
 
 function dschroedinger_stochastic(t::Float64, psi::Ket, f::Function, dpsi::Ket)
@@ -131,17 +112,13 @@ function dschroedinger_stochastic(t::Float64, psi::Ket, f::Function, dpsi::Ket)
     dschroedinger(psi, ops, dpsi)
 end
 
-function dschroedinger_stochastic(t::Float64, psi::Ket, f::Function, dpsi::Ket, n::Int)
-    out = Array{Ket}(1, n)
+function dschroedinger_stochastic(t::Float64, psi::Ket, f::Function, dpsi::Ket, index::Int)
     ops = f(t, psi)
-    @inbounds for i=1:n
-        check_schroedinger(psi, ops[i])
-        out[1, i] = dschroedinger(psi, ops[i], dpsi)
-    end
-    out
+    check_schroedinger(psi, ops[index])
+    dschroedinger(psi, ops[index], dpsi)
 end
 
-recast!(dstate::Array{Ket, 2}, dx::Array{Complex128}) = nothing
+recast!(dstate::Ket, dx::Array{Complex128, 2}) = nothing
 
 Base.@pure pure_inference(fout,T) = Core.Inference.return_type(fout, T)
 
