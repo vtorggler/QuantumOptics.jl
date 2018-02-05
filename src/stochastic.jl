@@ -56,7 +56,7 @@ function schroedinger(tspan, psi0::Ket, H::Operator, Hs::Operator;
     dschroedinger_determ(t::Float64, psi::Ket, dpsi::Ket) = dschroedinger(psi, H, dpsi)
     dschroedinger_stoch(t::Float64, psi::Ket, dpsi::Ket) = dschroedinger(psi, Hs, dpsi)
 
-    integrate_stoch(tspan_, dschroedinger_determ, dschroedinger_stoch, x0, state, dstate, fout; kwargs...)
+    integrate_stoch(tspan_, dschroedinger_determ, dschroedinger_stoch, x0, state, dstate, fout, nothing; kwargs...)
 end
 
 """
@@ -83,22 +83,27 @@ function schroedinger_dynamic(tspan, psi0::Ket, fdeterm::Function, fstoch::Funct
     tspan_ = convert(Vector{Float64}, tspan)
 
     stoch_type = pure_inference(fstoch, Tuple{eltype(tspan),typeof(psi0)})
-    n = stoch_type <: Tuple ? nfields(stoch_type) : 1
+    n = stoch_type <: Tuple ? nfields(stoch_type) : nothing
+
     dstate = copy(psi0)
-
-    dschroedinger_determ(t::Float64, psi::Ket, dpsi::Ket) = dschroedinger_dynamic(t, psi, fdeterm, dpsi)
-
-    # TODO: clean up
-    dschroedinger_stoch_1(t::Float64, psi::Ket, dpsi::Ket) = dschroedinger_stochastic(t, psi, fstoch, dpsi)
-    dschroedinger_stoch_2(t::Float64, psi::Ket, dpsi::Ket, index::Int) = dschroedinger_stochastic(t, psi, fstoch, dpsi, index)
-
     x0 = psi0.data
     state = copy(psi0)
-    if n == 1
-        integrate_stoch(tspan_, dschroedinger_determ, dschroedinger_stoch_1, x0, state, dstate, fout; kwargs...)
-    else
-        integrate_stoch(tspan_, dschroedinger_determ, dschroedinger_stoch_2, x0, state, dstate, fout, n; kwargs...)
-    end
+
+    dschroedinger_determ(t::Float64, psi::Ket, dpsi::Ket) = dschroedinger_dynamic(t, psi, fdeterm, dpsi)
+    schroedinger_dynamic_(tspan, state, dstate, x0, dschroedinger_determ, fstoch, n; fout=fout, kwargs...)
+end
+
+function schroedinger_dynamic_(tspan::Vector{Float64}, state::Ket, dstate::Ket, x0::Vector{Complex128},
+                dschroedinger_determ::Function, fstoch::Function, n::Void;
+                fout::Union{Void, Function}=nothing, kwargs...)
+    dschroedinger_stoch(t::Float64, psi::Ket, dpsi::Ket) = dschroedinger_stochastic(t, psi, fstoch, dpsi)
+    integrate_stoch(tspan, dschroedinger_determ, dschroedinger_stoch, x0, state, dstate, fout, n; kwargs...)
+end
+function schroedinger_dynamic_(tspan::Vector{Float64}, state::Ket, dstate::Ket, x0::Vector{Complex128},
+                dschroedinger_determ::Function, fstoch::Function, n::Int;
+                fout::Union{Void, Function}=nothing, kwargs...)
+    dschroedinger_stoch(t::Float64, psi::Ket, dpsi::Ket, index::Int) = dschroedinger_stochastic(t, psi, fstoch, dpsi, index)
+    integrate_stoch(tspan, dschroedinger_determ, dschroedinger_stoch, x0, state, dstate, fout, n; kwargs...)
 end
 
 function dschroedinger_stochastic(psi::Ket, Hs::Vector{T}, dpsi::Ket, index::Int) where T <: Operator
