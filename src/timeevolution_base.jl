@@ -165,7 +165,7 @@ function integrate_stoch_(tspan::Vector{Float64}, df_::Function, dg::Function, x
         recast!(x, state)
         @inbounds for i=1:n
             recast!(dx[:, i], dstate)
-            dx[:, i] = dg(t, state, dstate, i).data
+            dx[:, i] = dg(t, state, dstate, i).data[:]
         end
         recast!(dstate, dx)
     end
