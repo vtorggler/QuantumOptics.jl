@@ -155,9 +155,14 @@ function master(tspan, rho0::DenseOperator, H::Operator, Hs::Operator,
 
     tmp = copy(rho0)
 
-    if rates != nothing
+    if rates_s == nothing && rates != nothing
         rates_s = sqrt.(rates)
     end
+    if isa(rates_s, Matrix{Float64})
+        throw(ArgumentError("A matrix of stochastic rates is ambiguous! Please provide a vector of stochastic rates.
+        You may want to use diagonaljumps."))
+    end
+
     n = length(Js) + 1
     dmaster_stoch(t::Float64, rho::DenseOperator, drho::DenseOperator, index::Int) = dmaster_stochastic(rho, Hs, rates_s, Js, Jsdagger, drho, tmp, index)
 
@@ -197,9 +202,14 @@ function master(tspan, rho0::DenseOperator, H::Operator, Hs::Vector,
 
     tmp = copy(rho0)
 
-    if rates != nothing
+    if rates_s == nothing && rates != nothing
         rates_s = sqrt.(rates)
     end
+    if isa(rates_s, Matrix{Float64})
+        throw(ArgumentError("A matrix of stochastic rates is ambiguous! Please provide a vector of stochastic rates.
+        You may want to use diagonaljumps."))
+    end
+
     n = length(Js) + length(Hs)
     dmaster_stoch(t::Float64, rho::DenseOperator, drho::DenseOperator, index::Int) = dmaster_stochastic(rho, Hs, rates_s, Js, Jsdagger, drho, tmp, index)
 

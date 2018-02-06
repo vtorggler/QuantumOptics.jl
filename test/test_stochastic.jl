@@ -77,4 +77,7 @@ for i=1:length(tout)
     @test tracedistance(ρt3[i], ρt_determ[i]) < dt
 end
 
+@test_throws ArgumentError stochastic.master(T, ρ0, H, Hs, [sm, sm], [sm, sm]; rates=[0.1 0.1; 0.1 0.1], dt=dt)
+@test_throws ArgumentError stochastic.master(T, ρ0, H, [Hs], [sm, sm], [sm, sm]; rates=[0.1 0.1; 0.1 0.1], dt=dt)
+
 end # testset
