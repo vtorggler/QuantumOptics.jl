@@ -80,4 +80,34 @@ end
 @test_throws ArgumentError stochastic.master(T, ρ0, H, Hs, [sm, sm], [sm, sm]; rates=[0.1 0.1; 0.1 0.1], dt=dt)
 @test_throws ArgumentError stochastic.master(T, ρ0, H, [Hs], [sm, sm], [sm, sm]; rates=[0.1 0.1; 0.1 0.1], dt=dt)
 
+# Test master dynamic
+Jdagger = dagger.(J)
+Js .*= rates
+Jsdagger = dagger.(Js)
+function fdeterm_master(t, rho)
+    H, J, Jdagger
+end
+function fstoch1_master(t, rho)
+    [zero_op], [zero_op], [zero_op]
+end
+function fstoch2_master(t, rho)
+    [zero_op], Js, Jsdagger
+end
+function fstoch3_master(t, rho)
+    [Hs], Js, Jsdagger
+end
+
+tout, ρt4 = stochastic.master_dynamic(T, ρ0, fdeterm_master, fstoch1_master; dt=dt)
+tout, ρt5 = stochastic.master_dynamic(T, ρ0, fdeterm_master, fstoch2_master; dt=dt)
+tout, ρt6 = stochastic.master_dynamic(T, ρ0, fdeterm_master, fstoch3_master; dt=dt)
+
+for i=1:length(tout)
+    @test tracedistance(ρt4[i], ρt_determ[i]) < dt
+end
+for i=2:length(tout)
+    @test tracedistance(ρt5[i], ρt_determ[i]) > dt
+    @test tracedistance(ρt5[i], ρt6[i]) > dt
+end
+
+
 end # testset

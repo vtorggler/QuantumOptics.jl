@@ -5,7 +5,7 @@ using ..operators_dense, ..operators_sparse
 using ..timeevolution
 import ..timeevolution: integrate_stoch, recast!
 import ..timeevolution.timeevolution_schroedinger: dschroedinger, dschroedinger_dynamic, check_schroedinger
-import ..timeevolution.timeevolution_master: dmaster_h, dmaster_nh, check_master
+import ..timeevolution.timeevolution_master: dmaster_h, dmaster_nh, dmaster_h_dynamic, check_master
 import StochasticDiffEq
 
 const DecayRates = Union{Vector{Float64}, Matrix{Float64}, Void}
@@ -240,6 +240,63 @@ function master(tspan, rho0::DenseOperator, H::Operator, Hs::Vector,
     end
 end
 
+"""
+    stochastic.master_dynamic(tspan, rho0, f, fs; <keyword arguments>)
+
+Time-evolution according to a master equation with a dynamic Hamiltonian and J.
+
+There are two implementations for integrating the master equation with dynamic
+operators:
+
+* [`master_dynamic`](@ref): Usual formulation of the master equation.
+* [`master_nh_dynamic`](@ref): Variant with non-hermitian Hamiltonian.
+
+# Arguments
+* `tspan`: Vector specifying the points of time for which output should be displayed.
+* `rho0`: Initial density operator. Can also be a state vector which is
+        automatically converted into a density operator.
+* `f`: Function `f(t, rho) -> (H, J, Jdagger)` or `f(t, rho) -> (H, J, Jdagger, rates)`
+* `fs`: Function `fs(t, rho) -> (Hs, Js, Jsdagger)` or `fs(t, rho) -> (Hs, Js, Jsdagger, rates)`
+* `rates=nothing`: Vector or matrix specifying the coefficients (decay rates)
+        for the jump operators. If nothing is specified all rates are assumed
+        to be 1.
+* `rates_s=nothing`: Vector or matrix specifying the coefficients (decay rates)
+        for the stochastic jump operators. If nothing is specified all rates are assumed
+        to be 1.
+* `fout=nothing`: If given, this function `fout(t, rho)` is called every time
+        an output should be displayed. ATTENTION: The given state rho is not
+        permanent! It is still in use by the ode solver and therefore must not
+        be changed.
+* `kwargs...`: Further arguments are passed on to the ode solver.
+"""
+function master_dynamic(tspan, rho0::DenseOperator, f::Function, fs::Function;
+                rates::DecayRates=nothing, rates_s::DecayRates=nothing,
+                fout::Union{Function,Void}=nothing,
+                kwargs...)
+
+    tmp = copy(rho0)
+
+    if rates_s == nothing && rates != nothing
+        rates_s = sqrt.(rates)
+    end
+    if isa(rates_s, Matrix{Float64})
+        throw(ArgumentError("A matrix of stochastic rates is ambiguous! Please provide a vector of stochastic rates.
+        You may want to use diagonaljumps."))
+    end
+
+    fs_out = fs(0, rho0)
+    n = length(fs_out[1]) + length(fs_out[2])
+    no_rates = length(fs_out) == 3
+
+    dmaster_determ(t::Float64, rho::DenseOperator, drho::DenseOperator) = dmaster_h_dynamic(t, rho, f, rates, drho, tmp)
+    dmaster_stoch(t::Float64, rho::DenseOperator, drho::DenseOperator, index::Int) = if no_rates
+        dmaster_stoch_dynamic_norates(t, rho, fs, rates_s, drho, tmp, index)
+    else
+        dmaster_stoch_dynamic_rates(t, rho, fs, rates_s, drho, tmp, index)
+    end
+    integrate_master_stoch(tspan, dmaster_determ, dmaster_stoch, rho0, fout, n; kwargs...)
+end
+
 function dschroedinger_stochastic(psi::Ket, Hs::Vector{T}, dpsi::Ket, index::Int) where T <: Operator
     check_schroedinger(psi, Hs[index])
     dschroedinger(psi, Hs[index], dpsi)
@@ -327,6 +384,69 @@ function dmaster_stochastic(rho::DenseOperator, H::Vector, rates::Vector{Float64
     end
     return drho
 end
+
+function dmaster_stoch_dynamic_norates(t::Float64, rho::DenseOperator, f::Function, rates::Vector{Float64},
+            drho::DenseOperator, tmp::DenseOperator, index::Int)
+
+    result = f(t, rho)
+    @assert 3 == length(result)
+    H, J, Jdagger = result
+    if index > length(J)
+        operators.gemm!(-1.0im, H[index - length(J)], rho, 0.0, drho)
+        operators.gemm!(1.0im, rho, H[index - length(J)], 1.0, drho)
+    else
+        operators.gemm!(rates[index], J[index], rho, 0, tmp)
+        operators.gemm!(1, tmp, Jdagger[index], 1, drho)
+
+        operators.gemm!(-0.5, Jdagger[index], tmp, 1, drho)
+
+        operators.gemm!(rates[index], rho, Jdagger[index], 0, tmp)
+        operators.gemm!(-0.5, tmp, J[index], 1, drho)
+    end
+    return drho
+end
+function dmaster_stoch_dynamic_norates(t::Float64, rho::DenseOperator, f::Function, rates::Void,
+            drho::DenseOperator, tmp::DenseOperator, index::Int)
+
+    result = f(t, rho)
+    @assert 3 == length(result)
+    H, J, Jdagger = result
+    if index > length(J)
+        operators.gemm!(-1.0im, H[index - length(J)], rho, 0.0, drho)
+        operators.gemm!(1.0im, rho, H[index - length(J)], 1.0, drho)
+    else
+        operators.gemm!(1, J[index], rho, 0, tmp)
+        operators.gemm!(1, tmp, Jdagger[index], 1, drho)
+
+        operators.gemm!(-0.5, Jdagger[index], tmp, 1, drho)
+
+        operators.gemm!(1, rho, Jdagger[index], 0, tmp)
+        operators.gemm!(-0.5, tmp, J[index], 1, drho)
+    end
+    return drho
+end
+
+function dmaster_stoch_rates(t::Float64, rho::DenseOperator, f::Function, rates::Void,
+            drho::DenseOperator, tmp::DenseOperator, index::Int)
+    result = f(t, rho)
+    @assert length(result) == 4
+    H, J, Jdagger, rates_ = result
+    if index > length(J)
+        operators.gemm!(-1.0im, H[index - length(J)], rho, 0.0, drho)
+        operators.gemm!(1.0im, rho, H[index - length(J)], 1.0, drho)
+    else
+        operators.gemm!(rates_[index], J[index], rho, 0, tmp)
+        operators.gemm!(1, tmp, Jdagger[index], 1, drho)
+
+        operators.gemm!(-0.5, Jdagger[index], tmp, 1, drho)
+
+        operators.gemm!(rates_[index], rho, Jdagger[index], 0, tmp)
+        operators.gemm!(-0.5, tmp, J[index], 1, drho)
+    end
+    return drho
+end
+
+
 
 function integrate_master_stoch(tspan, df::Function, dg::Function,
                         rho0::DenseOperator, fout::Union{Void, Function},

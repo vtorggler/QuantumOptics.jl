@@ -95,7 +95,7 @@ Integrate using StochasticDiffEq
 """
 function integrate_stoch(tspan::Vector{Float64}, df::Function, dg::Function, x0::Vector{Complex128},
             state::T, dstate::T, fout::Function, n::Union{Void, Int};
-            save_everystep = false,
+            save_everystep = false, callback=nothing,
             kwargs...) where T
 
     function df_(dx::Vector{Complex128}, x::Vector{Complex128}, p, t)
@@ -118,8 +118,9 @@ function integrate_stoch(tspan::Vector{Float64}, df::Function, dg::Function, x0:
                                          save_everystep=save_everystep,
                                          save_start = false)
 
+    full_cb = OrdinaryDiffEq.CallbackSet(callback, scb)
 
-    integrate_stoch_(tspan, df_, dg, x0, state, dstate, fout_, out, n; callback=scb, kwargs...)
+    integrate_stoch_(tspan, df_, dg, x0, state, dstate, fout_, out, n; callback=full_cb, kwargs...)
 end
 
 """
