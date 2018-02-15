@@ -14,7 +14,7 @@ H = sp + sm
 ψ0 = spindown(b_spin)
 
 T = [0:0.1:1;]
-dt = 1e-5
+dt = 1/50
 
 function fdeterm(t, psi)
     H
@@ -52,8 +52,8 @@ end
 tout, ψt5 = stochastic.schroedinger(T, ψ0, H, noise_op; dt=dt)
 tout, ψt6 = stochastic.schroedinger_dynamic(T, ψ0, fdeterm, fstoch_3; dt=dt)
 for i=2:length(tout)
-    @test norm(ψt5[i] - ψt_determ[i]) > dt
-    @test norm(ψt5[i] - ψt6[i]) > dt
+    @test norm(ψt5[i] - ψt_determ[i]) > 1e-3
+    @test norm(ψt5[i] - ψt6[i]) > 1e-3
 end
 
 # Test master
@@ -63,22 +63,21 @@ J = [sm]
 Js = [sm]
 Hs = noise_op
 
-tout, ρt2 = stochastic.master(T, ρ0, H, [Hs, Hs], J, Js; rates=rates, dt=dt)
-tout, ρt1 = stochastic.master(T, ρ0, H, Hs, J, Js; rates=rates, dt=dt)
+tout, ρt1 = stochastic.master(T, ρ0, H, J; rates=rates, dt=dt)
+tout, ρt2 = stochastic.master(T, ρ0, H, J; Hs=[Hs], rates=rates, dt=dt)
 
-tout, ρt3 = stochastic.master(T, ρ0, H, 0*H, J, 0.*Js; dt=dt)
+tout, ρt3 = stochastic.master(T, ρ0, H, J; Js=0.*J, dt=dt)
 tout, ρt_determ = timeevolution.master(T, ρ0, H, J)
 
 for i=2:length(tout)
-    @test tracedistance(ρt1[i], ρt2[i]) > dt
-    @test tracedistance(ρt1[i], ρt_determ[i]) > dt
+    @test tracedistance(ρt1[i], ρt3[i]) > 1e-3
+    @test tracedistance(ρt1[i], ρt_determ[i]) > 1e-3
 end
 for i=1:length(tout)
     @test tracedistance(ρt3[i], ρt_determ[i]) < dt
 end
 
-@test_throws ArgumentError stochastic.master(T, ρ0, H, Hs, [sm, sm], [sm, sm]; rates=[0.1 0.1; 0.1 0.1], dt=dt)
-@test_throws ArgumentError stochastic.master(T, ρ0, H, [Hs], [sm, sm], [sm, sm]; rates=[0.1 0.1; 0.1 0.1], dt=dt)
+@test_throws ArgumentError stochastic.master(T, ρ0, H, [sm, sm]; rates=[0.1 0.1; 0.1 0.1], dt=dt)
 
 # Test master dynamic
 Jdagger = dagger.(J)
@@ -88,25 +87,33 @@ function fdeterm_master(t, rho)
     H, J, Jdagger
 end
 function fstoch1_master(t, rho)
-    [zero_op], [zero_op], [zero_op]
+    [zero_op], [zero_op]
 end
 function fstoch2_master(t, rho)
-    [zero_op], Js, Jsdagger
+    Js, Jsdagger
 end
 function fstoch3_master(t, rho)
-    [Hs], Js, Jsdagger
+    [Hs]
+end
+function fstoch4_master(t, rho)
+    J, Jdagger, rates
 end
 
 tout, ρt4 = stochastic.master_dynamic(T, ρ0, fdeterm_master, fstoch1_master; dt=dt)
 tout, ρt5 = stochastic.master_dynamic(T, ρ0, fdeterm_master, fstoch2_master; dt=dt)
-tout, ρt6 = stochastic.master_dynamic(T, ρ0, fdeterm_master, fstoch3_master; dt=dt)
+tout, ρt6 = stochastic.master_dynamic(T, ρ0, fdeterm_master, fstoch2_master; fstoch_H=fstoch3_master, dt=dt)
+tout, ρt7 = stochastic.master_dynamic(T, ρ0, fdeterm_master, fstoch2_master; fstoch_J=fstoch4_master, dt=dt)
+tout, ρt8 = stochastic.master_dynamic(T, ρ0, fdeterm_master, fstoch2_master; fstoch_H=fstoch3_master, fstoch_J=fstoch4_master, dt=dt)
 
 for i=1:length(tout)
     @test tracedistance(ρt4[i], ρt_determ[i]) < dt
 end
 for i=2:length(tout)
-    @test tracedistance(ρt5[i], ρt_determ[i]) > dt
-    @test tracedistance(ρt5[i], ρt6[i]) > dt
+    @test tracedistance(ρt5[i], ρt_determ[i]) > 1e-4
+    @test tracedistance(ρt5[i], ρt_determ[i]) > 1e-4
+    @test tracedistance(ρt6[i], ρt_determ[i]) > 1e-4
+    @test tracedistance(ρt7[i], ρt_determ[i]) > 1e-4
+    @test tracedistance(ρt8[i], ρt_determ[i]) > 1e-4
 end
 
 
