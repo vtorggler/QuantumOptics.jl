@@ -74,7 +74,11 @@ include("steadystate.jl")
 include("timecorrelations.jl")
 include("spectralanalysis.jl")
 include("semiclassical.jl")
-include("stochastic.jl")
+module stochastic
+    include("stochastic_schroedinger.jl")
+    include("stochastic_master.jl")
+    using .stochastic_schroedinger, .stochastic_master
+end
 include("printing.jl")
 
 using .bases
