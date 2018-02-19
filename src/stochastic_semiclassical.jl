@@ -51,30 +51,22 @@ function schroedinger_semiclassical(tspan, state0::State{Ket}, fquantum::Functio
     state = copy(state0)
     dstate = copy(state0)
 
+    n = 0
     if isa(fstoch_quantum, Function)
         stoch_type = pure_inference(fstoch_quantum, Tuple{eltype(tspan), typeof(state0.quantum), typeof(state0.classical)})
-        n = stoch_type <: Tuple ? nfields(stoch_type) : 1
-        if isa(fstoch_classical, Function)
-            n += 2
-        else
-            n -= 1
-        end
-    else
-        n = nothing
+        n += stoch_type <: Tuple ? nfields(stoch_type) : 1
+    end
+    if isa(fstoch_classical, Function)
+        n += 1
     end
 
-    if n == 0
-        n = nothing
-    end
-    if isa(n, Void)
-        dschroedinger_stoch_1(t::Float64, state::State{Ket}, dstate::State{Ket}) =
-            dschroedinger_stochastic(t, state, fstoch_quantum, fstoch_classical, dstate)
-        integrate_stoch(tspan_, dschroedinger_det, dschroedinger_stoch_1, x0, state, dstate, fout, n; kwargs...)
+    dschroedinger_stoch(t::Float64, state::State{Ket}, dstate::State{Ket}, index::Int) =
+    if n == 1
+        dschroedinger_stochastic(t, state, fstoch_quantum, fstoch_classical, dstate)
     else
-        dschroedinger_stoch_2(t::Float64, state::State{Ket}, dstate::State{Ket}, index::Int) =
-            dschroedinger_stochastic(t, state, fstoch_quantum, fstoch_classical, dstate, index)
-        integrate_stoch(tspan_, dschroedinger_det, dschroedinger_stoch_2, x0, state, dstate, fout, n; kwargs...)
+        dschroedinger_stochastic(t, state, fstoch_quantum, fstoch_classical, dstate, index)
     end
+    integrate_stoch(tspan_, dschroedinger_det, dschroedinger_stoch, x0, state, dstate, fout, n; kwargs...)
 end
 
 # """

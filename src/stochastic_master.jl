@@ -125,23 +125,20 @@ function master_dynamic(tspan::Vector{Float64}, rho0::DenseOperator, fdeterm::Fu
 
     tmp = copy(rho0)
 
-    if rates_s == nothing && rates != nothing
-        rates_s = sqrt.(rates)
-    end
     if isa(rates_s, Matrix{Float64})
         throw(ArgumentError("A matrix of stochastic rates is ambiguous! Please provide a vector of stochastic rates.
-        You may want to set them as ones or use diagonaljumps."))
+        You may want to use diagonaljumps."))
     end
 
     # TODO: Proper type inference for length
     fs_out = fstoch(0, rho0)
     n = length(fs_out[1])
 
-
     dmaster_determ(t::Float64, rho::DenseOperator, drho::DenseOperator) = dmaster_h_dynamic(t, rho, fdeterm, rates, drho, tmp)
     if isa(fstoch_H, Void) && isa(fstoch_J, Void)
         dmaster_stoch_std(t::Float64, rho::DenseOperator, drho::DenseOperator, index::Int) =
-        dmaster_stoch_dynamic(t, rho, fstoch, rates_s, drho, tmp, index)
+            dmaster_stoch_dynamic(t, rho, fstoch, rates_s, drho, tmp, index)
+
         integrate_master_stoch(tspan, dmaster_determ, dmaster_stoch_std, rho0, fout, n; kwargs...)
     else
         if isa(fstoch_H, Function)
@@ -151,7 +148,9 @@ function master_dynamic(tspan::Vector{Float64}, rho0::DenseOperator, fdeterm::Fu
             n += length(fstoch_J(0, rho0)[1])
         end
         dmaster_stoch_gen(t::Float64, rho::DenseOperator, drho::DenseOperator, index::Int) =
-        dmaster_stoch_dynamic_general(t, rho, fstoch, fstoch_H, fstoch_J, rates, rates_s, drho, tmp, index)
+            dmaster_stoch_dynamic_general(t, rho, fstoch, fstoch_H, fstoch_J,
+                    rates, rates_s, drho, tmp, index)
+
         integrate_master_stoch(tspan, dmaster_determ, dmaster_stoch_gen, rho0, fout, n; kwargs...)
     end
 end

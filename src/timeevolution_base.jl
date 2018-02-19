@@ -94,7 +94,7 @@ end
 Integrate using StochasticDiffEq
 """
 function integrate_stoch(tspan::Vector{Float64}, df::Function, dg::Function, x0::Vector{Complex128},
-            state::T, dstate::T, fout::Function, n::Union{Void, Int};
+            state::T, dstate::T, fout::Function, n::Int;
             save_everystep = false, callback=nothing,
             kwargs...) where T
 
@@ -119,23 +119,26 @@ function integrate_stoch(tspan::Vector{Float64}, df::Function, dg::Function, x0:
                                          save_start = false)
 
     full_cb = OrdinaryDiffEq.CallbackSet(callback, scb)
-
-    integrate_stoch_(tspan, df_, dg, x0, state, dstate, fout_, out, n; callback=full_cb, kwargs...)
+    if n == 1
+        integrate_stoch_scalar(tspan, df_, dg, x0, state, dstate, fout_, out, full_cb; kwargs...)
+    else
+        integrate_stoch_ndiag(tspan, df_, dg, x0, state, dstate, fout_, out, n, full_cb; kwargs...)
+    end
 end
 
 """
 Dispatch for scalar noise problems.
 """
-function integrate_stoch_(tspan::Vector{Float64}, df_::Function, dg::Function, x0::Vector{Complex128},
-            state::T, dstate::T, fout_::Function, out::DiffEqCallbacks.SavedValues, n::Void;
-            callback=nothing,
+function integrate_stoch_scalar(tspan::Vector{Float64}, df_::Function, dg::Function,
+            x0::Vector{Complex128}, state::T, dstate::T, fout_::Function,
+            out::DiffEqCallbacks.SavedValues, callback;
             alg::StochasticDiffEq.StochasticDiffEqAlgorithm = StochasticDiffEq.RKMil(interpretation=:Stratonovich),
             kwargs...) where T
 
     function dg_(dx::Vector{Complex128}, x::Vector{Complex128}, p, t)
         recast!(x, state)
         recast!(dx, dstate)
-        dg(t, state, dstate)
+        dg(t, state, dstate, 1)
         recast!(dstate, dx)
     end
 
@@ -156,10 +159,11 @@ end
 """
 Dispatch for non-diagonal noise.
 """
-function integrate_stoch_(tspan::Vector{Float64}, df_::Function, dg::Function, x0::Vector{Complex128},
-            state::T, dstate::T, fout_::Function, out::DiffEqCallbacks.SavedValues, n::Int;
-            callback=nothing,
+function integrate_stoch_ndiag(tspan::Vector{Float64}, df_::Function, dg::Function,
+            x0::Vector{Complex128}, state::T, dstate::T, fout_::Function,
+            out::DiffEqCallbacks.SavedValues, n::Int, callback;
             alg::StochasticDiffEq.StochasticDiffEqAlgorithm = StochasticDiffEq.EulerHeun(),
+            noise_rate_prototype=Array{Complex128}(length(state), n),
             kwargs...) where T
 
     function dg_(dx::Array{Complex128, 2}, x::Vector{Complex128}, p, t)
@@ -173,7 +177,7 @@ function integrate_stoch_(tspan::Vector{Float64}, df_::Function, dg::Function, x
     end
 
     prob = StochasticDiffEq.SDEProblem{true}(df_, dg_, x0,(tspan[1],tspan[end]),
-                noise_rate_prototype=Array{Complex128}(length(state), n))
+                noise_rate_prototype=noise_rate_prototype)
 
     sol = StochasticDiffEq.solve(
                 prob,
@@ -194,7 +198,7 @@ end
 Define fout if it was omitted.
 """
 function integrate_stoch(tspan::Vector{Float64}, df::Function, dg::Function, x0::Vector{Complex128},
-    state::T, dstate::T, ::Void, n::Union{Void, Int}; kwargs...) where T
+    state::T, dstate::T, ::Void, n::Int; kwargs...) where T
     function fout(t::Float64, state::T)
         copy(state)
     end
