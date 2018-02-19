@@ -13,8 +13,8 @@ noise_op = 0.1*sz
 H = sp + sm
 ψ0 = spindown(b_spin)
 
-T = [0:0.1:1;]
-dt = 1/50
+T = [0:0.2:1;]
+dt = 1/10.0
 
 function fdeterm(t, psi)
     H
@@ -47,13 +47,13 @@ end
 
 # Test with non-zero noise
 function fstoch_3(t, psi)
-    noise_op, zero_op
+    noise_op, noise_op
 end
 tout, ψt5 = stochastic.schroedinger(T, ψ0, H, noise_op; dt=dt)
 tout, ψt6 = stochastic.schroedinger_dynamic(T, ψ0, fdeterm, fstoch_3; dt=dt)
 for i=2:length(tout)
     @test norm(ψt5[i] - ψt_determ[i]) > 1e-3
-    @test norm(ψt5[i] - ψt6[i]) > 1e-3
+    @test norm(ψt6[i] - ψt_determ[i]) > 1e-3
 end
 
 # Test master
@@ -116,5 +116,40 @@ for i=2:length(tout)
     @test tracedistance(ρt8[i], ρt_determ[i]) > 1e-4
 end
 
+# Test semiclassical
+u0 = Complex128[0.1, 0.5]
+ψ_sc = semiclassical.State(ψ0, u0)
+function fquantum(t, psi, u)
+  return H
+end
+function fclassical(t, psi, u, du)
+  du[1] = 3*u[2]
+  du[2] = 5*sin(u[1])*cos(u[1])
+end
+function fquantum_stoch(t, psi, u)
+    10Hs
+end
+function fclassical_stoch(t, psi, u, du)
+    du[2] = 2*u[2]
+end
+tout, ψt_determ = semiclassical.schroedinger_dynamic(T, ψ_sc, fquantum, fclassical)
+tout, ψt_sc1 = stochastic.schroedinger_semiclassical(T, ψ_sc, fquantum, fclassical; fstoch_quantum=fquantum_stoch, dt=dt)
+tout, ψt_sc2 = stochastic.schroedinger_semiclassical(T, ψ_sc, fquantum, fclassical; fstoch_classical=fclassical_stoch, dt=dt)
+tout, ψt_sc3 = stochastic.schroedinger_semiclassical(T, ψ_sc, fquantum, fclassical; fstoch_quantum=fquantum_stoch, fstoch_classical=fclassical_stoch, dt=dt)
+
+# using PyPlot
+# subplot(121)
+# title("Classical")
+# plot(tout, [p.classical[1] for p=ψt_determ], label="det")
+# plot(tout, [p.classical[1] for p=ψt_sc1], label="q-noise")
+# plot(tout, [p.classical[1] for p=ψt_sc2], label="c-noise")
+# plot(tout, [p.classical[1] for p=ψt_sc3], label="both")
+# legend()
+# subplot(122)
+# title("Quantum")
+# plot(tout, expect(sp*sm, ψt_determ))
+# plot(tout, expect(sp*sm, ψt_sc1))
+# plot(tout, expect(sp*sm, ψt_sc2))
+# plot(tout, expect(sp*sm, ψt_sc3))
 
 end # testset

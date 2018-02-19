@@ -8,7 +8,7 @@ using ...timeevolution
 import ...timeevolution: integrate_stoch, recast!
 import ...timeevolution.timeevolution_schroedinger: dschroedinger, dschroedinger_dynamic, check_schroedinger
 
-Base.@pure pure_inference(fout,T) = Core.Inference.return_type(fout, T)
+Base.@pure pure_inference(f, T) = Core.Inference.return_type(f, T)
 
 """
     stochastic.schroedinger(tspan, state0, H, Hs[; fout, ...])
@@ -85,7 +85,6 @@ function schroedinger_dynamic(tspan, psi0::Ket, fdeterm::Function, fstoch::Funct
 
     stoch_type = pure_inference(fstoch, Tuple{eltype(tspan),typeof(psi0)})
     n = stoch_type <: Tuple ? nfields(stoch_type) : nothing
-
     dstate = copy(psi0)
     x0 = psi0.data
     state = copy(psi0)
@@ -124,6 +123,7 @@ function dschroedinger_stochastic(t::Float64, psi::Ket, f::Function, dpsi::Ket, 
     dschroedinger(psi, ops[index], dpsi)
 end
 
-recast!(dstate::Ket, dx::Array{Complex128, 2}) = nothing
+recast!(psi::StateVector, x::SubArray{Complex128, 1}) = (x .= psi.data)
+recast!(x::SubArray{Complex128, 1}, psi::StateVector) = (psi.data = x)
 
 end # module

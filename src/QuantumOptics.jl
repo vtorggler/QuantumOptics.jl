@@ -77,7 +77,8 @@ include("semiclassical.jl")
 module stochastic
     include("stochastic_schroedinger.jl")
     include("stochastic_master.jl")
-    using .stochastic_schroedinger, .stochastic_master
+    include("stochastic_semiclassical.jl")
+    using .stochastic_schroedinger, .stochastic_master, .stochastic_semiclassical
 end
 include("printing.jl")
 

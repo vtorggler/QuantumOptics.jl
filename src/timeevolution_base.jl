@@ -165,10 +165,11 @@ function integrate_stoch_(tspan::Vector{Float64}, df_::Function, dg::Function, x
     function dg_(dx::Array{Complex128, 2}, x::Vector{Complex128}, p, t)
         recast!(x, state)
         @inbounds for i=1:n
-            recast!(dx[:, i], dstate)
-            dx[:, i] = dg(t, state, dstate, i).data[:]
+            dx_i = @view dx[:, i]
+            recast!(dx_i, dstate)
+            dg(t, state, dstate, i)
+            recast!(dstate, dx_i)
         end
-        recast!(dstate, dx)
     end
 
     prob = StochasticDiffEq.SDEProblem{true}(df_, dg_, x0,(tspan[1],tspan[end]),

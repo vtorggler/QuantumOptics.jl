@@ -8,6 +8,7 @@ using ..bases, ..states, ..operators, ..operators_dense, ..timeevolution
 
 
 const QuantumState = Union{Ket, DenseOperator}
+const DecayRates = Union{Void, Vector{Float64}, Matrix{Float64}}
 
 """
 Semi-classical state.
@@ -121,17 +122,18 @@ function recast!(x::Vector{Complex128}, state::State)
     copy!(state.classical, 1, x, N+1, length(state.classical))
 end
 
-function dschroedinger_dynamic(t::Float64, state::State{Ket}, fquantum, fclassical, dstate::State{Ket})
+function dschroedinger_dynamic(t::Float64, state::State{Ket}, fquantum::Function,
+            fclassical::Function, dstate::State{Ket})
     fquantum_(t, psi) = fquantum(t, state.quantum, state.classical)
     timeevolution.timeevolution_schroedinger.dschroedinger_dynamic(t, state.quantum, fquantum_, dstate.quantum)
     fclassical(t, state.quantum, state.classical, dstate.classical)
 end
 
-function dmaster_h_dynamic(t::Float64, state::State{DenseOperator}, fquantum, fclassical, rates, dstate::State{DenseOperator}, tmp::DenseOperator)
+function dmaster_h_dynamic(t::Float64, state::State{DenseOperator}, fquantum::Function,
+            fclassical::Function, rates::DecayRates, dstate::State{DenseOperator}, tmp::DenseOperator)
     fquantum_(t, rho) = fquantum(t, state.quantum, state.classical)
     timeevolution.timeevolution_master.dmaster_h_dynamic(t, state.quantum, fquantum_, rates, dstate.quantum, tmp)
     fclassical(t, state.quantum, state.classical, dstate.classical)
 end
 
 end # module
-

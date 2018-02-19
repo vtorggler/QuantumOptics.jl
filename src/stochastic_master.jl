@@ -133,8 +133,8 @@ function master_dynamic(tspan::Vector{Float64}, rho0::DenseOperator, fdeterm::Fu
         You may want to set them as ones or use diagonaljumps."))
     end
 
+    # TODO: Proper type inference for length
     fs_out = fstoch(0, rho0)
-    # no_rates = length(fs_out) == 3
     n = length(fs_out[1])
 
 
@@ -303,6 +303,9 @@ function integrate_master_stoch(tspan, df::Function, dg::Function,
     integrate_stoch(tspan_, df, dg, x0, state, dstate, fout, n; kwargs...)
 end
 
-recast!(dstate::Operator, dx::Array{Complex128, 2}) = nothing
+function recast!(x::SubArray{Complex128, 1}, rho::DenseOperator)
+    rho.data = reshape(x, size(rho.data))
+end
+recast!(state::DenseOperator, x::SubArray{Complex128, 1}) = (x[:] = state.data)
 
 end # module
