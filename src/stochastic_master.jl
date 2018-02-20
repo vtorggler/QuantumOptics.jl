@@ -216,6 +216,7 @@ function dmaster_stoch_dynamic_general(t::Float64, rho::DenseOperator, fstoch::F
             fstoch_H::Function, fstoch_J::Void, rates::DecayRates, rates_s::DecayRates,
             drho::DenseOperator, tmp::DenseOperator, index::Int)
     res_stoch = fstoch(t, rho)
+    # TODO: Clean up by checking length of Hvec and else calling dmaster_stoch_dynamic
     H = fstoch_H(t, rho)
     @assert 2 <= length(res_stoch) <= 3
     if length(res_stoch) == 2
@@ -230,6 +231,7 @@ function dmaster_stoch_dynamic_general(t::Float64, rho::DenseOperator, fstoch::F
             fstoch_H::Void, fstoch_J::Function, rates::DecayRates, rates_s::DecayRates,
             drho::DenseOperator, tmp::DenseOperator, index::Int)
     res_stoch = fstoch(t, rho)
+    # TODO: Clean up by checking length of J and else calling dmaster_stoch_dynamic
     if index <= length(res_stoch[1])
         @assert 2 <= length(res_stoch) <= 3
         if length(res_stoch) == 2
@@ -256,6 +258,7 @@ function dmaster_stoch_dynamic_general(t::Float64, rho::DenseOperator, fstoch::F
             drho::DenseOperator, tmp::DenseOperator, index::Int)
     res_stoch = fstoch(t, rho)
     H = fstoch_H(t, rho)
+    # TODO: Clean up by checking length of Hvec and J and else calling dmaster_stoch_dynamic
     if index <= length(res_stoch[1]) + length(H)
         @assert 2 <= length(res_stoch) <= 3
         if length(res_stoch) == 2
@@ -297,8 +300,8 @@ function integrate_master_stoch(tspan, df::Function, dg::Function,
                         kwargs...)
     tspan_ = convert(Vector{Float64}, tspan)
     x0 = reshape(rho0.data, length(rho0))
-    state = DenseOperator(rho0.basis_l, rho0.basis_r, rho0.data)
-    dstate = DenseOperator(rho0.basis_l, rho0.basis_r, rho0.data)
+    state = copy(rho0)
+    dstate = copy(rho0)
     integrate_stoch(tspan_, df, dg, x0, state, dstate, fout, n; kwargs...)
 end
 

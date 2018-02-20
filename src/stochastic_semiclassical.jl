@@ -1,15 +1,17 @@
 module stochastic_semiclassical
 
-export schroedinger_semiclassical#, semiclassical.master_dynamic
+export schroedinger_semiclassical, master_semiclassical
 
 using ...bases, ...states, ...operators
 using ...operators_dense, ...operators_sparse
 using ...semiclassical
-import ...semiclassical: recast!, State
+import ...semiclassical: recast!, State, dmaster_h_dynamic
 using ...timeevolution
 import ...timeevolution: integrate_stoch
 import ...timeevolution.timeevolution_schroedinger: dschroedinger, dschroedinger_dynamic
-# import ...timeevolution.timeevolution_master: dmaster_h, dmaster_nh, dmaster_h_dynamic, check_master
+# import ...timeevolution.timeevolution_master:
+using ...stochastic
+import ...stochastic.stochastic_master: dmaster_stochastic, dmaster_stoch_dynamic, dlindblad
 
 const DecayRates = Union{Vector{Float64}, Matrix{Float64}, Void}
 const QuantumState = Union{Ket, DenseOperator}
@@ -69,75 +71,86 @@ function schroedinger_semiclassical(tspan, state0::State{Ket}, fquantum::Functio
     integrate_stoch(tspan_, dschroedinger_det, dschroedinger_stoch, x0, state, dstate, fout, n; kwargs...)
 end
 
-# """
-#     stochastic.master_semiclassical(tspan, rho0, H, Hs, J; <keyword arguments>)
-#
-# Time-evolution according to a stochastic master equation.
-#
-# For dense arguments the `master` function calculates the
-# non-hermitian Hamiltonian and then calls master_nh which is slightly faster.
-#
-# # Arguments
-# * `tspan`: Vector specifying the points of time for which output should
-#         be displayed.
-# * `rho0`: Initial density operator. Can also be a state vector which is
-#         automatically converted into a density operator.
-# * `H`: Deterministic part of the Hamiltonian.
-# * `Hs`: Operator or vector of operators specifying the stochastic part of the
-#         Hamiltonian.
-# * `J`: Vector containing all deterministic
-#         jump operators which can be of any arbitrary operator type.
-# * `Js`: Vector containing all stochastic jump operators.
-# * `rates=nothing`: Vector or matrix specifying the coefficients (decay rates)
-#         for the jump operators. If nothing is specified all rates are assumed
-#         to be 1.
-# * `Jdagger=dagger.(J)`: Vector containing the hermitian conjugates of the jump
-#         operators. If they are not given they are calculated automatically.
-# * `Jsdagger=dagger.(Js)`: Vector containing the hermitian conjugates of the
-#         stochastic jump operators.
-# * `fout=nothing`: If given, this function `fout(t, rho)` is called every time
-#         an output should be displayed. ATTENTION: The given state rho is not
-#         permanent! It is still in use by the ode solver and therefore must not
-#         be changed.
-# * `kwargs...`: Further arguments are passed on to the ode solver.
-# """
-# function master_semiclassical(tspan::Vector{Float64}, rho0::DenseOperator, fdeterm::Function, fstoch::Function;
-#                 fstoch_H::Union{Function, Void}=nothing, fstoch_J::Union{Function, Void}=nothing,
-#                 rates::DecayRates=nothing, rates_s::DecayRates=nothing,
-#                 fout::Union{Function,Void}=nothing,
-#                 kwargs...)
-#
-#     tmp = copy(rho0)
-#
-#     if rates_s == nothing && rates != nothing
-#         rates_s = sqrt.(rates)
-#     end
-#     if isa(rates_s, Matrix{Float64})
-#         throw(ArgumentError("A matrix of stochastic rates is ambiguous! Please provide a vector of stochastic rates.
-#         You may want to set them as ones or use diagonaljumps."))
-#     end
-#
-#     fs_out = fstoch(0, rho0)
-#     n = length(fs_out[1])
-#
-#
-#     dmaster_determ(t::Float64, rho::DenseOperator, drho::DenseOperator) = dmaster_h_dynamic(t, rho, fdeterm, rates, drho, tmp)
-#     if isa(fstoch_H, Void) && isa(fstoch_J, Void)
-#         dmaster_stoch_std(t::Float64, rho::DenseOperator, drho::DenseOperator, index::Int) =
-#         dmaster_stoch_dynamic(t, rho, fstoch, rates_s, drho, tmp, index)
-#         integrate_master_stoch(tspan, dmaster_determ, dmaster_stoch_std, rho0, fout, n; kwargs...)
-#     else
-#         if isa(fstoch_H, Function)
-#             n += length(fstoch_H(0, rho0))
-#         end
-#         if isa(fstoch_J, Function)
-#             n += length(fstoch_J(0, rho0)[1])
-#         end
-#         dmaster_stoch_gen(t::Float64, rho::DenseOperator, drho::DenseOperator, index::Int) =
-#         dmaster_stoch_dynamic_general(t, rho, fstoch, fstoch_H, fstoch_J, rates, rates_s, drho, tmp, index)
-#         integrate_master_stoch(tspan, dmaster_determ, dmaster_stoch_gen, rho0, fout, n; kwargs...)
-#     end
-# end
+"""
+    stochastic.master_semiclassical(tspan, rho0, H, Hs, J; <keyword arguments>)
+
+Time-evolution according to a stochastic master equation.
+
+For dense arguments the `master` function calculates the
+non-hermitian Hamiltonian and then calls master_nh which is slightly faster.
+
+# Arguments
+* `tspan`: Vector specifying the points of time for which output should
+        be displayed.
+* `rho0`: Initial density operator. Can also be a state vector which is
+        automatically converted into a density operator.
+* `H`: Deterministic part of the Hamiltonian.
+* `Hs`: Operator or vector of operators specifying the stochastic part of the
+        Hamiltonian.
+* `J`: Vector containing all deterministic
+        jump operators which can be of any arbitrary operator type.
+* `Js`: Vector containing all stochastic jump operators.
+* `rates=nothing`: Vector or matrix specifying the coefficients (decay rates)
+        for the jump operators. If nothing is specified all rates are assumed
+        to be 1.
+* `Jdagger=dagger.(J)`: Vector containing the hermitian conjugates of the jump
+        operators. If they are not given they are calculated automatically.
+* `Jsdagger=dagger.(Js)`: Vector containing the hermitian conjugates of the
+        stochastic jump operators.
+* `fout=nothing`: If given, this function `fout(t, rho)` is called every time
+        an output should be displayed. ATTENTION: The given state rho is not
+        permanent! It is still in use by the ode solver and therefore must not
+        be changed.
+* `kwargs...`: Further arguments are passed on to the ode solver.
+"""
+function master_semiclassical(tspan::Vector{Float64}, rho0::State{DenseOperator},
+                fquantum::Function, fclassical::Function;
+                fstoch_quantum::Union{Function, Void}=nothing,
+                fstoch_classical::Union{Function, Void}=nothing,
+                fstoch_H::Union{Function, Void}=nothing, fstoch_J::Union{Function, Void}=nothing,
+                rates::DecayRates=nothing, rates_s::DecayRates=nothing,
+                fout::Union{Function,Void}=nothing,
+                kwargs...)
+
+    tmp = copy(rho0.quantum)
+
+    if isa(rates_s, Matrix{Float64})
+        throw(ArgumentError("A matrix of stochastic rates is ambiguous! Please provide a vector of stochastic rates.
+        You may want to set them as ones or use diagonaljumps."))
+    end
+
+    n = 0
+    if isa(fstoch_quantum, Function)
+        fq_out = fstoch_quantum(0, rho0.quantum, rho0.classical)
+        n += length(fq_out[1])
+    end
+    if isa(fstoch_classical, Function)
+        n += 1
+    end
+
+    dmaster_determ(t::Float64, rho::State{DenseOperator}, drho::State{DenseOperator}) =
+            dmaster_h_dynamic(t, rho, fquantum, fclassical, rates, drho, tmp)
+    if isa(fstoch_H, Void) && isa(fstoch_J, Void)
+        dmaster_stoch_std(t::Float64, rho::State{DenseOperator},
+                        drho::State{DenseOperator}, index::Int) =
+            dmaster_stoch_dynamic(t, rho, fstoch_quantum, fstoch_classical,
+                        rates_s, drho, tmp, index)
+        integrate_master_stoch(tspan, dmaster_determ, dmaster_stoch_std, rho0, fout, n; kwargs...)
+    else
+        if isa(fstoch_H, Function)
+            n += length(fstoch_H(0, rho0.quantum, rho0.classical))
+        end
+        if isa(fstoch_J, Function)
+            n += length(fstoch_J(0, rho0.quantum, rho0.classical)[1])
+        end
+        dmaster_stoch_gen(t::Float64, rho::State{DenseOperator},
+                        drho::State{DenseOperator}, index::Int) =
+            dmaster_stoch_dynamic_general(t, rho, fstoch_quantum,
+                        fstoch_classical, fstoch_H, fstoch_J, rates, rates_s,
+                        drho, tmp, index)
+        integrate_master_stoch(tspan, dmaster_determ, dmaster_stoch_gen, rho0, fout, n; kwargs...)
+    end
+end
 
 function dschroedinger_stochastic(t::Float64, state::State{Ket}, fstoch_quantum::Function,
             fstoch_classical::Function, dstate::State{Ket}, index::Int)
@@ -164,6 +177,98 @@ function dschroedinger_stochastic(t::Float64, state::State{Ket}, fstoch_quantum:
     fstoch_classical(t, state.quantum, state.classical, dstate.classical)
 end
 
+function dmaster_stoch_dynamic(t::Float64, state::State{DenseOperator}, fstoch_quantum::Function,
+            fstoch_classical::Void,
+            rates_s::DecayRates, dstate::State{DenseOperator}, tmp::DenseOperator,
+            index::Int)
+    fstoch_quantum_(t, rho) = fstoch_quantum(t, state.quantum, state.classical)
+    dmaster_stoch_dynamic(t, state.quantum, fstoch_quantum_, rates_s,
+                dstate.quantum, tmp, index)
+end
+function dmaster_stoch_dynamic(t::Float64, state::State{DenseOperator}, fstoch_quantum::Void,
+            fstoch_classical::Function,
+            rates_s::DecayRates, dstate::State{DenseOperator}, tmp::DenseOperator,
+            index::Int)
+    fstoch_classical(t, state.quantum, state.classical, dstate.classical)
+end
+function dmaster_stoch_dynamic(t::Float64, state::State{DenseOperator}, fstoch_quantum::Function,
+            fstoch_classical::Function,
+            rates_s::DecayRates, dstate::State{DenseOperator}, tmp::DenseOperator,
+            index::Int)
+    result = fstoch_quantum(t, state.quantum, state.classical)
+    if index <= length(result[1])
+        @assert 2 <= length(result) <= 3
+        if length(result) == 2
+            Js, Jsdagger = result
+            rates_s_ = rates_s
+        else
+            Js, Jsdagger, rates_s_ = result
+        end
+        dmaster_stochastic(state.quantum, nothing, rates_s_, Js, Jsdagger, dstate.quantum, tmp, index)
+    else
+        fstoch_classical(t, state.quantum, state.classical, dstate.classical)
+    end
+end
+
+function dmaster_stoch_dynamic_general(t::Float64, state::State{DenseOperator},
+            fstoch_quantum::Union{Function, Void}, fstoch_classical::Union{Function, Void},
+            fstoch_H::Function, fstoch_J::Void, rates::DecayRates, rates_s::DecayRates,
+            dstate::State{DenseOperator}, tmp::DenseOperator, index::Int)
+    H = fstoch_H(t, state.quantum, state.classical)
+    Hvec = isa(H, Vector) ? H : [H]
+    if index <= length(Hvec)
+        operators.gemm!(-1.0im, Hvec[index], state.quantum, 0.0, dstate.quantum)
+        operators.gemm!(1.0im, state.quantum, Hvec[index], 1.0, dstate.quantum)
+    else
+        dmaster_stoch_dynamic(t, state, fstoch_quantum, fstoch_classical,
+                rates_s, dstate, tmp, index-length(Hvec))
+    end
+end
+function dmaster_stoch_dynamic_general(t::Float64, state::State{DenseOperator},
+            fstoch_quantum::Union{Function, Void}, fstoch_classical::Union{Function, Void},
+            fstoch_H::Void, fstoch_J::Function, rates::DecayRates, rates_s::DecayRates,
+            dstate::State{DenseOperator}, tmp::DenseOperator, index::Int)
+    result_J = fstoch_J(t, state.quantum, state.classical)
+    if index <= length(result_J[1])
+        @assert 2 <= length(result_J) <= 3
+        if length(result_J) == 2
+            J, Jdagger = result_J
+            rates_ = rates
+        else
+            J, Jdagger, rates_ = result_J
+        end
+        dlindblad(state.quantum, rates_, J, Jdagger, dstate.quantum, tmp, index)
+    else
+        dmaster_stoch_dynamic(t, state, fstoch_quantum, fstoch_classical,
+                rates_s, dstate, tmp, index-length(result_J[1]))
+    end
+end
+function dmaster_stoch_dynamic_general(t::Float64, state::State{DenseOperator},
+            fstoch_quantum::Union{Function, Void}, fstoch_classical::Union{Function, Void},
+            fstoch_H::Function, fstoch_J::Function, rates::DecayRates, rates_s::DecayRates,
+            dstate::State{DenseOperator}, tmp::DenseOperator, index::Int)
+    H = fstoch_H(t, state.quantum, state.classical)
+    Hvec = isa(H, Vector) ? H : [H]
+    if index <= length(Hvec)
+        operators.gemm!(-1.0im, Hvec[index], state.quantum, 0.0, dstate.quantum)
+        operators.gemm!(1.0im, state.quantum, Hvec[index], 1.0, dstate.quantum)
+    else
+        dmaster_stoch_dynamic_general(t, state, fstoch_quantum, fstoch_classical,
+                nothing, fstoch_J, rates, rates_s, dstate, tmp, index-length(Hvec))
+    end
+end
+
+function integrate_master_stoch(tspan, df::Function, dg::Function,
+                        rho0::State{DenseOperator}, fout::Union{Void, Function},
+                        n::Int;
+                        kwargs...)
+    tspan_ = convert(Vector{Float64}, tspan)
+    x0 = Vector{Complex128}(length(rho0))
+    recast!(rho0, x0)
+    state = copy(rho0)
+    dstate = copy(rho0)
+    integrate_stoch(tspan_, df, dg, x0, state, dstate, fout, n; kwargs...)
+end
 
 function recast!(state::State, x::SubArray{Complex128, 1})
     N = length(state.quantum)
