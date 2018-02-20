@@ -8,8 +8,6 @@ using ...timeevolution
 import ...timeevolution: integrate_stoch, recast!
 import ...timeevolution.timeevolution_schroedinger: dschroedinger, dschroedinger_dynamic, check_schroedinger
 
-Base.@pure pure_inference(f, T) = Core.Inference.return_type(f, T)
-
 """
     stochastic.schroedinger(tspan, state0, H, Hs[; fout, ...])
 
@@ -63,22 +61,24 @@ Integrate stochastic Schrödinger equation with dynamic Hamiltonian.
 * `kwargs...`: Further arguments are passed on to the ode solver.
 """
 function schroedinger_dynamic(tspan, psi0::Ket, fdeterm::Function, fstoch::Function;
-                fout::Union{Function,Void}=nothing,
+                fout::Union{Function,Void}=nothing, noise_processes::Int=0,
                 kwargs...)
     tspan_ = convert(Vector{Float64}, tspan)
 
-    stoch_type = pure_inference(fstoch, Tuple{eltype(tspan),typeof(psi0)})
-    n = stoch_type <: Tuple ? nfields(stoch_type) : 1
+    if noise_processes == 0
+        fs_out = fstoch(0.0, psi0)
+        n = length(fs_out)
+    else
+        n = noise_processes
+    end
+
     dstate = copy(psi0)
     x0 = psi0.data
     state = copy(psi0)
 
     dschroedinger_determ(t::Float64, psi::Ket, dpsi::Ket) = dschroedinger_dynamic(t, psi, fdeterm, dpsi)
-    dschroedinger_stoch(t::Float64, psi::Ket, dpsi::Ket, index::Int) = if n == 1
-        dschroedinger_stochastic(t, psi, fstoch, dpsi)
-    else
+    dschroedinger_stoch(t::Float64, psi::Ket, dpsi::Ket, index::Int) =
         dschroedinger_stochastic(t, psi, fstoch, dpsi, index)
-    end
 
     integrate_stoch(tspan, dschroedinger_determ, dschroedinger_stoch, x0, state, dstate, fout, n; kwargs...)
 end
@@ -89,7 +89,7 @@ function dschroedinger_stochastic(psi::Ket, Hs::Vector{T}, dpsi::Ket, index::Int
 end
 
 function dschroedinger_stochastic(t::Float64, psi::Ket, f::Function, dpsi::Ket)
-    ops = f(t, psi)
+    ops = f(t, psi)[1]
     check_schroedinger(psi, ops)
     dschroedinger(psi, ops, dpsi)
 end

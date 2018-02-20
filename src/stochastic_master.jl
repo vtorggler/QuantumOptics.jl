@@ -121,6 +121,7 @@ function master_dynamic(tspan::Vector{Float64}, rho0::DenseOperator, fdeterm::Fu
                 fstoch_H::Union{Function, Void}=nothing, fstoch_J::Union{Function, Void}=nothing,
                 rates::DecayRates=nothing, rates_s::DecayRates=nothing,
                 fout::Union{Function,Void}=nothing,
+                noise_processes::Int=0,
                 kwargs...)
 
     tmp = copy(rho0)
@@ -130,9 +131,18 @@ function master_dynamic(tspan::Vector{Float64}, rho0::DenseOperator, fdeterm::Fu
         You may want to use diagonaljumps."))
     end
 
-    # TODO: Proper type inference for length
-    fs_out = fstoch(0, rho0)
-    n = length(fs_out[1])
+    if noise_processes == 0
+        fs_out = fstoch(0, rho0)
+        n = length(fs_out[1])
+        if isa(fstoch_H, Function)
+            n += length(fstoch_H(0, rho0))
+        end
+        if isa(fstoch_J, Function)
+            n += length(fstoch_J(0, rho0)[1])
+        end
+    else
+        n = noise_processes
+    end
 
     dmaster_determ(t::Float64, rho::DenseOperator, drho::DenseOperator) = dmaster_h_dynamic(t, rho, fdeterm, rates, drho, tmp)
     if isa(fstoch_H, Void) && isa(fstoch_J, Void)
@@ -141,12 +151,6 @@ function master_dynamic(tspan::Vector{Float64}, rho0::DenseOperator, fdeterm::Fu
 
         integrate_master_stoch(tspan, dmaster_determ, dmaster_stoch_std, rho0, fout, n; kwargs...)
     else
-        if isa(fstoch_H, Function)
-            n += length(fstoch_H(0, rho0))
-        end
-        if isa(fstoch_J, Function)
-            n += length(fstoch_J(0, rho0)[1])
-        end
         dmaster_stoch_gen(t::Float64, rho::DenseOperator, drho::DenseOperator, index::Int) =
             dmaster_stoch_dynamic_general(t, rho, fstoch, fstoch_H, fstoch_J,
                     rates, rates_s, drho, tmp, index)
@@ -215,69 +219,50 @@ end
 function dmaster_stoch_dynamic_general(t::Float64, rho::DenseOperator, fstoch::Function,
             fstoch_H::Function, fstoch_J::Void, rates::DecayRates, rates_s::DecayRates,
             drho::DenseOperator, tmp::DenseOperator, index::Int)
-    res_stoch = fstoch(t, rho)
-    # TODO: Clean up by checking length of Hvec and else calling dmaster_stoch_dynamic
     H = fstoch_H(t, rho)
-    @assert 2 <= length(res_stoch) <= 3
-    if length(res_stoch) == 2
-        J, Jdagger = res_stoch
-        rates_s_ = rates_s
+    if index <= length(H)
+        operators.gemm!(-1.0im, H[index], rho, 0.0, drho)
+        operators.gemm!(1.0im, rho, H[index], 1.0, drho)
     else
-        J, Jdagger, rates_s_ = res_stoch
+        dmaster_stoch_dynamic(t, rho, fstoch, rates_s, drho, tmp, index-length(H))
     end
-    dmaster_stochastic(rho, H, rates_s_, J, Jdagger, drho, tmp, index)
 end
 function dmaster_stoch_dynamic_general(t::Float64, rho::DenseOperator, fstoch::Function,
             fstoch_H::Void, fstoch_J::Function, rates::DecayRates, rates_s::DecayRates,
             drho::DenseOperator, tmp::DenseOperator, index::Int)
-    res_stoch = fstoch(t, rho)
-    # TODO: Clean up by checking length of J and else calling dmaster_stoch_dynamic
-    if index <= length(res_stoch[1])
-        @assert 2 <= length(res_stoch) <= 3
-        if length(res_stoch) == 2
-            J, Jdagger = res_stoch
-            rates_s_ = rates_s
-        else
-            J, Jdagger, rates_s_ = res_stoch
-        end
-        dmaster_stochastic(rho, nothing, rates_s_, J, Jdagger, drho, tmp, index)
-    else
-        res_jumps = fstoch_J(t, rho)
-        @assert 2 <= length(res_jumps) <= 3
-        if length(res_jumps) == 2
-            J_stoch, J_stoch_dagger = res_jumps
+    result_J = fstoch_J(t, rho)
+    if index <= length(result_J[1])
+        @assert 2 <= length(result_J) <= 3
+        if length(result_J) == 2
+            J_stoch, J_stoch_dagger = result_J
             rates_ = rates
         else
-            J_stoch, J_stoch_dagger, rates_ = res_jumps
+            J_stoch, J_stoch_dagger, rates_ = result_J
         end
-        dlindblad(rho, rates_, J_stoch, J_stoch_dagger, drho, tmp, index-length(res_stoch[1]))
+        dlindblad(rho, rates_, J_stoch, J_stoch_dagger, drho, tmp, index)
+    else
+        dmaster_stoch_dynamic(t, rho, fstoch, rates_s, drho, tmp, index-length(result_J[1]))
     end
 end
 function dmaster_stoch_dynamic_general(t::Float64, rho::DenseOperator, fstoch::Function,
             fstoch_H::Function, fstoch_J::Function, rates::DecayRates, rates_s::DecayRates,
             drho::DenseOperator, tmp::DenseOperator, index::Int)
-    res_stoch = fstoch(t, rho)
     H = fstoch_H(t, rho)
-    # TODO: Clean up by checking length of Hvec and J and else calling dmaster_stoch_dynamic
-    if index <= length(res_stoch[1]) + length(H)
-        @assert 2 <= length(res_stoch) <= 3
-        if length(res_stoch) == 2
-            J, Jdagger = res_stoch
-            rates_s_ = rates_s
-        else
-            J, Jdagger, rates_s_ = res_stoch
-        end
-        dmaster_stochastic(rho, H, rates_s_, J, Jdagger, drho, tmp, index)
-    else
-        res_jumps = fstoch_J(t, rho)
-        @assert 2 <= length(res_jumps) <= 3
-        if length(res_jumps) == 2
-            J_stoch, J_stoch_dagger = res_jumps
+    result_J = fstoch_J(t, rho)
+    if index <= length(H)
+        operators.gemm!(-1.0im, H[index], rho, 0.0, drho)
+        operators.gemm!(1.0im, rho, H[index], 1.0, drho)
+    elseif length(H) < index <= length(H) + length(result_J[1])
+        @assert 2 <= length(result_J) <= 3
+        if length(result_J) == 2
+            J_stoch, J_stoch_dagger = result_J
             rates_ = rates
         else
-            J_stoch, J_stoch_dagger, rates_ = res_jumps
+            J_stoch, J_stoch_dagger, rates_ = result_J
         end
-        dlindblad(rho, rates_, J_stoch, J_stoch_dagger, drho, tmp, index-length(res_stoch[1])-length(H))
+        dlindblad(rho, rates_, J_stoch, J_stoch_dagger, drho, tmp, index-length(H))
+    else
+        dmaster_stoch_dynamic(t, rho, fstoch, rates_s, drho, tmp, index-length(H)-length(result_J[1]))
     end
 end
 

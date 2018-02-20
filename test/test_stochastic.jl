@@ -20,7 +20,7 @@ Js = [sm]
 Jdagger = dagger.(J)
 Js .*= rates
 Jsdagger = dagger.(Js)
-Hs = noise_op
+Hs = [noise_op]
 
 u0 = Complex128[0.1, 0.5]
 ψ_sc = semiclassical.State(ψ0, u0)
@@ -34,10 +34,10 @@ function fdeterm(t, psi)
 end
 # Test equivalence to Schrödinger equation with zero noise
 function fstoch_1(t, psi)
-    zero_op
+    [zero_op]
 end
 function fstoch_2(t, psi)
-    zero_op, zero_op, zero_op
+    [zero_op, zero_op, zero_op]
 end
 
 # Non-dynamic Schrödinger
@@ -71,7 +71,7 @@ end
 
 # Test master
 tout, ρt1 = stochastic.master(T, ρ0, H, J; rates=rates, dt=dt)
-tout, ρt2 = stochastic.master(T, ρ0, H, J; Hs=[Hs], rates=rates, dt=dt)
+tout, ρt2 = stochastic.master(T, ρ0, H, J; Hs=Hs, rates=rates, dt=dt)
 
 tout, ρt3 = stochastic.master(T, ρ0, H, J; Js=0.*J, dt=dt)
 tout, ρt_determ = timeevolution.master(T, ρ0, H, J)
@@ -97,7 +97,7 @@ function fstoch2_master(t, rho)
     Js, Jsdagger
 end
 function fstoch3_master(t, rho)
-    [Hs]
+    Hs
 end
 function fstoch4_master(t, rho)
     J, Jdagger, rates
@@ -107,7 +107,8 @@ tout, ρt4 = stochastic.master_dynamic(T, ρ0, fdeterm_master, fstoch1_master; d
 tout, ρt5 = stochastic.master_dynamic(T, ρ0, fdeterm_master, fstoch2_master; dt=dt)
 tout, ρt6 = stochastic.master_dynamic(T, ρ0, fdeterm_master, fstoch2_master; fstoch_H=fstoch3_master, dt=dt)
 tout, ρt7 = stochastic.master_dynamic(T, ρ0, fdeterm_master, fstoch2_master; fstoch_J=fstoch4_master, dt=dt)
-tout, ρt8 = stochastic.master_dynamic(T, ρ0, fdeterm_master, fstoch2_master; fstoch_H=fstoch3_master, fstoch_J=fstoch4_master, dt=dt)
+tout, ρt8 = stochastic.master_dynamic(T, ρ0, fdeterm_master, fstoch2_master;
+            fstoch_H=fstoch3_master, fstoch_J=fstoch4_master, dt=dt)
 
 for i=1:length(tout)
     @test tracedistance(ρt4[i], ρt_determ[i]) < dt
@@ -129,15 +130,18 @@ function fclassical(t, psi, u, du)
   du[2] = 5*sin(u[1])*cos(u[1])
 end
 function fquantum_stoch(t, psi, u)
-    10Hs
+    10 .* Hs
 end
 function fclassical_stoch(t, psi, u, du)
     du[2] = 2*u[2]
 end
 tout, ψt_determ = semiclassical.schroedinger_dynamic(T, ψ_sc, fquantum, fclassical)
-tout, ψt_sc1 = stochastic.schroedinger_semiclassical(T, ψ_sc, fquantum, fclassical; fstoch_quantum=fquantum_stoch, dt=dt)
-tout, ψt_sc2 = stochastic.schroedinger_semiclassical(T, ψ_sc, fquantum, fclassical; fstoch_classical=fclassical_stoch, dt=dt)
-tout, ψt_sc3 = stochastic.schroedinger_semiclassical(T, ψ_sc, fquantum, fclassical; fstoch_quantum=fquantum_stoch, fstoch_classical=fclassical_stoch, dt=dt)
+tout, ψt_sc1 = stochastic.schroedinger_semiclassical(T, ψ_sc, fquantum, fclassical;
+            fstoch_quantum=fquantum_stoch, dt=dt)
+tout, ψt_sc2 = stochastic.schroedinger_semiclassical(T, ψ_sc, fquantum, fclassical;
+            fstoch_classical=fclassical_stoch, dt=dt)
+tout, ψt_sc3 = stochastic.schroedinger_semiclassical(T, ψ_sc, fquantum, fclassical;
+            fstoch_quantum=fquantum_stoch, fstoch_classical=fclassical_stoch, dt=dt)
 
 # Semiclassical master
 function fquantum_master(t, rho, u)

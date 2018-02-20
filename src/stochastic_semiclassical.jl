@@ -9,13 +9,10 @@ import ...semiclassical: recast!, State, dmaster_h_dynamic
 using ...timeevolution
 import ...timeevolution: integrate_stoch
 import ...timeevolution.timeevolution_schroedinger: dschroedinger, dschroedinger_dynamic
-# import ...timeevolution.timeevolution_master:
 using ...stochastic
 import ...stochastic.stochastic_master: dmaster_stochastic, dmaster_stoch_dynamic, dlindblad
 
 const DecayRates = Union{Vector{Float64}, Matrix{Float64}, Void}
-const QuantumState = Union{Ket, DenseOperator}
-Base.@pure pure_inference(f, T) = Core.Inference.return_type(f, T)
 
 """
     semiclassical.schroedinger_stochastic(tspan, state0, fquantum, fclassical[; fout, ...])
@@ -40,12 +37,13 @@ function schroedinger_semiclassical(tspan, state0::State{Ket}, fquantum::Functio
                 fclassical::Function; fstoch_quantum::Union{Void, Function}=nothing,
                 fstoch_classical::Union{Void, Function}=nothing,
                 fout::Union{Function,Void}=nothing,
+                noise_processes::Int=0,
                 kwargs...)
     tspan_ = convert(Vector{Float64}, tspan)
     dschroedinger_det(t::Float64, state::State{Ket}, dstate::State{Ket}) = semiclassical.dschroedinger_dynamic(t, state, fquantum, fclassical, dstate)
 
     if isa(fstoch_quantum, Void) && isa(fstoch_classical, Void)
-        warn("No stochastic functions provided!")
+        throw(ArgumentError("No stochastic functions provided!"))
     end
 
     x0 = Vector{Complex128}(length(state0))
@@ -53,21 +51,21 @@ function schroedinger_semiclassical(tspan, state0::State{Ket}, fquantum::Functio
     state = copy(state0)
     dstate = copy(state0)
 
-    n = 0
-    if isa(fstoch_quantum, Function)
-        stoch_type = pure_inference(fstoch_quantum, Tuple{eltype(tspan), typeof(state0.quantum), typeof(state0.classical)})
-        n += stoch_type <: Tuple ? nfields(stoch_type) : 1
-    end
-    if isa(fstoch_classical, Function)
-        n += 1
+    if noise_processes == 0
+        n = 0
+        if isa(fstoch_quantum, Function)
+            fs_out = fstoch_quantum(0.0, state0.quantum, state0.classical)
+            n += length(fs_out)
+        end
+        if isa(fstoch_classical, Function)
+            n += 1
+        end
+    else
+        n = noise_processes
     end
 
     dschroedinger_stoch(t::Float64, state::State{Ket}, dstate::State{Ket}, index::Int) =
-    if n == 1
-        dschroedinger_stochastic(t, state, fstoch_quantum, fstoch_classical, dstate)
-    else
         dschroedinger_stochastic(t, state, fstoch_quantum, fstoch_classical, dstate, index)
-    end
     integrate_stoch(tspan_, dschroedinger_det, dschroedinger_stoch, x0, state, dstate, fout, n; kwargs...)
 end
 
@@ -110,6 +108,7 @@ function master_semiclassical(tspan::Vector{Float64}, rho0::State{DenseOperator}
                 fstoch_H::Union{Function, Void}=nothing, fstoch_J::Union{Function, Void}=nothing,
                 rates::DecayRates=nothing, rates_s::DecayRates=nothing,
                 fout::Union{Function,Void}=nothing,
+                noise_processes::Int=0,
                 kwargs...)
 
     tmp = copy(rho0.quantum)
@@ -118,14 +117,27 @@ function master_semiclassical(tspan::Vector{Float64}, rho0::State{DenseOperator}
         throw(ArgumentError("A matrix of stochastic rates is ambiguous! Please provide a vector of stochastic rates.
         You may want to set them as ones or use diagonaljumps."))
     end
-
-    n = 0
-    if isa(fstoch_quantum, Function)
-        fq_out = fstoch_quantum(0, rho0.quantum, rho0.classical)
-        n += length(fq_out[1])
+    if isa(fstoch_quantum, Void) && isa(fstoch_classical, Void) && isa(fstoch_H, Void) && isa(fstoch_J, Void)
+        throw(ArgumentError("No stochastic functions provided!"))
     end
-    if isa(fstoch_classical, Function)
-        n += 1
+
+    if noise_processes == 0
+        n = 0
+        if isa(fstoch_quantum, Function)
+            fq_out = fstoch_quantum(0, rho0.quantum, rho0.classical)
+            n += length(fq_out[1])
+        end
+        if isa(fstoch_classical, Function)
+            n += 1
+        end
+        if isa(fstoch_H, Function)
+            n += length(fstoch_H(0, rho0.quantum, rho0.classical))
+        end
+        if isa(fstoch_J, Function)
+            n += length(fstoch_J(0, rho0.quantum, rho0.classical)[1])
+        end
+    else
+        n = noise_processes
     end
 
     dmaster_determ(t::Float64, rho::State{DenseOperator}, drho::State{DenseOperator}) =
@@ -137,12 +149,6 @@ function master_semiclassical(tspan::Vector{Float64}, rho0::State{DenseOperator}
                         rates_s, drho, tmp, index)
         integrate_master_stoch(tspan, dmaster_determ, dmaster_stoch_std, rho0, fout, n; kwargs...)
     else
-        if isa(fstoch_H, Function)
-            n += length(fstoch_H(0, rho0.quantum, rho0.classical))
-        end
-        if isa(fstoch_J, Function)
-            n += length(fstoch_J(0, rho0.quantum, rho0.classical)[1])
-        end
         dmaster_stoch_gen(t::Float64, rho::State{DenseOperator},
                         drho::State{DenseOperator}, index::Int) =
             dmaster_stoch_dynamic_general(t, rho, fstoch_quantum,
@@ -155,25 +161,19 @@ end
 function dschroedinger_stochastic(t::Float64, state::State{Ket}, fstoch_quantum::Function,
             fstoch_classical::Function, dstate::State{Ket}, index::Int)
     H = fstoch_quantum(t, state.quantum, state.classical)
-    Hvec = isa(H, Operator) ? [H] : H
-    if index <= length(Hvec)
-        dschroedinger(state.quantum, Hvec[index], dstate.quantum)
+    if index <= length(H)
+        dschroedinger(state.quantum, H[index], dstate.quantum)
     else
         fstoch_classical(t, state.quantum, state.classical, dstate.classical)
     end
 end
 function dschroedinger_stochastic(t::Float64, state::State{Ket}, fstoch_quantum::Function,
-            fstoch_classical::Void, dstate::State{Ket})
-    fquantum_(t, psi) = fstoch_quantum(t, state.quantum, state.classical)
-    dschroedinger_dynamic(t, state.quantum, fquantum_, dstate.quantum)
-end
-function dschroedinger_stochastic(t::Float64, state::State{Ket}, fstoch_quantum::Function,
             fstoch_classical::Void, dstate::State{Ket}, index::Int)
     H = fstoch_quantum(t, state.quantum, state.classical)
-    dschroedinger(t, state.quantum, H[index], dstate.quantum)
+    dschroedinger(state.quantum, H[index], dstate.quantum)
 end
 function dschroedinger_stochastic(t::Float64, state::State{Ket}, fstoch_quantum::Void,
-            fstoch_classical::Function, dstate::State{Ket})
+            fstoch_classical::Function, dstate::State{Ket}, index::Int)
     fstoch_classical(t, state.quantum, state.classical, dstate.classical)
 end
 
@@ -215,13 +215,12 @@ function dmaster_stoch_dynamic_general(t::Float64, state::State{DenseOperator},
             fstoch_H::Function, fstoch_J::Void, rates::DecayRates, rates_s::DecayRates,
             dstate::State{DenseOperator}, tmp::DenseOperator, index::Int)
     H = fstoch_H(t, state.quantum, state.classical)
-    Hvec = isa(H, Vector) ? H : [H]
-    if index <= length(Hvec)
-        operators.gemm!(-1.0im, Hvec[index], state.quantum, 0.0, dstate.quantum)
-        operators.gemm!(1.0im, state.quantum, Hvec[index], 1.0, dstate.quantum)
+    if index <= length(H)
+        operators.gemm!(-1.0im, H[index], state.quantum, 0.0, dstate.quantum)
+        operators.gemm!(1.0im, state.quantum, H[index], 1.0, dstate.quantum)
     else
         dmaster_stoch_dynamic(t, state, fstoch_quantum, fstoch_classical,
-                rates_s, dstate, tmp, index-length(Hvec))
+                rates_s, dstate, tmp, index-length(H))
     end
 end
 function dmaster_stoch_dynamic_general(t::Float64, state::State{DenseOperator},
@@ -248,13 +247,12 @@ function dmaster_stoch_dynamic_general(t::Float64, state::State{DenseOperator},
             fstoch_H::Function, fstoch_J::Function, rates::DecayRates, rates_s::DecayRates,
             dstate::State{DenseOperator}, tmp::DenseOperator, index::Int)
     H = fstoch_H(t, state.quantum, state.classical)
-    Hvec = isa(H, Vector) ? H : [H]
-    if index <= length(Hvec)
-        operators.gemm!(-1.0im, Hvec[index], state.quantum, 0.0, dstate.quantum)
-        operators.gemm!(1.0im, state.quantum, Hvec[index], 1.0, dstate.quantum)
+    if index <= length(H)
+        operators.gemm!(-1.0im, H[index], state.quantum, 0.0, dstate.quantum)
+        operators.gemm!(1.0im, state.quantum, H[index], 1.0, dstate.quantum)
     else
         dmaster_stoch_dynamic_general(t, state, fstoch_quantum, fstoch_classical,
-                nothing, fstoch_J, rates, rates_s, dstate, tmp, index-length(Hvec))
+                nothing, fstoch_J, rates, rates_s, dstate, tmp, index-length(H))
     end
 end
 
