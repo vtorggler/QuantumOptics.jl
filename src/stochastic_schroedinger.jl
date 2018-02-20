@@ -18,7 +18,8 @@ Integrate stochastic Schrödinger equation.
         be displayed.
 * `psi0`: Initial state as Ket.
 * `H`: Deterministic part of the Hamiltonian.
-* `Hs`: Stochastic part(s) of the Hamiltonian.
+* `Hs`: Stochastic part(s) of the Hamiltonian (either an operator or a vector
+        of operators).
 * `fout=nothing`: If given, this function `fout(t, state)` is called every time
         an output should be displayed. ATTENTION: The given state is neither
         normalized nor permanent!
@@ -52,12 +53,18 @@ Integrate stochastic Schrödinger equation with dynamic Hamiltonian.
         be displayed.
 * `psi0`: Initial state.
 * `fdeterm`: Function `f(t, psi, u) -> H` returning the deterministic
-    (time- or state-dependent) part of the Hamiltonian.
-* `fstoch`: Function or vector of functions `f(t, psi, u, du)` returning the stochastic part
-    of the Hamiltonian.
+        (time- or state-dependent) part of the Hamiltonian.
+* `fstoch`: Function `f(t, psi, u, du) -> Hs` returning a vector that
+        contains the stochastic terms of the Hamiltonian.
 * `fout=nothing`: If given, this function `fout(t, state)` is called every time
         an output should be displayed. ATTENTION: The given state is neither
         normalized nor permanent!
+* `noise_processes=0`: Number of distinct white-noise processes in the equation.
+        This number has to be equal to the total number of noise operators
+        returned by `fstoch`. If unset, the number is calculated automatically
+        from the function output.
+        NOTE: Set this number if you want to avoid an initial calculation of
+        the function output!
 * `kwargs...`: Further arguments are passed on to the ode solver.
 """
 function schroedinger_dynamic(tspan, psi0::Ket, fdeterm::Function, fstoch::Function;

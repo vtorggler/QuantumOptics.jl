@@ -22,15 +22,28 @@ Integrate time-dependent Schrödinger equation coupled to a classical system.
 # Arguments
 * `tspan`: Vector specifying the points of time for which the output should
         be displayed.
-* `psi0`: Initial semi-classical state [`semiclassical.State`](@ref).
+* `state0`: Initial semi-classical state [`semiclassical.State`](@ref).
 * `fquantum`: Function `f(t, psi, u) -> H` returning the time and or state
         dependent Hamiltonian.
 * `fclassical`: Function `f(t, psi, u, du)` calculating the possibly time and
         state dependent derivative of the classical equations and storing it
         in the vector `du`.
+* `fstoch_quantum=nothing`: Function `f(t, psi, u) -> Hs` that returns a vector
+        of operators corresponding to the stochastic terms of the Hamiltonian.
+        NOTE: Either this function or `fstoch_classical` has to be defined.
+* `fstoch_classical=nothing`: Function `f(t, psi, u, du)` that calculates the
+        stochastic terms of the derivative `du`.
+        NOTE: Either this function or `fstoch_quantum` has to be defined.
 * `fout=nothing`: If given, this function `fout(t, state)` is called every time
         an output should be displayed. ATTENTION: The given state is neither
         normalized nor permanent!
+* `noise_processes=0`: Number of distinct white-noise processes in the equation.
+        This number has to be equal to the total number of noise operators
+        returned by `fstoch_quantum`. Add 1 if `fstoch_classical` is specificed.
+        If unset, the number is automatically calculated from function outputs.
+        NOTE: Set this number if you want to avoid an initial calculation of
+        function outputs!
+* `kwargs...`: Further arguments are passed on to the ode solver.
 * `kwargs...`: Further arguments are passed on to the ode solver.
 """
 function schroedinger_semiclassical(tspan, state0::State{Ket}, fquantum::Function,
@@ -82,23 +95,43 @@ non-hermitian Hamiltonian and then calls master_nh which is slightly faster.
         be displayed.
 * `rho0`: Initial density operator. Can also be a state vector which is
         automatically converted into a density operator.
-* `H`: Deterministic part of the Hamiltonian.
-* `Hs`: Operator or vector of operators specifying the stochastic part of the
-        Hamiltonian.
-* `J`: Vector containing all deterministic
-        jump operators which can be of any arbitrary operator type.
-* `Js`: Vector containing all stochastic jump operators.
+* `fquantum`: Function `f(t, rho) -> (H, J, Jdagger)` or
+        `f(t, rho) -> (H, J, Jdagger, rates)` giving the deterministic
+        part of the master equation.
+* `fclassical`: Function `f(t, rho) -> (Js, Jsdagger)` or
+        `f(t, rho) -> (Js, Jsdagger, rates)` giving the stochastic superoperator
+        of the form `Js[i]*rho + rho*Jsdagger[i]`.
+* `fstoch_quantum=nothing`: Function `f(t, rho, u) -> Js, Jsdagger` or
+        `f(t, psi, u) -> Js, Jsdagger, rates_s` that returns the stochastic
+        operator for the superoperator of the form `Js[i]*rho + rho*Jsdagger[i]`.
+* `fstoch_classical=nothing`: Function `f(t, rho, u, du)` that calculates the
+        stochastic terms of the derivative `du`.
+* `fstoch_H=nothing`: Function `f(t, rho) -> Hs` providing a vector of operators
+        that correspond to stochastic terms of the Hamiltonian.
+* `fstoch_J=nothing`: Function `f(t, rho) -> (J, Jdagger)` or
+        `f(t, rho) -> (J, Jdagger, rates)` giving a stochastic
+        Lindblad term.
 * `rates=nothing`: Vector or matrix specifying the coefficients (decay rates)
         for the jump operators. If nothing is specified all rates are assumed
         to be 1.
-* `Jdagger=dagger.(J)`: Vector containing the hermitian conjugates of the jump
-        operators. If they are not given they are calculated automatically.
-* `Jsdagger=dagger.(Js)`: Vector containing the hermitian conjugates of the
-        stochastic jump operators.
+* `rates_s=nothing`: Vector or matrix specifying the coefficients (decay rates)
+        for the stochastic jump operators. If nothing is specified all rates are assumed
+        to be 1.
+* `fstoch_H=nothing`: Function `f(t, rho) -> Hs` providing a vector of operators
+        that correspond to stochastic terms of the Hamiltonian.
+* `fstoch_J=nothing`: Function `f(t, rho) -> (J, Jdagger)` or
+        `f(t, rho) -> (J, Jdagger, rates)` giving a stochastic
+        Lindblad term.
 * `fout=nothing`: If given, this function `fout(t, rho)` is called every time
         an output should be displayed. ATTENTION: The given state rho is not
         permanent! It is still in use by the ode solver and therefore must not
         be changed.
+* `noise_processes=0`: Number of distinct white-noise processes in the equation.
+        This number has to be equal to the total number of noise operators
+        returned by all stochastic functions. Add 1 for classical noise.
+        If unset, the number is calculated automatically from the function outputs.
+        NOTE: Set this number if you want to avoid an initial calculation of
+        function outputs!
 * `kwargs...`: Further arguments are passed on to the ode solver.
 """
 function master_semiclassical(tspan::Vector{Float64}, rho0::State{DenseOperator},
@@ -157,6 +190,8 @@ function master_semiclassical(tspan::Vector{Float64}, rho0::State{DenseOperator}
         integrate_master_stoch(tspan, dmaster_determ, dmaster_stoch_gen, rho0, fout, n; kwargs...)
     end
 end
+master_semiclassical(tspan::Vector{Float64}, psi0::State{Ket}, args...; kwargs...) =
+        master_semiclassical(tspan, dm(psi0), args...; kwargs...)
 
 function dschroedinger_stochastic(t::Float64, state::State{Ket}, fstoch_quantum::Function,
             fstoch_classical::Function, dstate::State{Ket}, index::Int)

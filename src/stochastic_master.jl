@@ -28,10 +28,16 @@ non-hermitian Hamiltonian and then calls master_nh which is slightly faster.
         Hamiltonian.
 * `J`: Vector containing all deterministic
         jump operators which can be of any arbitrary operator type.
-* `Js`: Vector containing all stochastic jump operators.
+* `Js=J`: Vector containing the stochastic jump operators for a superoperator
+        describing a measurement which has the form of the standard linear
+        stochastic master equation, `Js[i]*rho + rho*Jsdagger[i]`.
+* `Hs=nothing`: Vector containing additional stochastic terms of the Hamiltonian.
 * `rates=nothing`: Vector or matrix specifying the coefficients (decay rates)
         for the jump operators. If nothing is specified all rates are assumed
         to be 1.
+* `rates_s=nothing`: Vector specifying the coefficients (decay rates)
+        for the stochastic jump operators. If nothing is specified all rates
+        are assumed to be 1.
 * `Jdagger=dagger.(J)`: Vector containing the hermitian conjugates of the jump
         operators. If they are not given they are calculated automatically.
 * `Jsdagger=dagger.(Js)`: Vector containing the hermitian conjugates of the
@@ -88,7 +94,7 @@ function master(tspan, rho0::DenseOperator, H::Operator,
         integrate_master_stoch(tspan, dmaster_nh_determ, dmaster_stoch, rho0, fout, n; kwargs...)
     end
 end
-
+master(tspan, psi0::Ket, args...; kwargs...) = master(tspan, dm(psi0), args...; kwargs...)
 
 """
     stochastic.master_dynamic(tspan, rho0, f, fs; <keyword arguments>)
@@ -96,25 +102,36 @@ end
 Time-evolution according to a stochastic master equation with a
 dynamic Hamiltonian and J.
 
-There are two implementations for integrating the master equation with dynamic
-operators:
-
 # Arguments
 * `tspan`: Vector specifying the points of time for which output should be displayed.
 * `rho0`: Initial density operator. Can also be a state vector which is
         automatically converted into a density operator.
-* `f`: Function `f(t, rho) -> (H, J, Jdagger)` or `f(t, rho) -> (H, J, Jdagger, rates)`
-* `fs`: Function `fs(t, rho) -> (Hs, Js, Jsdagger)` or `fs(t, rho) -> (Hs, Js, Jsdagger, rates)`
+* `fdeterm`: Function `f(t, rho) -> (H, J, Jdagger)` or
+        `f(t, rho) -> (H, J, Jdagger, rates)` giving the deterministic
+        part of the master equation.
+* `fstoch`: Function `f(t, rho) -> (Js, Jsdagger)` or
+        `f(t, rho) -> (Js, Jsdagger, rates)` giving the stochastic superoperator
+        of the form `Js[i]*rho + rho*Jsdagger[i]`.
 * `rates=nothing`: Vector or matrix specifying the coefficients (decay rates)
         for the jump operators. If nothing is specified all rates are assumed
         to be 1.
 * `rates_s=nothing`: Vector or matrix specifying the coefficients (decay rates)
         for the stochastic jump operators. If nothing is specified all rates are assumed
         to be 1.
+* `fstoch_H=nothing`: Function `f(t, rho) -> Hs` providing a vector of operators
+        that correspond to stochastic terms of the Hamiltonian.
+* `fstoch_J=nothing`: Function `f(t, rho) -> (J, Jdagger)` or
+        `f(t, rho) -> (J, Jdagger, rates)` giving a stochastic
+        Lindblad term.
 * `fout=nothing`: If given, this function `fout(t, rho)` is called every time
         an output should be displayed. ATTENTION: The given state rho is not
         permanent! It is still in use by the ode solver and therefore must not
         be changed.
+* `noise_processes=0`: Number of distinct white-noise processes in the equation.
+        This number has to be equal to the total number of noise operators
+        returned by `fstoch` and all optional functions. If unset, the number
+        is calculated automatically from the function outputs. NOTE: Set this
+        number if you want to avoid an initial calculation of function outputs!
 * `kwargs...`: Further arguments are passed on to the ode solver.
 """
 function master_dynamic(tspan::Vector{Float64}, rho0::DenseOperator, fdeterm::Function, fstoch::Function;
@@ -158,6 +175,7 @@ function master_dynamic(tspan::Vector{Float64}, rho0::DenseOperator, fdeterm::Fu
         integrate_master_stoch(tspan, dmaster_determ, dmaster_stoch_gen, rho0, fout, n; kwargs...)
     end
 end
+master_dynamic(tspan::Vector{Float64}, psi0::Ket, args...; kwargs...) = master_dynamic(tspan, dm(psi0), args...; kwargs...)
 
 function dmaster_stochastic(rho::DenseOperator, H::Void, rates::Void,
             J::Vector, Jdagger::Vector, drho::DenseOperator, tmp::DenseOperator,

@@ -70,7 +70,7 @@ for i=2:length(tout)
 end
 
 # Test master
-tout, ρt1 = stochastic.master(T, ρ0, H, J; rates=rates, dt=dt)
+tout, ρt1 = stochastic.master(T, ψ0, H, J; rates=rates, dt=dt)
 tout, ρt2 = stochastic.master(T, ρ0, H, J; Hs=Hs, rates=rates, dt=dt)
 
 tout, ρt3 = stochastic.master(T, ρ0, H, J; Js=0.*J, dt=dt)
@@ -103,7 +103,7 @@ function fstoch4_master(t, rho)
     J, Jdagger, rates
 end
 
-tout, ρt4 = stochastic.master_dynamic(T, ρ0, fdeterm_master, fstoch1_master; dt=dt)
+tout, ρt4 = stochastic.master_dynamic(T, ψ0, fdeterm_master, fstoch1_master; dt=dt)
 tout, ρt5 = stochastic.master_dynamic(T, ρ0, fdeterm_master, fstoch2_master; dt=dt)
 tout, ρt6 = stochastic.master_dynamic(T, ρ0, fdeterm_master, fstoch2_master; fstoch_H=fstoch3_master, dt=dt)
 tout, ρt7 = stochastic.master_dynamic(T, ρ0, fdeterm_master, fstoch2_master; fstoch_J=fstoch4_master, dt=dt)
