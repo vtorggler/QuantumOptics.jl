@@ -164,7 +164,6 @@ function dmaster_stochastic(rho::DenseOperator, H::Void, rates::Void,
             index::Int)
     operators.gemm!(1, J[index], rho, 0, drho)
     operators.gemm!(1, rho, Jdagger[index], 1, drho)
-    operators.gemm!(-expect(J[index]+Jdagger[index], rho), rho, one(J[index]), 1, drho)
     return drho
 end
 function dmaster_stochastic(rho::DenseOperator, H::Void, rates::Vector{Float64},
@@ -172,7 +171,6 @@ function dmaster_stochastic(rho::DenseOperator, H::Void, rates::Vector{Float64},
             index::Int)
     operators.gemm!(rates[index], J[index], rho, 0, drho)
     operators.gemm!(rates[index], rho, Jdagger[index], 1, drho)
-    operators.gemm!(-rates[index]*expect(J[index]+Jdagger[index], rho), rho, one(J[index]), 1, drho)
     return drho
 end
 
@@ -185,7 +183,6 @@ function dmaster_stochastic(rho::DenseOperator, H::Vector, rates::Void,
     else
         operators.gemm!(1, J[index], rho, 0, drho)
         operators.gemm!(1, rho, Jdagger[index], 1, drho)
-        operators.gemm!(-expect(J[index]+Jdagger[index], rho), rho, one(J[index]), 1, drho)
     end
     return drho
 end
