@@ -45,7 +45,7 @@ tout, ψt4 = stochastic.schroedinger(T, ψ0, H, [zero_op, zero_op]; dt=dt)
 tout, ψt3 = stochastic.schroedinger(T, ψ0, H, zero_op; dt=dt)
 # Dynamic Schrödinger
 tout, ψt1 = stochastic.schroedinger_dynamic(T, ψ0, fdeterm, fstoch_1; dt=dt)
-tout, ψt2 = stochastic.schroedinger_dynamic(T, ψ0, fdeterm, fstoch_2; dt=dt)
+tout, ψt2 = stochastic.schroedinger_dynamic(T, ψ0, fdeterm, fstoch_2; dt=dt, noise_processes=3)
 
 # Test sharp equality for same algorithms
 @test ψt1 == ψt3
@@ -65,13 +65,13 @@ end
 tout, ψt5 = stochastic.schroedinger(T, ψ0, H, noise_op; dt=dt)
 tout, ψt6 = stochastic.schroedinger_dynamic(T, ψ0, fdeterm, fstoch_3; dt=dt)
 for i=2:length(tout)
-    @test norm(ψt5[i] - ψt_determ[i]) > 1e-3
-    @test norm(ψt6[i] - ψt_determ[i]) > 1e-3
+    @test norm(ψt5[i] - ψt_determ[i]) > 1e-2
+    @test norm(ψt6[i] - ψt_determ[i]) > 1e-2
 end
 
 # Test master
 tout, ρt1 = stochastic.master(T, ψ0, H, J; rates=rates, dt=dt)
-tout, ρt2 = stochastic.master(T, ρ0, H, J; Hs=Hs, rates=rates, dt=dt)
+tout, ρt2 = stochastic.master(T, ρ0, LazyProduct(H, one(H)), sqrt.(rates).*J; Hs=Hs, dt=dt)
 
 tout, ρt3 = stochastic.master(T, ρ0, H, J; Js=0.*J, dt=dt)
 tout, ρt_determ = timeevolution.master(T, ρ0, H, J)
@@ -84,14 +84,16 @@ for i=1:length(tout)
     @test tracedistance(ρt3[i], ρt_determ[i]) < dt
 end
 
-@test_throws ArgumentError stochastic.master(T, ρ0, H, [sm, sm]; rates=[0.1 0.1; 0.1 0.1], dt=dt)
+rates_mat = [0.1 0.05; 0.05 0.1]
+tout, ρt4 = stochastic.master(T, ψ0, H, [sm, sm]; rates=rates_mat, dt=dt)
+@test_throws ArgumentError stochastic.master(T, ψ0, H, [sm, sm]; rates_s=rates_mat, dt=dt)
 
 # Test master dynamic
 function fdeterm_master(t, rho)
     H, J, Jdagger
 end
 function fstoch1_master(t, rho)
-    [zero_op], [zero_op]
+    [zero_op], [zero_op], rates
 end
 function fstoch2_master(t, rho)
     Js, Jsdagger
@@ -103,7 +105,7 @@ function fstoch4_master(t, rho)
     J, Jdagger, rates
 end
 
-tout, ρt4 = stochastic.master_dynamic(T, ψ0, fdeterm_master, fstoch1_master; dt=dt)
+tout, ρt4 = stochastic.master_dynamic(T, ψ0, fdeterm_master, fstoch1_master; dt=dt, noise_processes=1)
 tout, ρt5 = stochastic.master_dynamic(T, ρ0, fdeterm_master, fstoch2_master; dt=dt)
 tout, ρt6 = stochastic.master_dynamic(T, ρ0, fdeterm_master, fstoch2_master; fstoch_H=fstoch3_master, dt=dt)
 tout, ρt7 = stochastic.master_dynamic(T, ρ0, fdeterm_master, fstoch2_master; fstoch_J=fstoch4_master, dt=dt)
@@ -120,6 +122,8 @@ for i=2:length(tout)
     @test tracedistance(ρt7[i], ρt_determ[i]) > 1e-4
     @test tracedistance(ρt8[i], ρt_determ[i]) > 1e-4
 end
+
+@test_throws ArgumentError stochastic.master_dynamic(T, ψ0, fdeterm_master, fstoch1_master; rates_s=rates_mat, dt=dt)
 
 # Test semiclassical
 function fquantum(t, psi, u)
@@ -139,9 +143,11 @@ tout, ψt_determ = semiclassical.schroedinger_dynamic(T, ψ_sc, fquantum, fclass
 tout, ψt_sc1 = stochastic.schroedinger_semiclassical(T, ψ_sc, fquantum, fclassical;
             fstoch_quantum=fquantum_stoch, dt=dt)
 tout, ψt_sc2 = stochastic.schroedinger_semiclassical(T, ψ_sc, fquantum, fclassical;
-            fstoch_classical=fclassical_stoch, dt=dt)
+            fstoch_classical=fclassical_stoch, noise_processes=1, dt=dt)
 tout, ψt_sc3 = stochastic.schroedinger_semiclassical(T, ψ_sc, fquantum, fclassical;
             fstoch_quantum=fquantum_stoch, fstoch_classical=fclassical_stoch, dt=dt)
+
+@test_throws ArgumentError stochastic.schroedinger_semiclassical(T, ψ_sc, fquantum, fclassical)
 
 # Semiclassical master
 function fquantum_master(t, rho, u)
@@ -150,53 +156,31 @@ end
 function fstoch_q_master(t, rho, u)
     5Js, 5Jsdagger
 end
+function fstoch_q_master2(t, rho, u)
+    5Js, 5Jsdagger, ones(length(Js))
+end
 function fstoch_J(t, rho, u)
     J, Jdagger
 end
 tout, ρt_determ = semiclassical.master_dynamic(T, ρ_sc, fquantum_master, fclassical)
 tout, ρt1 = stochastic.master_semiclassical(T, ρ_sc, fquantum_master, fclassical; fstoch_quantum=fstoch_q_master, dt=dt)
 tout, ρt2 = stochastic.master_semiclassical(T, ρ_sc, fquantum_master, fclassical; fstoch_classical=fclassical_stoch, dt=dt)
-tout, ρt3 = stochastic.master_semiclassical(T, ρ_sc, fquantum_master, fclassical;
-            fstoch_quantum=fstoch_q_master, fstoch_classical=fclassical_stoch, dt=dt)
+tout, ρt3 = stochastic.master_semiclassical(T, ψ_sc, fquantum_master, fclassical;
+            fstoch_quantum=fstoch_q_master2, fstoch_classical=fclassical_stoch, dt=dt)
 tout, ρt4 = stochastic.master_semiclassical(T, ρ_sc, fquantum_master, fclassical;
             fstoch_classical=fclassical_stoch,
             fstoch_H=fquantum_stoch, dt=dt)
 tout, ρt5 = stochastic.master_semiclassical(T, ρ_sc, fquantum_master, fclassical;
             fstoch_classical=fclassical_stoch,
             fstoch_J=fstoch_J, dt=dt)
+tout2, ρt6 = stochastic.master_semiclassical([0,0.1], ρ_sc, fquantum_master, fclassical;
+            fstoch_quantum=fstoch_q_master2, dt=dt)
+tout2, ρt7 = stochastic.master_semiclassical([0,0.1], ρ_sc, fquantum_master, fclassical;
+            fstoch_H=fquantum_stoch, fstoch_J=fstoch_J, dt=dt)
 
-# using PyPlot
-# figure(1)
-# subplot(121)
-# title("Classical")
-# plot(tout, [p.classical[1] for p=ψt_determ], label="det")
-# plot(tout, [p.classical[1] for p=ψt_sc1], label="q-noise")
-# plot(tout, [p.classical[1] for p=ψt_sc2], label="c-noise")
-# plot(tout, [p.classical[1] for p=ψt_sc3], label="both")
-# legend()
-# subplot(122)
-# title("Quantum")
-# plot(tout, expect(sp*sm, ψt_determ))
-# plot(tout, expect(sp*sm, ψt_sc1))
-# plot(tout, expect(sp*sm, ψt_sc2))
-# plot(tout, expect(sp*sm, ψt_sc3))
-# figure(2)
-# subplot(121)
-# title("Classical")
-# plot(tout, [r.classical[1] for r=ρt_determ], label="det")
-# plot(tout, [r.classical[1] for r=ρt1], label="q-noise")
-# plot(tout, [r.classical[1] for r=ρt2], label="c-noise")
-# plot(tout, [r.classical[1] for r=ρt3], label="both")
-# plot(tout, [r.classical[1] for r=ρt4], label="c+H")
-# plot(tout, [r.classical[1] for r=ρt4], label="c+J")
-# legend()
-# subplot(122)
-# title("Quantum")
-# plot(tout, expect(sp*sm, ρt_determ))
-# plot(tout, expect(sp*sm, ρt1))
-# plot(tout, expect(sp*sm, ρt2))
-# plot(tout, expect(sp*sm, ρt3))
-# plot(tout, expect(sp*sm, ρt4))
-# plot(tout, expect(sp*sm, ρt5))
+@test_throws ArgumentError stochastic.master_semiclassical(T, ρ_sc, fquantum_master, fclassical)
+@test_throws ArgumentError stochastic.master_semiclassical(T, ρ_sc, fquantum_master, fclassical;
+                                    fstoch_classical=fclassical_stoch, rates_s=rates_mat)
+
 
 end # testset
