@@ -57,9 +57,6 @@ function master(tspan, rho0::DenseOperator, H::Operator,
 
     tmp = copy(rho0)
 
-    if rates_s == nothing && rates != nothing
-        rates_s = sqrt.(rates)
-    end
     if isa(rates_s, Matrix{Float64})
         throw(ArgumentError("A matrix of stochastic rates is ambiguous! Please provide a vector of stochastic rates.
         You may want to use diagonaljumps."))
@@ -213,7 +210,6 @@ function dmaster_stochastic(rho::DenseOperator, H::Vector, rates::Vector{Float64
     else
         operators.gemm!(rates[index], J[index], rho, 0, drho)
         operators.gemm!(rates[index], rho, Jdagger[index], 1, drho)
-        operators.gemm!(-rates[index]*expect(J[index]+Jdagger[index], rho), rho, one(J[index]), 1, drho)
     end
     return drho
 end

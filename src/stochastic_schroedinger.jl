@@ -95,11 +95,6 @@ function dschroedinger_stochastic(psi::Ket, Hs::Vector{T}, dpsi::Ket, index::Int
     dschroedinger(psi, Hs[index], dpsi)
 end
 
-function dschroedinger_stochastic(t::Float64, psi::Ket, f::Function, dpsi::Ket)
-    ops = f(t, psi)[1]
-    check_schroedinger(psi, ops)
-    dschroedinger(psi, ops, dpsi)
-end
 function dschroedinger_stochastic(t::Float64, psi::Ket, f::Function, dpsi::Ket, index::Int)
     ops = f(t, psi)
     check_schroedinger(psi, ops[index])
