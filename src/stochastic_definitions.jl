@@ -42,7 +42,7 @@ H_s = iCe^{-i\\theta}.
 """
 function homodyne_carmichael(H0::Operator, C::Vector{T}, theta::Vector{R}) where {T <: Operator, R <: Real}
     @assert length(C) == length(theta)
-    Hs = C .* exp.(-1.0im .* theta)
+    Hs = 1.0im*C .* exp.(-1.0im .* theta)
     X = Hs .+ dagger.(Hs)
     CdagC = -0.5im .* dagger.(C) .* C
 
