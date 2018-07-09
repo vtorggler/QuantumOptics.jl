@@ -49,7 +49,7 @@ function homodyne_carmichael(H0::Operator, C::Vector{T}, theta::Vector{R};
     n = length(C)
     @assert n == length(theta)
     Hs = 1.0im*C .* exp.(-1.0im .* theta)
-    X = Hs .+ dagger.(Hs)
+    X = C .* exp.(-1.0im .* theta) + dagger.(C) .* exp.(1.0im .* theta)
     CdagC = -0.5im .* dagger.(C) .* C
 
     fstoch(t::Float64, psi::StateVector) = Hs
