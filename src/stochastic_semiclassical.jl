@@ -10,7 +10,6 @@ using ...timeevolution
 import ...timeevolution: integrate_stoch
 import ...timeevolution.timeevolution_schroedinger: dschroedinger, dschroedinger_dynamic
 using ...stochastic
-import ...stochastic.stochastic_master: dmaster_stochastic, dmaster_stoch_dynamic
 
 import DiffEqCallbacks
 
