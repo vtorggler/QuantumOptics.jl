@@ -17,6 +17,10 @@ trajectories according to Carmichael with `stochastic.schroedinger_dynamic`.
     Defines the operator of the measured quadrature as
     ``X_\\theta = C e^{-i\\theta} + C^\\dagger e^{i\\theta}``. Needs to be a
     vector of the same length as `C` if `C` is a vector.
+* `normalize_expect=true`: Specifiy whether or not to normalize the state vector
+    when the expectation value in the nonlinear term is calculated. NOTE:
+    should only be set to `false` if the state is guaranteed to be normalized,
+    e.g. by setting `normalize_state=true` in `stochastic.schroedinger_dynamic`.
 
 Returns `(fdeterm, fstoch)`, where `fdeterm(t, psi) -> H` and
 `fstoch(t, psi) -> Hs` are functions returning the deterministic and stochastic
@@ -40,25 +44,28 @@ and
 H_s = iCe^{-i\\theta}.
 ```
 """
-function homodyne_carmichael(H0::Operator, C::Vector{T}, theta::Vector{R}) where {T <: Operator, R <: Real}
-    @assert length(C) == length(theta)
+function homodyne_carmichael(H0::Operator, C::Vector{T}, theta::Vector{R};
+            normalize_expect::Bool=true) where {T <: Operator, R <: Real}
+    n = length(C)
+    @assert n == length(theta)
     Hs = 1.0im*C .* exp.(-1.0im .* theta)
     X = Hs .+ dagger.(Hs)
     CdagC = -0.5im .* dagger.(C) .* C
 
-    exp_ls = zeros(Complex128, length(X))
-    function H_nl(psi::StateVector)
-        @inbounds for i=1:length(X)
-            exp_ls[i] = expect(X[i], psi)
-        end
-        sum(exp_ls .* Hs .+ CdagC)
-    end
-
-    fdeterm(t::Float64, psi::StateVector) = H0 + H_nl(psi)
     fstoch(t::Float64, psi::StateVector) = Hs
-    return fdeterm, fstoch
+    if normalize_expect
+        H_nl_n(psi::StateVector) =
+            sum(expect(X[i], normalize(psi))*Hs[i] + CdagC[i] for i=1:n)
+        fdeterm_n(t::Float64, psi::StateVector) = H0 + H_nl_n(psi)
+        return fdeterm_n, fstoch
+    else
+        H_nl_un(psi::StateVector) =
+            sum(expect(X[i], psi)*Hs[i] + CdagC[i] for i=1:n)
+        fdeterm_un(t::Float64, psi::StateVector) = H0 + H_nl_un(psi)
+        return fdeterm_un, fstoch
+    end
 end
-homodyne_carmichael(H0::Operator, C::Operator, theta::Real) =
-    homodyne_carmichael(H0, [C], [theta])
+homodyne_carmichael(H0::Operator, C::Operator, theta::Real; kwargs...) =
+    homodyne_carmichael(H0, [C], [theta]; kwargs...)
 
 end # module
