@@ -27,9 +27,8 @@ non-hermitian Hamiltonian and then calls master_nh which is slightly faster.
 * `H`: Deterministic part of the Hamiltonian.
 * `J`: Vector containing all deterministic
         jump operators which can be of any arbitrary operator type.
-* `C`: Vector containing the stochastic jump operators for a superoperator
-        describing a measurement which has the form of the standard linear
-        stochastic master equation, `C[i]*rho + rho*Cdagger[i]`.
+* `C`: Vector containing the stochastic operators for a superoperator
+        of the form `C[i]*rho + rho*Cdagger[i]`.
 * `rates=nothing`: Vector or matrix specifying the coefficients (decay rates)
         for the jump operators. If nothing is specified all rates are assumed
         to be 1.
@@ -97,9 +96,8 @@ dynamic Hamiltonian and J.
 * `fdeterm`: Function `f(t, rho) -> (H, J, Jdagger)` or
         `f(t, rho) -> (H, J, Jdagger, rates)` giving the deterministic
         part of the master equation.
-* `fstoch`: Function `f(t, rho) -> (C, Cdagger)` or
-        `f(t, rho) -> (C, Cdagger)` giving the stochastic superoperator
-        of the form `C[i]*rho + rho*Cdagger[i]`.
+* `fstoch`: Function `f(t, rho) -> (C, Cdagger)` giving the stochastic
+        superoperator of the form `C[i]*rho + rho*Cdagger[i]`.
 * `rates=nothing`: Vector or matrix specifying the coefficients (decay rates)
         for the jump operators. If nothing is specified all rates are assumed
         to be 1.
