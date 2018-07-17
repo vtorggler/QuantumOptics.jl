@@ -48,10 +48,27 @@ tss, ρss = steadystate.master(Hdense, Jdense; tol=1e-4)
 ρss = steadystate.eigenvector(Hdense, Jdense)
 @test tracedistance(ρss, ρt[end]) < 1e-6
 
+ρss = steadystate.eigenvector(Hdense, Jdense, unsafe = true)
+@test tracedistance(ρss, ρt[end]) < 1e-6
+
 ρss = steadystate.eigenvector(H, sqrt(2).*J; rates=0.5.*ones(length(J)))
 @test tracedistance(ρss, ρt[end]) < 1e-3
 
+ρss = steadystate.eigenvector(H, sqrt(2).*J; rates=0.5.*ones(length(J)), unsafe = true)
+@test tracedistance(ρss, ρt[end]) < 1e-3
+
+ρss = steadystate.eigenvector(liouvillian(Hdense, Jdense))
+@test tracedistance(ρss, ρt[end]) < 1e-6
+
 @test_throws TypeError steadystate.eigenvector(H, J; ncv="a")
+
+ev, ops = steadystate.liouvillianspectrum(Hdense, Jdense)
+@test tracedistance(ρss, ops[1]) < 1e-12
+@test ev[sortperm(-real(ev))] == ev
+
+ev, ops = steadystate.liouvillianspectrum(H, sqrt(2).*J; rates=0.5.*ones(length(J)), nev = 1)
+@test tracedistance(ρss, ops[1]) < 1e-12
+@test ev[sortperm(-real(ev))] == ev
 
 # Compute steady-state photon number of a driven cavity (analytically: η^2/κ^2)
 Hp = η*(destroy(fockbasis) + create(fockbasis))
@@ -72,7 +89,7 @@ nss = expect(create(fockbasis)*destroy(fockbasis), ρss)
 
 
 # Test error messages
-@test_throws ErrorException steadystate.eigenvector(sx, [sm])
+#@test_throws ErrorException steadystate.eigenvector(sx, [sm])
 function fout_wrong(t, x)
   @assert x == t
 end
