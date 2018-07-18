@@ -55,7 +55,7 @@ sorted according to the real part of the eigenvalues.
 * `which = :LR`: Find eigenvalues with largest real part. Keyword for `eigs` function (ineffective for DenseSuperOperator).
 * `kwargs...`:  Keyword arguments for the Julia `eig` or `eigs` function.
 """
-function liouvillianspectrum(L::DenseSuperOperator; nev::Int64 = min(10, length(L.basis_r[1])*length(L.basis_r[2])), which::Symbol = :LR, kwargs...)
+function liouvillianspectrum(L::DenseSuperOperator; nev::Int = min(10, length(L.basis_r[1])*length(L.basis_r[2])), which::Symbol = :LR, kwargs...)
     d, v = Base.eig(L.data; kwargs...)
     indices = sortperm(-real(d))[1:nev]
     ops = DenseOperator[]
@@ -67,9 +67,9 @@ function liouvillianspectrum(L::DenseSuperOperator; nev::Int64 = min(10, length(
     return d[indices], ops
 end
 
-function liouvillianspectrum(L::SparseSuperOperator; nev::Int64 = min(10, length(L.basis_r[1])*length(L.basis_r[2])), which::Symbol = :LR, kwargs...)
+function liouvillianspectrum(L::SparseSuperOperator; nev::Int = min(10, length(L.basis_r[1])*length(L.basis_r[2])), which::Symbol = :LR, kwargs...)
     d, v, nconv, niter, nmult, resid = try
-        Base.eigs(L.data; nev=nev, which = which, kwargs...)
+        Base.eigs(L.data; nev = nev, which = which, kwargs...)
     catch err
         if isa(err, LinAlg.SingularException) || isa(err, LinAlg.ARPACKException)
             error("Base.LinAlg.eigs() algorithm failed; try using DenseOperators or change nev.")
@@ -96,21 +96,25 @@ liouvillianspectrum(H::Operator, J::Vector; rates::Union{Vector{Float64}, Matrix
 Find steady state by calculating the eigenstate with eigenvalue 0 of the Liouvillian matrix `L`, if it exists.
 
 # Keyword arguments:
-* `unsafe=false`: If `false` it checks if there is only one eigenvalue 0 (within tol). No checks if `true`, might lead to faster evaluation when using SparseSuperOperator.
-* `tol=1e-9`: Check `abs(eigenvalue) < tol` to determine zero eigenvalue.
+* `tol = 1e-9`: Check `abs(real(eigenvalue)) < tol` to determine zero eigenvalue.
+* `nev = 2`: Number of calculated eigenvalues. If `nev > 1` it is checked if there
+is only one eigenvalue with real part 0. No checks for `nev = 1`: use if faster
+or for avoiding convergence errors of `eigs`. Changing `nev` thus only makes sense when using SparseSuperOperator.
 * `which = :LR`: Find eigenvalues with largest real part. Keyword for `eigs` function (ineffective for DenseSuperOperator).
 * `kwargs...`:  Keyword arguments for the Julia `eig` or `eigs` function.
 """
-function eigenvector(L::SuperOperator; unsafe::Bool = false, tol::Real = 1e-9, which::Symbol = :LR, kwargs...)
-    nev = unsafe ? 1 : 2
-    d, ops = liouvillianspectrum(L; which = which, nev = nev, kwargs...)
-    if abs(d[1]) > tol
+function eigenvector(L::SuperOperator; tol::Real = 1e-9, nev::Int = 2, which::Symbol = :LR, kwargs...)
+    d, ops = liouvillianspectrum(L; nev = nev, which = which, kwargs...)
+    if abs(real(d[1])) > tol
         error("Eigenvalue with largest real part is not zero.")
     end
-    if unsafe == false
-        if abs(d[2]) < tol
-            warn("Degenerate zero eigenspace detected; use steadystate.liouvillianspectrum to find a basis.")
+    if nev > 1
+        if abs(real(d[2])) < tol
+            warn("Several eigenvalues with real part 0 detected; use steadystate.liouvillianspectrum to find out more.")
         end
+    end
+    if abs(imag(d[1])) > tol
+        warn("Imaginary part of eigenvalue not zero.")
     end
     return ops[1]
 end
