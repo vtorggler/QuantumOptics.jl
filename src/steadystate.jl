@@ -48,7 +48,8 @@ end
     steadystate.liouvillianspectrum(H, J)
 
 Calculate eigenspectrum of the Liouvillian matrix `L`. The eigenvalues and -states are
-sorted according to the real part of the eigenvalues.
+sorted according to the real part of the eigenvalues. The states are not normalized since
+not all of them need to be a physical density matrix, and thus the trace can be zero.
 
 # Keyword arguments:
 * `nev = min(10, length(L.basis_r[1])*length(L.basis_r[2]))`: Number of eigenvalues.
@@ -62,7 +63,7 @@ function liouvillianspectrum(L::DenseSuperOperator; nev::Int = min(10, length(L.
     for i in indices
         data = reshape(v[:,i], length(L.basis_r[1]), length(L.basis_r[2]))
         op = DenseOperator(L.basis_r[1], L.basis_r[2], data)
-        push!(ops, op/trace(op))
+        push!(ops, op)
     end
     return d[indices], ops
 end
@@ -82,7 +83,7 @@ function liouvillianspectrum(L::SparseSuperOperator; nev::Int = min(10, length(L
     for i in indices
         data = reshape(v[:,i], length(L.basis_r[1]), length(L.basis_r[2]))
         op = DenseOperator(L.basis_r[1], L.basis_r[2], data)
-        push!(ops, op/trace(op))
+        push!(ops, op)
     end
     return d[indices], ops
 end
@@ -116,7 +117,7 @@ function eigenvector(L::SuperOperator; tol::Real = 1e-9, nev::Int = 2, which::Sy
     if abs(imag(d[1])) > tol
         warn("Imaginary part of eigenvalue not zero.")
     end
-    return ops[1]
+    return ops[1]/trace(ops[1])
 end
 
 eigenvector(H::Operator, J::Vector; rates::Union{Vector{Float64}, Matrix{Float64}}=ones(Float64, length(J)), kwargs...) = eigenvector(liouvillian(H, J; rates=rates); kwargs...)
